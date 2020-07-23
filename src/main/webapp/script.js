@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
  
-//Get API key from hidden file and use it to get the map
+// Get API key from hidden file and use it to get the map
 var mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
  
-//When the page loads, call createMap
+// When the page loads, call createMap
 window.onload = function() {
-  createMap()
+  createMap();
 };
  
-//Create a map zoomed in on Googleplex
+// Create a map zoomed in on Googleplex
 function createMap() {
   const map = new google.maps.Map(
       document.getElementById('map'),
