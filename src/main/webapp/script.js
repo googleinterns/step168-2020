@@ -23,7 +23,6 @@ window.onload = function() {
 
 // Update currently displayed coordinates
 function displayLatitudeLongitude(value) {
-  console.log(value);
   document.getElementById('latitude').value = value['lat'];
   document.getElementById('longitude').value = value['lng'];
 }
