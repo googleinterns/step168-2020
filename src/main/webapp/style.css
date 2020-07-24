@@ -5,3 +5,18 @@
   top: 0px;
   left: 0px;
 }
+
+#search {
+  position: absolute;
+  top: 10px;
+  left: 210px;
+  z-index: 5;
+}
+
+#search-text {
+  height: 35px;
+}
+
+#search-submit {
+  height: 40px;
+}
