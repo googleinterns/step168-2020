@@ -32,6 +32,19 @@ function createMap() {
   const map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 37.422, lng: -122.084}, zoom: 16});
+  // Gets active case data and displays as heat map   
+  fetch('/report').then(response => response.json()).then((reports) => {
+    var heatmapData = [];
+    reports.forEach((report) => {
+      heatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.active
+      });
+    });
+    heatmap = new google.maps.visualization.HeatmapLayer(
+        {data: heatmapData, dissipating: false, map: map});
+  });
+
   const geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
