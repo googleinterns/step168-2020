@@ -26,4 +26,19 @@ function createMap() {
   const map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 37.422, lng: -122.084}, zoom: 16});
+  const geocoder = new google.maps.Geocoder();
+  document.getElementById("search-submit").addEventListener("click", () => {
+    getCoordsFromSearch(geocoder, map);
+  });
+}
+
+function getCoordsFromSearch(geocoder, map) {
+  const address = document.getElementById("search-text").value;
+  geocoder.geocode({ address: address }, (results, status) => {
+    if (status === "OK") {
+      map.setCenter(results[0].geometry.location);
+    } else {
+      alert("Geocode was not successful for the following reason: " + status);
+    }
+  });
 }
