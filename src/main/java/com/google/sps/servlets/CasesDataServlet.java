@@ -60,7 +60,7 @@ public class CasesDataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding(ENCODING);
     response.setContentType(CTYPE);
-    response.getWriter().append(reportsJson);
+    response.getWriter().println(reportsJson);
   }
 
   /** Represents active number of cases at a specific lat lng point */
