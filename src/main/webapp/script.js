@@ -32,7 +32,7 @@ function createMap() {
   const map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
-  // Gets active case data and displays as heat map   
+  // Gets active case data and displays as heat map
   fetch('/report').then(response => response.json()).then((reports) => {
     var heatmapData = [];
     reports.forEach((report) => {
