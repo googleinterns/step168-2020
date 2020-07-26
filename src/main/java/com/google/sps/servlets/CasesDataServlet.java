@@ -24,12 +24,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Builds and returns case data as a JSON array, e.g. [{"lat": 38.4404675, "lng": -122.7144313, "active": 5}] */
+/** Builds and returns case data as a JSON array, e.g. 
+    [{"lat": 38.4404675, "lng": -122.7144313, "active": 5}] */
 @WebServlet("/report")
 public class CasesDataServlet extends HttpServlet {
   private String reportsJson;
   public static final String STATS = "/WEB-INF/cases.csv"; // COVID-19 case data
   public static final String CTYPE = "application/json"; // HttpServletResponse content type
+  public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   // Builds Json array using data set
   @Override
@@ -54,8 +56,9 @@ public class CasesDataServlet extends HttpServlet {
   // Returns location-based COIVD-19 data
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setCharacterEncoding(ENCODING);
     response.setContentType(CTYPE);
-    response.getWriter().println(reportsJson);
+    response.getWriter().append(reportsJson);
   }
 
   /** Represents active number of cases at a specific lat lng point */
