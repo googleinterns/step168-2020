@@ -43,7 +43,7 @@ public final class CasesDataServletTest {
   private MockHttpServletResponse response;
 
   @Before
-  public void setUp() {
+  public void setUp() throws ServletException, IOException {
     servlet = new CasesDataServlet();
     request = new MockHttpServletRequest();
     response = new MockHttpServletResponse();
@@ -51,12 +51,12 @@ public final class CasesDataServletTest {
   }
 
   @Test
-  public void correctContentType() throws ServletException, IOException {
+  public void correctContentType() {
     Assert.assertEquals("application/json", response.getContentType());
   }
 
   @Test
-  public void correctCharacterEncoding() throws ServletException, IOException {
+  public void correctCharacterEncoding() {
     Assert.assertEquals("UTF-8", response.getCharacterEncoding());
   }
 }
