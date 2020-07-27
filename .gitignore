@@ -1,3 +1,5 @@
 /target/
 .idea
 apikeys.js
+node_modules/
+package-lock.json
