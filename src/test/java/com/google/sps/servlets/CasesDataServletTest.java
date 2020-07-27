@@ -43,7 +43,7 @@ public final class CasesDataServletTest {
   private MockHttpServletResponse response;
 
   @Test
-  public void servletBehavesCorrectly() {
+  public void servletBehavesCorrectly() throws IOException {
     servlet = new CasesDataServlet();
     request = new MockHttpServletRequest();
     request.setMethod("get");
