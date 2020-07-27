@@ -52,42 +52,22 @@ public final class CasesDataServletTest {
   }
 
   @Test
-  public void correctContentType() {
+  public void servletBehavesCorrectly() {
+    // Correct content type
     Assert.assertEquals("application/json", response.getContentType());
-  }
-
-  @Test
-  public void correctCharacterEncoding() {
+    // Correct character encoding
     Assert.assertEquals("UTF-8", response.getCharacterEncoding());
-  }
-
-  @Test
-  public void correctDataFile() {
+    // Uses correct data file
     Assert.assertEquals("/WEB-INF/cases.csv", servlet.STATS);
-  }
-
-  @Test
-  public void noHeaders() {
+    // No headers
     Assert.assertEquals(Collections.<String>emptySet(), response.getHeaderNames());
-  }
-
-  @Test
-  public void doesNotRedirect() {
+    // Does not redirect
     Assert.assertEquals(null, response.getRedirectedUrl());
-  }
-
-  @Test
-  public void statusOK() {
+    // Status OK
     Assert.assertEquals(200, response.getStatus());
-  }
-
-  @Test
-  public void correctlyCallsGetMethod() {
+    // Correctly calls get method
     Assert.assertEquals("get", request.getMethod());
-  }
-
-  @Test
-  public void usesHTTP() {
+    // Uses HTTP
     Assert.assertEquals("http", request.getProtocol());
   }
 }
