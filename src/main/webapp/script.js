@@ -16,6 +16,9 @@
 var mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
+var player;
+window.addEventListener('resize', resizeVideo);
+
 // When the page loads, call createMap
 window.onload = function() {
   createMap();
@@ -65,4 +68,29 @@ function getCoordsFromSearch(geocoder, map) {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
+}
+
+// Create a Youtube player when api is loaded
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('video-overlay', {
+    height: window.innerHeight,
+    width: window.innerWidth,
+  });
+}
+
+// Bring video to front and start playing
+function playVideo(videoId) {
+  player.loadVideoById(videoId);
+  document.getElementById("video-overlay").style.display = "block";
+}
+
+// Stop video and hide 
+function stopVideo() {
+  player.stopVideo();
+  document.getElementById("video-overlay").style.display = "none";
+}
+
+// Set video width and height to current window size
+function resizeVideo() {
+  player.setSize(window.innerWidth, window.innerHeight);
 }
