@@ -42,52 +42,21 @@ public final class CasesDataServletTest {
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
 
-  @Before
-  public void setUp() throws ServletException, IOException {
+  @Test
+  public void servletBehavesCorrectly() {
     servlet = new CasesDataServlet();
     request = new MockHttpServletRequest();
     request.setMethod("get");
     response = new MockHttpServletResponse();
     servlet.doGet(request, response);
-  }
 
-  @Test
-  public void correctContentType() {
     Assert.assertEquals("application/json", response.getContentType());
-  }
-
-  @Test
-  public void correctCharacterEncoding() {
     Assert.assertEquals("UTF-8", response.getCharacterEncoding());
-  }
-
-  @Test
-  public void correctDataFile() {
     Assert.assertEquals("/WEB-INF/cases.csv", servlet.STATS);
-  }
-
-  @Test
-  public void noHeaders() {
     Assert.assertEquals(Collections.<String>emptySet(), response.getHeaderNames());
-  }
-
-  @Test
-  public void doesNotRedirect() {
     Assert.assertEquals(null, response.getRedirectedUrl());
-  }
-
-  @Test
-  public void statusOK() {
     Assert.assertEquals(200, response.getStatus());
-  }
-
-  @Test
-  public void correctlyCallsGetMethod() {
     Assert.assertEquals("get", request.getMethod());
-  }
-
-  @Test
-  public void usesHTTP() {
     Assert.assertEquals("http", request.getProtocol());
   }
 }

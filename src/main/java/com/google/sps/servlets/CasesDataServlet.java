@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
-   Builds and returns case data as a JSON array, e.g.
-    [{"lat": 38.4404675, "lng": -122.7144313, "active": 5}]
+ * Builds and returns case data as a JSON array, e.g.
+ * [{"lat": 38.4404675, "lng": -122.7144313, "active": 5}]
  */
 @WebServlet("/report")
 public class CasesDataServlet extends HttpServlet {
@@ -35,7 +35,9 @@ public class CasesDataServlet extends HttpServlet {
   public static final String CTYPE = "application/json"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
-  // Builds Json array using data set
+  /**
+   * Builds Json array using data set
+   */
   @Override
   public void init() {
     Collection<Report> reports = new ArrayList<>();
@@ -55,7 +57,9 @@ public class CasesDataServlet extends HttpServlet {
     reportsJson = gson.toJson(reports);
   }
 
-  // Returns location-based COIVD-19 data
+  /**
+   * Returns location-based COIVD-19 data
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding(ENCODING);
@@ -63,7 +67,9 @@ public class CasesDataServlet extends HttpServlet {
     response.getWriter().println(reportsJson);
   }
 
-  /** Represents active number of cases at a specific lat lng point */
+  /**
+   * Represents active number of cases at a specific lat lng point
+   */
   class Report {
     private double lat;
     private double lng;
