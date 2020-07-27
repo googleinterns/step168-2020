@@ -42,32 +42,21 @@ public final class CasesDataServletTest {
   private MockHttpServletRequest request;
   private MockHttpServletResponse response;
 
-  @Before
-  public void setUp() throws ServletException, IOException {
+  @Test
+  public void servletBehavesCorrectly() {
     servlet = new CasesDataServlet();
     request = new MockHttpServletRequest();
     request.setMethod("get");
     response = new MockHttpServletResponse();
     servlet.doGet(request, response);
-  }
 
-  @Test
-  public void servletBehavesCorrectly() {
-    // Correct content type
     Assert.assertEquals("application/json", response.getContentType());
-    // Correct character encoding
     Assert.assertEquals("UTF-8", response.getCharacterEncoding());
-    // Uses correct data file
     Assert.assertEquals("/WEB-INF/cases.csv", servlet.STATS);
-    // No headers
     Assert.assertEquals(Collections.<String>emptySet(), response.getHeaderNames());
-    // Does not redirect
     Assert.assertEquals(null, response.getRedirectedUrl());
-    // Status OK
     Assert.assertEquals(200, response.getStatus());
-    // Correctly calls get method
     Assert.assertEquals("get", request.getMethod());
-    // Uses HTTP
     Assert.assertEquals("http", request.getProtocol());
   }
 }
