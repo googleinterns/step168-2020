@@ -15,6 +15,7 @@
   "globals": {
     "google": true,
     "heatmap": true,
-    "keys": true
+    "keys": true,
+    "YT": true
   }
 }

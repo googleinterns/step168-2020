@@ -7,12 +7,18 @@
     <script src="apikeys.js"></script>
     <script id="mapUrl"></script>
     <script defer src="script.js"></script>
+    <script defer src="https://www.youtube.com/iframe_api"></script>
   </head>
-  
-<body>
-  <div id="map"></div>
 
-  <div id="video-overlay"></div>
+  <body>
+    <div id="map"></div>
+
+    <div id="video-overlay">
+      <div id="video"></div>
+      <div id="video-controls">
+        <button type="button" id="exit-video">Exit Video</button>
+      </div>
+    </div>
 
     <div id="search">
       <input type="text" placeholder="Enter address here" id="search-text" />

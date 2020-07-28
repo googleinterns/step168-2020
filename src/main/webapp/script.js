@@ -16,8 +16,7 @@
 const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
-var player;
-window.addEventListener('resize', resizeVideo);
+let player;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -71,26 +70,40 @@ function getCoordsFromSearch(geocoder, map) {
 }
 
 // Create a Youtube player when api is loaded
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('video-overlay', {
+function onYouTubeIframeAPIReady() {  // eslint-disable-line no-unused-vars
+  player = new YT.Player('video', {
     height: window.innerHeight,
     width: window.innerWidth,
+    events: {
+      'onStateChange': onVidsoStateChange,
+    },
+  });
+  window.addEventListener('resize', resizeVideo);
+  document.getElementById('exit-video').addEventListener('click', () => {
+    hideVideo();
   });
 }
 
 // Bring video to front and start playing
-function playVideo(videoId) {
+function playVideo(videoId) {  // eslint-disable-line no-unused-vars
   player.loadVideoById(videoId);
-  document.getElementById("video-overlay").style.display = "block";
+  document.getElementById('video-overlay').style.display = 'block';
 }
 
-// Stop video and hide 
-function stopVideo() {
+// Stop video and hide
+function hideVideo() {
   player.stopVideo();
-  document.getElementById("video-overlay").style.display = "none";
+  document.getElementById('video-overlay').style.display = 'none';
 }
 
 // Set video width and height to current window size
 function resizeVideo() {
   player.setSize(window.innerWidth, window.innerHeight);
+}
+
+// Hide video when it is done
+function onVidsoStateChange(event) {
+  if (event.data == YT.PlayerState.ENDED) {
+    hideVideo();
+  }
 }
