@@ -71,39 +71,7 @@ function getCoordsFromSearch(geocoder, map) {
 
 // Create a Youtube player when api is loaded
 function onYouTubeIframeAPIReady() {  // eslint-disable-line no-unused-vars
-  player = new YT.Player('video', {
-    height: window.innerHeight,
-    width: window.innerWidth,
-    events: {
-      'onStateChange': onVidsoStateChange,
-    },
-  });
-  window.addEventListener('resize', resizeVideo);
-  document.getElementById('exit-video').addEventListener('click', () => {
-    hideVideo();
-  });
+  player = new VideoPlayer();
 }
 
-// Bring video to front and start playing
-function playVideo(videoId) {  // eslint-disable-line no-unused-vars
-  player.loadVideoById(videoId);
-  document.getElementById('video-overlay').style.display = 'block';
-}
 
-// Stop video and hide
-function hideVideo() {
-  player.stopVideo();
-  document.getElementById('video-overlay').style.display = 'none';
-}
-
-// Set video width and height to current window size
-function resizeVideo() {
-  player.setSize(window.innerWidth, window.innerHeight);
-}
-
-// Hide video when it is done
-function onVidsoStateChange(event) {
-  if (event.data == YT.PlayerState.ENDED) {
-    hideVideo();
-  }
-}
