@@ -64,7 +64,9 @@ public class CasesDataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding(ENCODING);
     response.setContentType(CTYPE);
-    response.getWriter().println(reportsJson);
+    if(reportsJson != null) {
+      response.getWriter().println(reportsJson);
+    }
   }
 
   /**

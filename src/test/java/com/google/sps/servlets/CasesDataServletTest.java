@@ -15,16 +15,9 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
@@ -32,29 +25,33 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.when;
+import java.net.HttpURLConnection;
 
 /** */
 @RunWith(JUnit4.class)
 public final class CasesDataServletTest {
+  @Mock private HttpServletRequest request;
+  @Mock private HttpServletResponse response;
   private CasesDataServlet servlet;
-  private MockHttpServletRequest request;
-  private MockHttpServletResponse response;
 
   @Test
-  public void servletBehavesCorrectly() {
+  public void test() throws IOException {
+    MockitoAnnotations.initMocks(this);  
     servlet = new CasesDataServlet();
-    request = new MockHttpServletRequest();
-    request.setMethod("get");
-    response = new MockHttpServletResponse();
+    when(response.getContentType()).thenReturn(servlet.CTYPE);
+    when(response.getCharacterEncoding()).thenReturn(servlet.ENCODING);
+    when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
+    when(request.getMethod()).thenReturn("get");
+    when(request.getProtocol()).thenReturn("http");
     servlet.doGet(request, response);
 
     Assert.assertEquals("application/json", response.getContentType());
     Assert.assertEquals("UTF-8", response.getCharacterEncoding());
     Assert.assertEquals("/WEB-INF/cases.csv", servlet.STATS);
-    Assert.assertEquals(Collections.<String>emptySet(), response.getHeaderNames());
-    Assert.assertEquals(null, response.getRedirectedUrl());
+    Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
     Assert.assertEquals(200, response.getStatus());
     Assert.assertEquals("get", request.getMethod());
     Assert.assertEquals("http", request.getProtocol());
