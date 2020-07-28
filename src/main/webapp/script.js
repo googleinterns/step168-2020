@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* globals VideoPlayer */
+
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
@@ -72,6 +74,5 @@ function getCoordsFromSearch(geocoder, map) {
 // Create a Youtube player when api is loaded
 function onYouTubeIframeAPIReady() {  // eslint-disable-line no-unused-vars
   player = new VideoPlayer();
+  player.resizeVideo();
 }
-
-
