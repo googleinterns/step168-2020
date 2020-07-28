@@ -14,7 +14,10 @@
 
 package com.google.sps.servlets;
 
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -27,8 +30,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.when;
-import java.net.HttpURLConnection;
 
 /** */
 @RunWith(JUnit4.class)
@@ -39,7 +40,7 @@ public final class CasesDataServletTest {
 
   @Test
   public void servletBehavesCorrectly() throws IOException {
-    MockitoAnnotations.initMocks(this);  
+    MockitoAnnotations.initMocks(this);
     servlet = new CasesDataServlet();
     when(response.getContentType()).thenReturn(servlet.CTYPE);
     when(response.getCharacterEncoding()).thenReturn(servlet.ENCODING);
