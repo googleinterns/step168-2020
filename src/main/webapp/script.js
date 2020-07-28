@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Get API key from hidden file and use it to get the map
-var mykey = keys.MAPS_API_KEY;
+const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
 var player;
@@ -36,12 +36,12 @@ function createMap() {
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
   // Gets active case data and displays as heat map
-  fetch('/report').then(response => response.json()).then((reports) => {
-    var heatmapData = [];
+  fetch('/report').then((response) => response.json()).then((reports) => {
+    const heatmapData = [];
     reports.forEach((report) => {
       heatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
-        weight: report.active
+        weight: report.active,
       });
     });
     heatmap = new google.maps.visualization.HeatmapLayer(
