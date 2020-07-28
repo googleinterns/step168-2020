@@ -38,7 +38,7 @@ public final class CasesDataServletTest {
   private CasesDataServlet servlet;
 
   @Test
-  public void test() throws IOException {
+  public void servletBehavesCorrectly() throws IOException {
     MockitoAnnotations.initMocks(this);  
     servlet = new CasesDataServlet();
     when(response.getContentType()).thenReturn(servlet.CTYPE);
