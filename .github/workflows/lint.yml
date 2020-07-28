@@ -1,0 +1,38 @@
+name: Lint and Validate
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Maven compile
+      run: mvn package
+    - name: install node dependencies
+      if: always()
+      run: make node_modules
+    - name: Validate HTML
+      if: always()
+      run: node_modules/html-validate/bin/html-validate.js src/main/webapp/*.html
+    - name: Validate CSS
+      if: always()
+      run: node_modules/css-validator/bin/css-validator src/main/webapp/*.css
+    - name: Validate JavaScript
+      if: always()
+      run: node_modules/eslint/bin/eslint.js src/main/webapp/*.js
+    - name: Check HTML Formatting
+      if: always()
+      run: node_modules/prettier/bin-prettier.js -c src/main/webapp/*.html
+    - name: Check CSS Formatting
+      if: always()
+      run: node_modules/prettier/bin-prettier.js -c src/main/webapp/*.css
+    - name: Check JavaScript Formatting
+      if: always()
+      run: diff -u <(cat src/main/webapp/*.js) <(node_modules/clang-format/bin/linux_x64/clang-format --style=Google src/main/webapp/*.js)
+    - name: Check Java Formatting
+      if: always()
+      run: diff -u <(cat src/main/java/com/google/sps/servlets/*.java) <(node_modules/clang-format/bin/linux_x64/clang-format --style=Google src/main/java/com/google/sps/servlets/*.java)
+    - name: Notify on failure
+      if: failure()
+      run: echo 'run "make validate" and "make pretty" to see/fix errors locally'
