@@ -14,11 +14,15 @@
 
 package com.google.sps.servlets;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.util.Collections;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
@@ -34,24 +38,32 @@ import org.mockito.MockitoAnnotations;
 public final class CasesDataServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock private ServletOutputStream mockOutput;
   private CasesDataServlet servlet;
 
   @Test
   public void servletBehavesCorrectly() throws IOException {
     MockitoAnnotations.initMocks(this);
     servlet = new CasesDataServlet();
-    when(response.getContentType()).thenReturn(servlet.CTYPE);
-    when(response.getCharacterEncoding()).thenReturn(servlet.ENCODING);
+    servlet.init();
+    String reportsJson = servlet.getReportsJson();
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
     when(request.getMethod()).thenReturn("get");
     when(request.getProtocol()).thenReturn("http");
+    when(response.getWriter()).thenReturn(writer);
     servlet.doGet(request, response);
 
-    Assert.assertEquals("application/json", response.getContentType());
-    Assert.assertEquals("UTF-8", response.getCharacterEncoding());
+    verify(response).setContentType("application/json");
+    verify(response).setCharacterEncoding("UTF-8");
+    verify(response).getWriter();
     Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
     Assert.assertEquals(200, response.getStatus());
-    Assert.assertEquals("get", request.getMethod());
-    Assert.assertEquals("http", request.getProtocol());
+    Assert.assertTrue(reportsJson.contains("\"lat\":33.034"));
+    Assert.assertTrue(reportsJson.contains("\"lng\":-116.736"));
+    Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
+    Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
+    Assert.assertTrue(reportsJson.contains("\"active\""));
   }
 }
