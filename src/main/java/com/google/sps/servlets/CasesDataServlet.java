@@ -15,6 +15,8 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +25,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 /**
  * Builds and returns case data as a JSON array, e.g.
@@ -45,7 +45,7 @@ public class CasesDataServlet extends HttpServlet {
     Collection<Report> reports = new ArrayList<>();
     // Gets file to scan
     Scanner scanner = null;
-    try{
+    try {
       File statsFile = new File(STATS);
       scanner = new Scanner(statsFile);
     } catch (FileNotFoundException e) {
@@ -55,7 +55,6 @@ public class CasesDataServlet extends HttpServlet {
     // Parses data set for coordinates and active location
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
-      System.out.println(line);
       String[] cells = line.split(",");
       double lat = Double.parseDouble(cells[5]);
       double lng = Double.parseDouble(cells[6]);
@@ -83,7 +82,6 @@ public class CasesDataServlet extends HttpServlet {
   public String getReportsJson() {
     return reportsJson;
   }
-
 
   /**
    * Represents active number of cases at a specific lat lng point
