@@ -51,7 +51,6 @@ public final class CasesDataServletTest {
 
     Assert.assertEquals("application/json", response.getContentType());
     Assert.assertEquals("UTF-8", response.getCharacterEncoding());
-    Assert.assertEquals("/WEB-INF/cases.csv", servlet.STATS);
     Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
     Assert.assertEquals(200, response.getStatus());
     Assert.assertEquals("get", request.getMethod());
