@@ -74,7 +74,9 @@ function getCoordsFromSearch(geocoder, map) {
   });
 }
 
-// Create a Youtube player when api is loaded
+/**
+ * Create a Youtube player when api is loaded
+ */
 function onYouTubeIframeAPIReady() {  // eslint-disable-line no-unused-vars
   player = new VideoPlayer();
   player.resizeVideo();
