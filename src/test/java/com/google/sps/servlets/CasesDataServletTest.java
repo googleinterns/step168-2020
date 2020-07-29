@@ -45,7 +45,7 @@ public final class CasesDataServletTest {
   private PrintWriter writer;
 
   @Before
-  public void setUp() throws IOException{
+  public void setUp() throws IOException {
     MockitoAnnotations.initMocks(this);
     servlet = new CasesDataServlet();
     servlet.init();
@@ -74,6 +74,6 @@ public final class CasesDataServletTest {
     Assert.assertTrue(reportsJson.contains("\"lng\":-116.736"));
     Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
     Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
-    Assert.assertTrue(reportsJson.contains("\"active\""));  
+    Assert.assertTrue(reportsJson.contains("\"active\""));
   }
 }
