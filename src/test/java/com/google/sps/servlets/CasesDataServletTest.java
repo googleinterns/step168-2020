@@ -40,13 +40,15 @@ public final class CasesDataServletTest {
   @Mock private HttpServletResponse response;
   @Mock private ServletOutputStream mockOutput;
   private CasesDataServlet servlet;
+  private String reportsJson;
+  private StringWriter stringWriter;
+  private PrintWriter writer;
 
-  @Test
-  public void servletBehavesCorrectly() throws IOException {
+  @Before
+  public void setUp() throws IOException{
     MockitoAnnotations.initMocks(this);
     servlet = new CasesDataServlet();
     servlet.init();
-    String reportsJson = servlet.getReportsJson();
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
@@ -54,16 +56,24 @@ public final class CasesDataServletTest {
     when(request.getProtocol()).thenReturn("http");
     when(response.getWriter()).thenReturn(writer);
     servlet.doGet(request, response);
+  }
 
+  @Test
+  public void servletBehavesCorrectly() throws IOException {
     verify(response).setContentType("application/json");
     verify(response).setCharacterEncoding("UTF-8");
     verify(response).getWriter();
     Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
     Assert.assertEquals(200, response.getStatus());
+  }
+
+  @Test
+  public void servletReturnsCorrectValues() {
+    String reportsJson = servlet.getReportsJson();
     Assert.assertTrue(reportsJson.contains("\"lat\":33.034"));
     Assert.assertTrue(reportsJson.contains("\"lng\":-116.736"));
     Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
     Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
-    Assert.assertTrue(reportsJson.contains("\"active\""));
+    Assert.assertTrue(reportsJson.contains("\"active\""));  
   }
 }
