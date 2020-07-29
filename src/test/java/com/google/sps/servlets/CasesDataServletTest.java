@@ -19,8 +19,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Collections;
-import java.util.List;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
