@@ -149,7 +149,8 @@ public class CasesDataServlet extends HttpServlet {
   }
 
   /**
-   * Represents active number of cases at a specific lat lng point
+   * Represents number of active, confirmed, deaths, and recovered cases
+   * at a specific lat lng point
    */
   class Report {
     private double lat;
