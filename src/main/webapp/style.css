@@ -20,3 +20,10 @@
 #search-submit {
   height: 40px;
 }
+
+#my-location {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+}

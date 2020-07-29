@@ -49,6 +49,9 @@ function createMap() {
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
   });
+  document.getElementById('my-location').addEventListener('click', () => {
+    gotoUserLocation(map);
+  });
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
   });
@@ -65,4 +68,29 @@ function getCoordsFromSearch(geocoder, map) {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
+}
+
+function gotoUserLocation(map) {
+  const geoOptions = {
+    timeout: 10 * 1000,         // 10 seconds
+    maximumAge: 5 * 60 * 1000,  // last 5 minutes
+  };
+
+  const geoSuccess = function(position) {
+    const location = new google.maps.LatLng(
+        position.coords.latitude, position.coords.longitude);
+    map.setCenter(location);
+    map.setZoom(8);
+    displayLatitudeLongitude(location.toJSON());
+  };
+  const geoError = function(error) {
+    console.log('Error occurred. Error code: ' + error.code);
+    // error.code can be:
+    //   0: unknown error
+    //   1: permission denied
+    //   2: position unavailable (error response from location provider)
+    //   3: timed out
+  };
+
+  navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }
