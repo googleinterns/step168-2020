@@ -23,6 +23,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Builds and returns case data as a JSON array, e.g.
@@ -31,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/report")
 public class CasesDataServlet extends HttpServlet {
   private String reportsJson;
-  public static final String STATS = "/WEB-INF/cases.csv"; // COVID-19 case data
+  public static final String STATS = "src/main/webapp/WEB-INF/cases.csv"; // COVID-19 case data
   public static final String CTYPE = "application/json"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
@@ -41,11 +43,19 @@ public class CasesDataServlet extends HttpServlet {
   @Override
   public void init() {
     Collection<Report> reports = new ArrayList<>();
+    // Gets file to scan
+    Scanner scanner = null;
+    try{
+      File statsFile = new File(STATS);
+      scanner = new Scanner(statsFile);
+    } catch (FileNotFoundException e) {
+      System.out.println(e);
+    }
 
     // Parses data set for coordinates and active location
-    Scanner scanner = new Scanner(getServletContext().getResourceAsStream(STATS));
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
+      System.out.println(line);
       String[] cells = line.split(",");
       double lat = Double.parseDouble(cells[5]);
       double lng = Double.parseDouble(cells[6]);
@@ -64,10 +74,16 @@ public class CasesDataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding(ENCODING);
     response.setContentType(CTYPE);
-    if (reportsJson != null) {
-      response.getWriter().println(reportsJson);
-    }
+    response.getWriter().println(reportsJson);
   }
+
+  /**
+   * Returns Json string of all reports
+   */
+  public String getReportsJson() {
+    return reportsJson;
+  }
+
 
   /**
    * Represents active number of cases at a specific lat lng point
