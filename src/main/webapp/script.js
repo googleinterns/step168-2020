@@ -71,19 +71,19 @@ function getCoordsFromSearch(geocoder, map) {
 }
 
 function gotoUserLocation(map) {
-  var startPos;
-  var geoOptions = {
-    timeout: 10 * 1000, // 10 seconds
-    maximumAge: 5 * 60 * 1000 // last 5 minutes
-  }
+  const geoOptions = {
+    timeout: 10 * 1000,         // 10 seconds
+    maximumAge: 5 * 60 * 1000,  // last 5 minutes
+  };
 
-  var geoSuccess = function(position) {
-    var location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  const geoSuccess = function(position) {
+    const location = new google.maps.LatLng(
+        position.coords.latitude, position.coords.longitude);
     map.setCenter(location);
     map.setZoom(8);
     displayLatitudeLongitude(location.toJSON());
   };
-  var geoError = function(error) {
+  const geoError = function(error) {
     console.log('Error occurred. Error code: ' + error.code);
     // error.code can be:
     //   0: unknown error
@@ -93,4 +93,4 @@ function gotoUserLocation(map) {
   };
 
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-};
+}

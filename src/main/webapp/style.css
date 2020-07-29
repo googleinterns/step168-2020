@@ -23,7 +23,7 @@
 
 #my-location {
   position: absolute;
-  display:inline-block;
+  display: inline-block;
   z-index: 5;
   top: 60px;
 }
