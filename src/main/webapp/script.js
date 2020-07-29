@@ -106,3 +106,7 @@ function gotoUserLocation(map) {
 
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }
+
+function getVideos() {
+  authenticate().then(loadClient);
+}
