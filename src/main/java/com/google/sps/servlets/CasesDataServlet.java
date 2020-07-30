@@ -55,11 +55,12 @@ public class CasesDataServlet extends HttpServlet {
       line = scanner.nextLine();
       String[] cells = line.split(",");
       // Ignore unassigned entires
-      if (cells[5].equals("") || cells[6].equals("")) {
+      if (cells[5].equals("") || cells[6].equals("")) { // Entries represent coordinates
         continue;
       }
       // Countries with extra delimiter in name need to be bumped by one
-      if (cells[2].contains("\"") || cells[3].contains("\"")) {
+      if (cells[2].contains("\"")
+          || cells[3].contains("\"")) { // Entries represent city and country name
         addReport(reports, cells, 1);
         continue;
       }
@@ -117,12 +118,14 @@ public class CasesDataServlet extends HttpServlet {
   private String getDate() {
     Clock today = Clock.systemUTC();
     Instant in = today.instant();
+    // Instant to string format: yyyy-mm-ddThh:mm:ss.msZ
     int hour = Integer.parseInt(in.toString().substring(11, 13));
     in = in.minus(1, ChronoUnit.DAYS);
     // The dataset updates at 5. If it is before 5, need previous set
     if (hour < 5) {
       in = in.minus(1, ChronoUnit.DAYS);
     }
+    // dateTime format : yyyy/mm/dd
     String dateTime = in.toString();
     String year = dateTime.substring(0, 4);
     String month = dateTime.substring(5, 7);
@@ -140,16 +143,16 @@ public class CasesDataServlet extends HttpServlet {
     int confirmed = 0;
     int deaths = 0;
     int recovered = 0;
-    if (!cells[10 + commaFlag].equals("")) {
+    if (!cells[10 + commaFlag].equals("")) { // Entry represents active cases
       active = Integer.parseInt(cells[10 + commaFlag]);
     }
-    if (!cells[7 + commaFlag].equals("")) {
+    if (!cells[7 + commaFlag].equals("")) { // Entry represents confirmed cases
       confirmed = Integer.parseInt(cells[7 + commaFlag]);
     }
-    if (!cells[8 + commaFlag].equals("")) {
+    if (!cells[8 + commaFlag].equals("")) { // Entry represents deaths
       deaths = Integer.parseInt(cells[8 + commaFlag]);
     }
-    if (!cells[9 + commaFlag].equals("")) {
+    if (!cells[9 + commaFlag].equals("")) { // Entry represents recovered cases
       recovered = Integer.parseInt(cells[9 + commaFlag]);
     }
     reports.add(new Report(lat, lng, active, confirmed, deaths, recovered));

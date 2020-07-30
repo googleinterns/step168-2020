@@ -31,6 +31,11 @@ function displayLatitudeLongitude(value) {
   document.getElementById('longitude').value = value['lng'];
 }
 
+function displayLocationData(value) {
+  const lookupURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + value['lat'] + "," + value['lng'] + "&key=" + mykey.substring(44,83);
+  fetch(lookupURL);
+}
+
 // Create a map zoomed in on Googleplex
 function createMap() {
   const map = new google.maps.Map(
@@ -76,6 +81,7 @@ function createMap() {
   });
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
+    displayLocationData(mapsMouseEvent.latLng.toJSON());
   });
 }
 

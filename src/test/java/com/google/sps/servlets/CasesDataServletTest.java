@@ -74,5 +74,8 @@ public final class CasesDataServletTest {
     Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
     Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
     Assert.assertTrue(reportsJson.contains("\"active\""));
+    Assert.assertTrue(reportsJson.contains("\"confirmed\""));
+    Assert.assertTrue(reportsJson.contains("\"deaths\""));
+    Assert.assertTrue(reportsJson.contains("\"recovered\""));
   }
 }
