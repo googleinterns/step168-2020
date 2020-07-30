@@ -58,7 +58,7 @@ public class CasesDataServlet extends HttpServlet {
       if (cells[5].equals("") || cells[6].equals("")) {
         continue;
       }
-      // Countries with a comma in the name need to be bumped by one
+      // Countries with extra delimiter in name need to be bumped by one
       if (cells[2].contains("\"") || cells[3].contains("\"")) {
         addReport(reports, cells, 1);
         continue;
@@ -117,7 +117,12 @@ public class CasesDataServlet extends HttpServlet {
   private String getDate() {
     Clock today = Clock.systemUTC();
     Instant in = today.instant();
+    int hour = Integer.parseInt(in.toString().substring(11, 13));
     in = in.minus(1, ChronoUnit.DAYS);
+    // The dataset updates at 5. If it is before 5, need previous set
+    if (hour < 5) {
+      in = in.minus(1, ChronoUnit.DAYS);
+    }
     String dateTime = in.toString();
     String year = dateTime.substring(0, 4);
     String month = dateTime.substring(5, 7);
