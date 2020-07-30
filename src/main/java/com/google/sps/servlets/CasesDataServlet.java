@@ -15,6 +15,8 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/report")
 public class CasesDataServlet extends HttpServlet {
   private String reportsJson;
-  public static final String STATS = "/WEB-INF/cases.csv"; // COVID-19 case data
+  public static final String STATS = "src/main/webapp/WEB-INF/cases.csv"; // COVID-19 case data
   public static final String CTYPE = "application/json"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
@@ -41,9 +43,16 @@ public class CasesDataServlet extends HttpServlet {
   @Override
   public void init() {
     Collection<Report> reports = new ArrayList<>();
+    // Gets file to scan
+    Scanner scanner = null;
+    try {
+      File statsFile = new File(STATS);
+      scanner = new Scanner(statsFile);
+    } catch (FileNotFoundException e) {
+      System.out.println(e);
+    }
 
     // Parses data set for coordinates and active location
-    Scanner scanner = new Scanner(getServletContext().getResourceAsStream(STATS));
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
       String[] cells = line.split(",");
@@ -65,6 +74,13 @@ public class CasesDataServlet extends HttpServlet {
     response.setCharacterEncoding(ENCODING);
     response.setContentType(CTYPE);
     response.getWriter().println(reportsJson);
+  }
+
+  /**
+   * Returns Json string of all reports
+   */
+  public String getReportsJson() {
+    return reportsJson;
   }
 
   /**
