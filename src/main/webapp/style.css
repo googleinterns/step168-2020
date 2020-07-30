@@ -51,3 +51,10 @@
   z-index: 5;
   top: 60px;
 }
+
+#videos {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 90px;
+}
