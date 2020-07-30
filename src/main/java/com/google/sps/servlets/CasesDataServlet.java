@@ -16,6 +16,11 @@ package com.google.sps.servlets;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
@@ -26,12 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Builds and returns case data as a JSON array, e.g.
- * [{"lat": 38.4404675, "lng": -122.7144313, "active": 5}]
+ * [{"lat": 38.4404675, "lng": -122.7144313, "active": 5,
+ * "confirmed": 20, "deaths": 0, "recovered": 15}]
  */
 @WebServlet("/report")
 public class CasesDataServlet extends HttpServlet {
   private String reportsJson;
-  public static final String STATS = "/WEB-INF/cases.csv"; // COVID-19 case data
   public static final String CTYPE = "application/json"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
@@ -41,16 +46,25 @@ public class CasesDataServlet extends HttpServlet {
   @Override
   public void init() {
     Collection<Report> reports = new ArrayList<>();
+    Scanner scanner = connectToData();
 
-    // Parses data set for coordinates and active location
-    Scanner scanner = new Scanner(getServletContext().getResourceAsStream(STATS));
+    // Parse the data set
+    String line = scanner.nextLine();
     while (scanner.hasNextLine()) {
-      String line = scanner.nextLine();
+      // Skip the first line (header)
+      line = scanner.nextLine();
       String[] cells = line.split(",");
-      double lat = Double.parseDouble(cells[5]);
-      double lng = Double.parseDouble(cells[6]);
-      int active = Integer.parseInt(cells[10]);
-      reports.add(new Report(lat, lng, active));
+      // Ignore unassigned entires
+      if (cells[5].equals("") || cells[6].equals("")) { // Entries represent coordinates
+        continue;
+      }
+      // Countries with extra delimiter in name need to be bumped by one
+      if (cells[2].contains("\"")
+          || cells[3].contains("\"")) { // Entries represent city and country name
+        addReport(reports, cells, 1);
+        continue;
+      }
+      addReport(reports, cells, 0);
     }
     scanner.close();
     Gson gson = new Gson();
@@ -67,18 +81,102 @@ public class CasesDataServlet extends HttpServlet {
     response.getWriter().println(reportsJson);
   }
 
+  public String getReportsJson() {
+    return reportsJson;
+  }
+
   /**
-   * Represents active number of cases at a specific lat lng point
+   * Establish connection to live Coivd-19 data set
+   */
+  private Scanner connectToData() {
+    URL covidDataUrl = null;
+    HttpURLConnection connection = null;
+    int responseCode = 0;
+    Scanner scanner = null;
+
+    try {
+      String date = getDate();
+      String url =
+          "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+          + date + ".csv";
+      covidDataUrl = new URL(url);
+      connection = (HttpURLConnection) covidDataUrl.openConnection();
+      connection.setRequestMethod("GET");
+      responseCode = connection.getResponseCode();
+      if (responseCode == HttpURLConnection.HTTP_OK) {
+        scanner = new Scanner(covidDataUrl.openStream());
+      }
+    } catch (IOException e) {
+      System.out.println("Unable to open connection");
+    }
+    return scanner;
+  }
+
+  /**
+   * Returns the date in mm-dd-yyyy format to retrieve most recent data set
+   */
+  private String getDate() {
+    Clock today = Clock.systemUTC();
+    Instant in = today.instant();
+    // Instant to string format: yyyy-mm-ddThh:mm:ss.msZ
+    int hour = Integer.parseInt(in.toString().substring(11, 13));
+    in = in.minus(1, ChronoUnit.DAYS);
+    // The dataset updates at 5. If it is before 5, need previous set
+    if (hour < 5) {
+      in = in.minus(1, ChronoUnit.DAYS);
+    }
+    // dateTime format : yyyy/mm/dd
+    String dateTime = in.toString();
+    String year = dateTime.substring(0, 4);
+    String month = dateTime.substring(5, 7);
+    String day = dateTime.substring(8, 10);
+    return month + "-" + day + "-" + year;
+  }
+
+  /**
+   * Creates a report based on the data and adds it to the collection
+   */
+  private void addReport(Collection<Report> reports, String[] cells, int commaFlag) {
+    double lat = Double.parseDouble(cells[5 + commaFlag]);
+    double lng = Double.parseDouble(cells[6 + commaFlag]);
+    int active = 0;
+    int confirmed = 0;
+    int deaths = 0;
+    int recovered = 0;
+    if (!cells[10 + commaFlag].equals("")) { // Entry represents active cases
+      active = Integer.parseInt(cells[10 + commaFlag]);
+    }
+    if (!cells[7 + commaFlag].equals("")) { // Entry represents confirmed cases
+      confirmed = Integer.parseInt(cells[7 + commaFlag]);
+    }
+    if (!cells[8 + commaFlag].equals("")) { // Entry represents deaths
+      deaths = Integer.parseInt(cells[8 + commaFlag]);
+    }
+    if (!cells[9 + commaFlag].equals("")) { // Entry represents recovered cases
+      recovered = Integer.parseInt(cells[9 + commaFlag]);
+    }
+    reports.add(new Report(lat, lng, active, confirmed, deaths, recovered));
+  }
+
+  /**
+   * Represents number of active, confirmed, deaths, and recovered cases
+   * at a specific lat lng point
    */
   class Report {
     private double lat;
     private double lng;
     private int active;
+    private int confirmed;
+    private int deaths;
+    private int recovered;
 
-    public Report(double lat, double lng, int active) {
+    public Report(double lat, double lng, int active, int confirmed, int deaths, int recovered) {
       this.lat = lat;
       this.lng = lng;
       this.active = active;
+      this.confirmed = confirmed;
+      this.deaths = deaths;
+      this.recovered = recovered;
     }
   }
 }
