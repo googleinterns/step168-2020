@@ -20,6 +20,8 @@ document.getElementById('mapUrl').src = mykey;
 
 let player;
 
+const routeLines = [];
+
 // When the page loads, call createMap
 window.onload = function() {
   createMap();
@@ -65,7 +67,7 @@ function createMap() {
   directionsRenderer.setMap(map);
 
   document.getElementById('directions-search').addEventListener('click', () => {
-    calculateAndDisplayRoute(directionsService, directionsRenderer);
+    calculateAndDisplayRoute(directionsService, map);
   });
 }
 
@@ -115,7 +117,7 @@ function gotoUserLocation(map) {
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }
 
-function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+function calculateAndDisplayRoute(directionsService, mapObject) {
   directionsService.route(
       {
         origin: {query: document.getElementById('start').value},
@@ -125,8 +127,21 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
       },
       (response, status) => {
         console.log(response);
+        for (let i = 0; i < routeLines.length; i++) {
+          routeLines[i].setMap(null);
+        }
         if (status === 'OK') {
-          directionsRenderer.setDirections(response);
+          // directionsRenderer.setDirections(response);
+          for (let i = 0; i < response.routes.length; i++) {
+            if (i >= routeLines.length) {
+              routeLines.push(new google.maps.DirectionsRenderer(
+                  {map: mapObject, directions: response, routeIndex: i}));
+            } else {
+              routeLines[i].setMap(mapObject);
+              routeLines[i].setDirections(response);
+              routeLines[i].setRouteIndex(i);
+            }
+          }
         } else {
           window.alert('Directions request failed due to ' + status);
         }
