@@ -38,7 +38,6 @@ import org.mockito.MockitoAnnotations;
 public final class CasesDataServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
-  @Mock private ServletOutputStream mockOutput;
   private CasesDataServlet servlet;
   private String reportsJson;
   private StringWriter stringWriter;
