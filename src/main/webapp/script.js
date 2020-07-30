@@ -39,14 +39,32 @@ function createMap() {
   // Gets active case data and displays as heat map
   fetch('/report').then((response) => response.json()).then((reports) => {
     const heatmapData = [];
+    var globalActive = 0;
+    var globalConfirmed = 0;
+    var globalDeaths = 0;
+    var globalRecovered = 0;
     reports.forEach((report) => {
       heatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.active,
       });
+      globalActive += report.active;
+      globalConfirmed += report.confirmed;
+      globalDeaths += report.deaths;
+      globalRecovered += report.recovered;
     });
     heatmap = new google.maps.visualization.HeatmapLayer(
         {data: heatmapData, dissipating: false, map: map});
+    // Display worldwide data initially
+    document.getElementById('location').innerHTML = 'Worldwide';
+    document.getElementById('displayActive').innerHTML =
+        `Active: ${globalActive}`;
+    document.getElementById('displayConfirmed').innerHTML =
+        `Confirmed: ${globalConfirmed}`;
+    document.getElementById('displayDeaths').innerHTML =
+        `Deaths: ${globalDeaths}`;
+    document.getElementById('displayRecovered').innerHTML =
+        `Recovered: ${globalRecovered}`;
   });
 
   const geocoder = new google.maps.Geocoder();
