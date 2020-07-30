@@ -59,6 +59,14 @@ function createMap() {
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
   });
+
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+
+  document.getElementById('directions-search').addEventListener('click', () => {
+    calculateAndDisplayRoute(directionsService, directionsRenderer);
+  });
 }
 
 // Recenter map to location searched and update current coordinates
@@ -105,4 +113,22 @@ function gotoUserLocation(map) {
   };
 
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+}
+
+function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+  directionsService.route(
+      {
+        origin: {query: document.getElementById('start').value},
+        destination: {query: document.getElementById('end').value},
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true,
+      },
+      (response, status) => {
+        console.log(response);
+        if (status === 'OK') {
+          directionsRenderer.setDirections(response);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      });
 }
