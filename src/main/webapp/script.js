@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer */
+/* globals VideoPlayer, searchForVideos */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;

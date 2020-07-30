@@ -1,3 +1,5 @@
+/* exported searchForVideos */
+/* globals gapi, player */
 function searchForVideos() {
   gapi.client.setApiKey(keys.YOUTUBE_API_KEY);
   if (document.getElementById('latitude').value === '') {
