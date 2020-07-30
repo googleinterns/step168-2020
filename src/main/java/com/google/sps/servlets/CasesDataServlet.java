@@ -59,7 +59,8 @@ public class CasesDataServlet extends HttpServlet {
         continue;
       }
       // Countries with extra delimiter in name need to be bumped by one
-      if (cells[2].contains("\"") || cells[3].contains("\"")) { // Entries represent city and country name
+      if (cells[2].contains("\"")
+          || cells[3].contains("\"")) { // Entries represent city and country name
         addReport(reports, cells, 1);
         continue;
       }
