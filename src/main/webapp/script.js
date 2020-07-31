@@ -64,9 +64,9 @@ function displayLocationData(value) {
         potentialReports.forEach((report) => {
           // If there is a match, display that territory's statistics
           if (location.long_name.trim().valueOf().includes(
-                  report.territory.trim().valueOf()) ||
-              report.territory.trim().valueOf().includes(
-                  location.long_name.trim().valueOf())) {
+              report.territory.trim().valueOf()) ||
+                  report.territory.trim().valueOf().includes(
+                      location.long_name.trim().valueOf())) {
             potentialReport = report;
             displayCurrentStats(
                 location.long_name.trim().valueOf(), potentialReport.active,
