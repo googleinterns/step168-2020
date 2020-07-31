@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer */
+/* exported casesData */
+/* globals VideoPlayer calculateAndDisplayRoute */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
 let player;
-
-const routeLines = [];
+let casesData;
+let map;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -35,11 +36,12 @@ function displayLatitudeLongitude(value) {
 
 // Create a map zoomed in on Googleplex
 function createMap() {
-  const map = new google.maps.Map(
+  map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
   // Gets active case data and displays as heat map
   fetch('/report').then((response) => response.json()).then((reports) => {
+    casesData = reports;
     const heatmapData = [];
     reports.forEach((report) => {
       heatmapData.push({
@@ -47,8 +49,8 @@ function createMap() {
         weight: report.active,
       });
     });
-    heatmap = new google.maps.visualization.HeatmapLayer(
-        {data: heatmapData, dissipating: false, map: map});
+    // heatmap = new google.maps.visualization.HeatmapLayer(
+    //    {data: heatmapData, dissipating: false, map: map});
   });
 
   const geocoder = new google.maps.Geocoder();
@@ -115,35 +117,4 @@ function gotoUserLocation(map) {
   };
 
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-}
-
-function calculateAndDisplayRoute(directionsService, mapObject) {
-  directionsService.route(
-      {
-        origin: {query: document.getElementById('start').value},
-        destination: {query: document.getElementById('end').value},
-        travelMode: google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives: true,
-      },
-      (response, status) => {
-        console.log(response);
-        for (let i = 0; i < routeLines.length; i++) {
-          routeLines[i].setMap(null);
-        }
-        if (status === 'OK') {
-          // directionsRenderer.setDirections(response);
-          for (let i = 0; i < response.routes.length; i++) {
-            if (i >= routeLines.length) {
-              routeLines.push(new google.maps.DirectionsRenderer(
-                  {map: mapObject, directions: response, routeIndex: i}));
-            } else {
-              routeLines[i].setMap(mapObject);
-              routeLines[i].setDirections(response);
-              routeLines[i].setRouteIndex(i);
-            }
-          }
-        } else {
-          window.alert('Directions request failed due to ' + status);
-        }
-      });
 }
