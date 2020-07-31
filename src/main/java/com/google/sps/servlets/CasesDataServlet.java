@@ -143,6 +143,7 @@ public class CasesDataServlet extends HttpServlet {
     int confirmed = 0;
     int deaths = 0;
     int recovered = 0;
+    String territory = "";
     if (!cells[10 + commaFlag].equals("")) { // Entry represents active cases
       active = Integer.parseInt(cells[10 + commaFlag]);
     }
@@ -155,7 +156,14 @@ public class CasesDataServlet extends HttpServlet {
     if (!cells[9 + commaFlag].equals("")) { // Entry represents recovered cases
       recovered = Integer.parseInt(cells[9 + commaFlag]);
     }
-    reports.add(new Report(lat, lng, active, confirmed, deaths, recovered));
+    if (!cells[1].equals("")) { // Entry represents recovered cases
+      territory = cells[1];
+    } else if (!cells[2].equals("")) {
+      territory = cells[2];
+    } else {
+      territory = cells[3];
+    }
+    reports.add(new Report(territory, lat, lng, active, confirmed, deaths, recovered));
   }
 
   /**
@@ -163,6 +171,7 @@ public class CasesDataServlet extends HttpServlet {
    * at a specific lat lng point
    */
   class Report {
+    private String territory;
     private double lat;
     private double lng;
     private int active;
@@ -170,7 +179,9 @@ public class CasesDataServlet extends HttpServlet {
     private int deaths;
     private int recovered;
 
-    public Report(double lat, double lng, int active, int confirmed, int deaths, int recovered) {
+    public Report(String territory, double lat, double lng, int active, int confirmed, int deaths,
+        int recovered) {
+      this.territory = territory;
       this.lat = lat;
       this.lng = lng;
       this.active = active;

@@ -32,10 +32,58 @@ function displayLatitudeLongitude(value) {
 }
 
 function displayLocationData(value) {
-  const lookupURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + value['lat'] + "," + value['lng'] + "&key=" + mykey.substring(44,83);
-  fetch(lookupURL);
+  let potentialReports = [];
+  const RADIUS = 2;
+  // Look for closest reports
+  fetch('/report').then((response) => response.json()).then((reports) => {
+    reports.forEach((report) => {
+      if (Math.abs(report.lat - value['lat']) < RADIUS &&
+          Math.abs(report.lng - value['lng']) < RADIUS) {
+        potentialReports.push(report);
+        console.log(potentialReports);
+      }
+    });
+
+    if (potentialReports.length == 0) {
+      displayCurrentStats(
+          'Worldwide', globalActive, globalConfirmed, globalDeaths,
+          globalRecovered);
+      return;
+    }
+    let potentialReport = findBestMatch(potentialReports, value);
+    displayCurrentStats(
+        potentialReport.territory, potentialReport.active,
+        potentialReport.confirmed, potentialReport.deaths,
+        potentialReport.recovered);
+  });
 }
 
+function findBestMatch(pReports, val) {
+  const lookupURL =
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + val['lat'] +
+      ',' + val['lng'] + '&key=' +
+      mykey.substring(44, 83);  // Indices represent the actual API key
+  fetch(lookupURL)
+      .then((response) => response.json())
+      .then((data) => {console.log(data.results[3].address_components)});
+  return pReports[0];
+}
+
+// Initialize global data
+var globalActive = 0;
+var globalConfirmed = 0;
+var globalDeaths = 0;
+var globalRecovered = 0;
+function displayCurrentStats(location, active, confirmed, deaths, recovered) {
+  // Display global data
+  document.getElementById('location').innerHTML = location;
+  document.getElementById('displayActive').innerHTML = `Active: ${active}`;
+  document.getElementById('displayConfirmed').innerHTML =
+      `Confirmed: ${confirmed}`;
+  document.getElementById('displayDeaths').innerHTML = `Deaths: ${deaths}`;
+  document.getElementById('displayRecovered').innerHTML =
+      `Recovered: ${recovered}`;
+}
 // Create a map zoomed in on Googleplex
 function createMap() {
   const map = new google.maps.Map(
@@ -44,15 +92,12 @@ function createMap() {
   // Gets active case data and displays as heat map
   fetch('/report').then((response) => response.json()).then((reports) => {
     const heatmapData = [];
-    var globalActive = 0;
-    var globalConfirmed = 0;
-    var globalDeaths = 0;
-    var globalRecovered = 0;
     reports.forEach((report) => {
       heatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.active,
       });
+      // Calculate worldwide data
       globalActive += report.active;
       globalConfirmed += report.confirmed;
       globalDeaths += report.deaths;
@@ -61,15 +106,9 @@ function createMap() {
     heatmap = new google.maps.visualization.HeatmapLayer(
         {data: heatmapData, dissipating: false, map: map});
     // Display worldwide data initially
-    document.getElementById('location').innerHTML = 'Worldwide';
-    document.getElementById('displayActive').innerHTML =
-        `Active: ${globalActive}`;
-    document.getElementById('displayConfirmed').innerHTML =
-        `Confirmed: ${globalConfirmed}`;
-    document.getElementById('displayDeaths').innerHTML =
-        `Deaths: ${globalDeaths}`;
-    document.getElementById('displayRecovered').innerHTML =
-        `Recovered: ${globalRecovered}`;
+    displayCurrentStats(
+        'Worldwide', globalActive, globalConfirmed, globalDeaths,
+        globalRecovered);
   });
 
   const geocoder = new google.maps.Geocoder();
