@@ -156,12 +156,15 @@ public class CasesDataServlet extends HttpServlet {
     if (!cells[9 + commaFlag].equals("")) { // Entry represents recovered cases
       recovered = Integer.parseInt(cells[9 + commaFlag]);
     }
-    if (!cells[1].equals("")) { // Entry represents recovered cases
+    if (!cells[1].equals("")) { // Entry represents territory name
       territory = cells[1];
-    } else if (!cells[2].equals("")) {
+    } else if (!cells[2].equals("")) { // For foreign territories, name will appear in index 2
       territory = cells[2];
-    } else {
+    } else { // For countries, name will appear in index 3
       territory = cells[3];
+    }
+    if (territory.substring(0, 1).equals("\"")) { // Some countries have " in name, remove the "
+      territory = territory.substring(1);
     }
     reports.add(new Report(territory, lat, lng, active, confirmed, deaths, recovered));
   }

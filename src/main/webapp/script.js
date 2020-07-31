@@ -31,42 +31,71 @@ function displayLatitudeLongitude(value) {
   document.getElementById('longitude').value = value['lng'];
 }
 
+// Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
-  let potentialReports = [];
-  const RADIUS = 2;
+  var potentialReports = [];
+  const RADIUS = 1.5;
   // Look for closest reports
   fetch('/report').then((response) => response.json()).then((reports) => {
     reports.forEach((report) => {
       if (Math.abs(report.lat - value['lat']) < RADIUS &&
           Math.abs(report.lng - value['lng']) < RADIUS) {
         potentialReports.push(report);
-        console.log(potentialReports);
       }
     });
 
+    // If there are no nearby reports, dispay global data
     if (potentialReports.length == 0) {
       displayCurrentStats(
           'Worldwide', globalActive, globalConfirmed, globalDeaths,
           globalRecovered);
       return;
     }
-    let potentialReport = findBestMatch(potentialReports, value);
-    displayCurrentStats(
-        potentialReport.territory, potentialReport.active,
-        potentialReport.confirmed, potentialReport.deaths,
-        potentialReport.recovered);
+    // If there are nearby reports, lookup address using geocoder
+    const lookupURL =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+        value['lat'] + ',' + value['lng'] + '&key=' +
+        mykey.substring(44, 83);  // Indices represent the actual API key
+    var potentialReport = potentialReports[0];
+    var foundFlag = false;
+    // Compare location names with territory names from potential reports
+    fetch(lookupURL).then((response) => response.json()).then((data) => {
+      data.results[0].address_components.forEach((location) => {
+        potentialReports.forEach((report) => {
+          // If there is a match, display that territory's statistics
+          if (location.long_name.trim().valueOf().includes(
+                  report.territory.trim().valueOf()) ||
+              report.territory.trim().valueOf().includes(
+                  location.long_name.trim().valueOf())) {
+            potentialReport = report;
+            displayCurrentStats(
+                location.long_name.trim().valueOf(), potentialReport.active,
+                potentialReport.confirmed, potentialReport.deaths,
+                potentialReport.recovered);
+            foundFlag = true;
+            return;
+          }
+        });
+      });
+      // If no match was found, take the report closest to the user request
+      if (foundFlag == false) {
+        const bigDistance = 1000;
+        var minimumDistance = bigDistance;
+        potentialReports.forEach((report) => {
+          var reportDistance = Math.abs(report.lat - value['lat']) +
+              Math.abs(report.lng - value['lng']);
+          if (reportDistance < minimumDistance) {
+            minimumDistance = reportDistance;
+            potentialReport = report;
+          }
+        });
+        displayCurrentStats(
+            potentialReport.territory, potentialReport.active,
+            potentialReport.confirmed, potentialReport.deaths,
+            potentialReport.recovered);
+      }
+    });
   });
-}
-
-function findBestMatch(pReports, val) {
-  const lookupURL =
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + val['lat'] +
-      ',' + val['lng'] + '&key=' +
-      mykey.substring(44, 83);  // Indices represent the actual API key
-  fetch(lookupURL)
-      .then((response) => response.json())
-      .then((data) => {console.log(data.results[3].address_components)});
-  return pReports[0];
 }
 
 // Initialize global data
@@ -84,6 +113,7 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
   document.getElementById('displayRecovered').innerHTML =
       `Recovered: ${recovered}`;
 }
+
 // Create a map zoomed in on Googleplex
 function createMap() {
   const map = new google.maps.Map(
