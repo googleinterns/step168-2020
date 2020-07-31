@@ -16,6 +16,7 @@
 /* globals casesData map */
 
 const routeLines = [];
+let routeMarkers = [];
 
 function calculateAndDisplayRoute(directionsService, mapObject) {
   directionsService.route(
@@ -30,6 +31,10 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
         for (let i = 0; i < routeLines.length; i++) {
           routeLines[i].setMap(null);
         }
+        for (let i = 0; i < routeMarkers.length; i++) {
+          routeMarkers[i].setMap(null);
+        }
+        routeMarkers = [];
         if (status === 'OK') {
           for (let i = 0; i < response.routes.length; i++) {
             if (i >= routeLines.length) {
@@ -49,6 +54,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
               const marker = new google.maps.Marker(
                   {position: latLng, title: 'Hello World!'});
               marker.setMap(map);
+              routeMarkers.push(marker);
               const closest = findClosest(points[j].lat(), points[j].lng());
               let duplicate = false;
               for (let k = 0; k < counted.length; k++) {
@@ -62,6 +68,16 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
               } else {
                 active += closest.active;
                 counted.push(closest);
+                const closeLatLng =
+                    new google.maps.LatLng(closest.lat, closest.lng);
+                const marker = new google.maps.Marker({
+                  position: closeLatLng,
+                  icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                  },
+                });
+                marker.setMap(map);
+                routeMarkers.push(marker);
               }
             }
             console.log(`"Route ${i} has ${active} cases"`);
@@ -86,6 +102,10 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
 //       position: myLatlng,
 //       title: casesData[i].lat.toString() + ' : ' +
 //       casesData[i].lng.toString(),
+//       icon: {
+//       url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+//     }
+
 //     });
 //     marker.setMap(map);
 //   }
