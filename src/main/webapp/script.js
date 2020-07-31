@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /* exported casesData */
-/* globals VideoPlayer calculateAndDisplayRoute */
+/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -63,14 +63,21 @@ function createMap() {
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
   });
-
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
-
   document.getElementById('directions-search').addEventListener('click', () => {
     calculateAndDisplayRoute(directionsService, map);
   });
+  document.getElementById('videos').addEventListener('click', () => {
+    searchForVideos(map);
+  });
+  document.onkeypress = function(keyPressed) {
+    const keyCodeForEnter = 13;
+    if (keyPressed.keyCode === keyCodeForEnter) {
+      searchForVideos(map);
+    }
+  };
 }
 
 // Recenter map to location searched and update current coordinates
@@ -104,7 +111,8 @@ function gotoUserLocation(map) {
     const location = new google.maps.LatLng(
         position.coords.latitude, position.coords.longitude);
     map.setCenter(location);
-    map.setZoom(8);
+    const zoomLargeEnoughToShowMultipleCities = 8;
+    map.setZoom(zoomLargeEnoughToShowMultipleCities);
     displayLatitudeLongitude(location.toJSON());
   };
   const geoError = function(error) {
