@@ -63,10 +63,9 @@ function displayLocationData(value) {
       data.results[0].address_components.forEach((location) => {
         potentialReports.forEach((report) => {
           // If there is a match, display that territory's statistics
-          if (location.long_name.trim().valueOf().includes(
-              report.territory.trim().valueOf()) ||
-                  report.territory.trim().valueOf().includes(
-                      location.long_name.trim().valueOf())) {
+          const lName = location.long_name.trim().valueOf();
+          const rName = report.territory.trim().valueOf();
+          if (lName.includes(rName) || rName.includes(lName)) {
             potentialReport = report;
             displayCurrentStats(
                 location.long_name.trim().valueOf(), potentialReport.active,
@@ -79,8 +78,8 @@ function displayLocationData(value) {
       });
       // If no match was found, take the report closest to the user request
       if (foundFlag == false) {
-        const bigDistance = 1000;
-        let minimumDistance = bigDistance;
+        const BIGDISTANCE = 1000;
+        let minimumDistance = BIGDISTANCE;
         potentialReports.forEach((report) => {
           const reportDistance = Math.abs(report.lat - value['lat']) +
               Math.abs(report.lng - value['lng']);
@@ -103,8 +102,8 @@ let globalActive = 0;
 let globalConfirmed = 0;
 let globalDeaths = 0;
 let globalRecovered = 0;
+// Display COVID data in html
 function displayCurrentStats(location, active, confirmed, deaths, recovered) {
-  // Display global data
   document.getElementById('location').innerHTML = location;
   document.getElementById('displayActive').innerHTML = `Active: ${active}`;
   document.getElementById('displayConfirmed').innerHTML =
@@ -177,6 +176,7 @@ function getCoordsFromSearch(geocoder, map) {
   });
 }
 
+// Update displayed COVID stats based on address
 function displayLocationDataFromSearch(geocoder) {
   const address = document.getElementById('search-text').value;
   geocoder.geocode({address: address}, (results, status) => {
