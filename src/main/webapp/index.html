@@ -32,13 +32,18 @@
       <button type="button" id="search-submit">Search</button>
       <input type="text" placeholder="Latitude" id="latitude" readonly />
       <input type="text" placeholder="Longitude" id="longitude" readonly />
-      <input type="text" id="start" placeholder="Start" />
-      <input type="text" id="end" placeholder="End" />
-      <button type="button" id="directions-search">Directions</button>
-      <button type="button" onclick="hideRouteMarkers()">Hide Route Markers</button>
-      <button type="button" onclick="showRouteMarkers()">Show Route Markers</button>
     </div>
     <button type="button" id="my-location">Go to my location</button>
     <button type="button" id="videos">Show Videos</button>
+
+    <div id="routing">
+      <p>Directions</p>
+      <input type="text" id="start" placeholder="Start" />
+      <input type="text" id="end" placeholder="End" />
+      <button type="button" id="directions-search">Directions</button><br />
+      <button type="button" onclick="hideAlternateRoutes()">Hide Alternate Routes</button>
+      <button type="button" onclick="showAlternateRoutes()">Show Alternate Routes</button>
+      <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
+    </div>
   </body>
 </html>

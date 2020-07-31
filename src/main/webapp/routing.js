@@ -15,7 +15,8 @@
 /* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers */
 /* globals casesData map */
 
-const routeLines = [];
+let chosenRoute = 0;
+let routeLines = [];
 let routeMarkers = [];
 
 function calculateAndDisplayRoute(directionsService, mapObject) {
@@ -29,64 +30,73 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
       (response, status) => {
         console.log(response);
         for (let i = 0; i < routeLines.length; i++) {
-          routeLines[i].setMap(null);
+          routeLines[i].route.setMap(null);
         }
+        routeLines = [];
         for (let i = 0; i < routeMarkers.length; i++) {
           routeMarkers[i].setMap(null);
         }
         routeMarkers = [];
         if (status === 'OK') {
           for (let i = 0; i < response.routes.length; i++) {
-            if (i >= routeLines.length) {
-              routeLines.push(new google.maps.DirectionsRenderer(
-                  {map: mapObject, directions: response, routeIndex: i}));
-            } else {
-              routeLines[i].setMap(mapObject);
-              routeLines[i].setDirections(response);
-              routeLines[i].setRouteIndex(i);
-            }
-            const counted = [];
-            let active = 0;
-            const points = response.routes[i].overview_path;
-            for (let j = 0; j < points.length; j += 1) {
-              const latLng =
-                  new google.maps.LatLng(points[j].lat(), points[j].lng());
-              const marker = new google.maps.Marker({
-                position: latLng,
-                icon: {
-                  url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                },
-                visible: false,
-              });
-              marker.setMap(map);
-              routeMarkers.push(marker);
-              const closest = findClosest(points[j].lat(), points[j].lng());
-              let duplicate = false;
-              for (let k = 0; k < counted.length; k++) {
-                if (closest == counted[k]) {
-                  duplicate = true;
-                  break;
-                }
-              }
-              if (!duplicate) {
-                active += closest.active;
-                counted.push(closest);
-                const closeLatLng =
-                    new google.maps.LatLng(closest.lat, closest.lng);
-                const marker = new google.maps.Marker({
-                  position: closeLatLng,
-                  visible: false,
-                });
-                marker.setMap(map);
-                routeMarkers.push(marker);
-              }
-            }
-            console.log(`"Route ${i} has ${active} cases"`);
+            processRoute(mapObject, response, i);
           }
+          let minCases = null;
+          for (let i = 0; i < routeLines.length; i++) {
+            if (minCases === null || routeLines[i].active < minCases) {
+              minCases = routeLines[i].active;
+              chosenRoute = i;
+            }
+          }
+          console.log('Route with least cases is', chosenRoute);
+          hideAlternateRoutes();
+          document.getElementById('route-active-count').textContent = minCases;
         } else {
           window.alert('Directions request failed due to ' + status);
         }
       });
+}
+
+function processRoute(mapObject, response, i) {
+  routeLines.push({
+    route: new google.maps.DirectionsRenderer(
+        {map: mapObject, directions: response, routeIndex: i}),
+    active: 0,
+  });
+  const counted = [];
+  const points = response.routes[i].overview_path;
+  for (let j = 0; j < points.length; j += 1) {
+    const latLng = new google.maps.LatLng(points[j].lat(), points[j].lng());
+    const marker = new google.maps.Marker({
+      position: latLng,
+      icon: {
+        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+      },
+      visible: false,
+    });
+    marker.setMap(map);
+    routeMarkers.push(marker);
+    const closest = findClosest(points[j].lat(), points[j].lng());
+    let duplicate = false;
+    for (let k = 0; k < counted.length; k++) {
+      if (closest === counted[k]) {
+        duplicate = true;
+        break;
+      }
+    }
+    if (!duplicate) {
+      routeLines[i].active += closest.active;
+      counted.push(closest);
+      const closeLatLng = new google.maps.LatLng(closest.lat, closest.lng);
+      const marker = new google.maps.Marker({
+        position: closeLatLng,
+        visible: false,
+      });
+      marker.setMap(map);
+      routeMarkers.push(marker);
+    }
+  }
+  console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
 }
 
 function hideRouteMarkers() {
@@ -96,18 +106,33 @@ function hideRouteMarkers() {
 }
 
 function showRouteMarkers() {
+  showAlternateRoutes();
   for (let i = 0; i < routeMarkers.length; i++) {
     routeMarkers[i].setVisible(true);
   }
 }
 
+function hideAlternateRoutes() {
+  for (let i = 0; i < routeLines.length; i++) {
+    if (i != chosenRoute) {
+      routeLines[i].route.setMap(null);
+    }
+  }
+}
+
+function showAlternateRoutes() {
+  for (let i = 0; i < routeLines.length; i++) {
+    routeLines[i].route.setMap(map);
+  }
+}
+
 function findClosest(lat, lng) {
   let closest = {};
-  let closestValue = 1000;
+  let closestValue = null;
   for (let i = 0; i < casesData.length; i++) {
     const diff =
         Math.abs(casesData[i].lat - lat) + Math.abs(casesData[i].lng - lng);
-    if (diff < closestValue) {
+    if (closestValue === null || diff < closestValue) {
       closest = casesData[i];
       closestValue = diff;
     }
