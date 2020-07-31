@@ -68,7 +68,7 @@ function displayLocationData(value) {
           if (lName.includes(rName) || rName.includes(lName)) {
             potentialReport = report;
             displayCurrentStats(
-                location.long_name.trim().valueOf(), potentialReport.active,
+                lName, potentialReport.active,
                 potentialReport.confirmed, potentialReport.deaths,
                 potentialReport.recovered);
             foundFlag = true;
