@@ -49,8 +49,8 @@ function createMap() {
         weight: report.active,
       });
     });
-    // heatmap = new google.maps.visualization.HeatmapLayer(
-    //    {data: heatmapData, dissipating: false, map: map});
+    heatmap = new google.maps.visualization.HeatmapLayer(
+        {data: heatmapData, dissipating: false, map: map});
   });
 
   const geocoder = new google.maps.Geocoder();

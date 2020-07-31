@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* exported calculateAndDisplayRoute */
+/* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers */
 /* globals casesData map */
 
 const routeLines = [];
@@ -51,8 +51,13 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
             for (let j = 0; j < points.length; j += 1) {
               const latLng =
                   new google.maps.LatLng(points[j].lat(), points[j].lng());
-              const marker = new google.maps.Marker(
-                  {position: latLng, title: 'Hello World!'});
+              const marker = new google.maps.Marker({
+                position: latLng,
+                icon: {
+                  url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                },
+                visible: false,
+              });
               marker.setMap(map);
               routeMarkers.push(marker);
               const closest = findClosest(points[j].lat(), points[j].lng());
@@ -63,25 +68,20 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
                   break;
                 }
               }
-              if (duplicate) {
-                console.debug('Duplicate', closest);
-              } else {
+              if (!duplicate) {
                 active += closest.active;
                 counted.push(closest);
                 const closeLatLng =
                     new google.maps.LatLng(closest.lat, closest.lng);
                 const marker = new google.maps.Marker({
                   position: closeLatLng,
-                  icon: {
-                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                  },
+                  visible: false,
                 });
                 marker.setMap(map);
                 routeMarkers.push(marker);
               }
             }
             console.log(`"Route ${i} has ${active} cases"`);
-            console.log(counted);
           }
         } else {
           window.alert('Directions request failed due to ' + status);
@@ -89,27 +89,17 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
       });
 }
 
-// function getData() {
-//   fetch('/report').then((response) => response.json()).then((reports) => {
-//     casesData = reports;
-//   });
-// }
+function hideRouteMarkers() {
+  for (let i = 0; i < routeMarkers.length; i++) {
+    routeMarkers[i].setVisible(false);
+  }
+}
 
-// function marker() {
-//   for (let i = 0; i < casesData.length; i++) {
-//     const myLatlng = new google.maps.LatLng(casesData[i].lat,
-//     casesData[i].lng); const marker = new google.maps.Marker({
-//       position: myLatlng,
-//       title: casesData[i].lat.toString() + ' : ' +
-//       casesData[i].lng.toString(),
-//       icon: {
-//       url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-//     }
-
-//     });
-//     marker.setMap(map);
-//   }
-// }
+function showRouteMarkers() {
+  for (let i = 0; i < routeMarkers.length; i++) {
+    routeMarkers[i].setVisible(true);
+  }
+}
 
 function findClosest(lat, lng) {
   let closest = {};
