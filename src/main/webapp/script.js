@@ -144,6 +144,7 @@ function createMap() {
   const geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
+    displayLocationDataFromSearch(geocoder);
   });
   document.getElementById('my-location').addEventListener('click', () => {
     gotoUserLocation(map);
@@ -161,6 +162,17 @@ function getCoordsFromSearch(geocoder, map) {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
       displayLatitudeLongitude(results[0].geometry.location.toJSON());
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+function displayLocationDataFromSearch(geocoder) {
+  const address = document.getElementById('search-text').value;
+  geocoder.geocode({address: address}, (results, status) => {
+    if (status === 'OK') {
+      displayLocationData(results[0].geometry.location.toJSON());
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
