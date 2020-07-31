@@ -52,6 +52,14 @@
   top: 60px;
 }
 
+#videos {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+  left: 127px;
+}
+
 #covidStats {
   position: absolute;
   top: 90px;

@@ -5,10 +5,13 @@
     <title>Video Map</title>
     <link rel="stylesheet" href="style.css" />
     <script src="apikeys.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     <script id="mapUrl"></script>
+    <script defer src="get-videos.js"></script>
     <script defer src="videoplayer.js"></script>
     <script defer src="script.js"></script>
     <script defer src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
   </head>
 
   <body>
@@ -30,6 +33,7 @@
       <input type="text" placeholder="Longitude" id="longitude" readonly />
     </div>
     <button type="button" id="my-location">Go to my location</button>
+    <button type="button" id="videos">Show Videos</button>
 
     <div id="covidStats">
       <p id="location" style="text-align: center; font-size: 160%;"></p>
