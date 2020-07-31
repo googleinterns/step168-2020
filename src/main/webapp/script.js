@@ -33,7 +33,7 @@ function displayLatitudeLongitude(value) {
 
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
-  let potentialReports = [];
+  const potentialReports = [];
   const RADIUS = 1.5;
   // Look for closest reports
   fetch('/report').then((response) => response.json()).then((reports) => {
@@ -64,9 +64,9 @@ function displayLocationData(value) {
         potentialReports.forEach((report) => {
           // If there is a match, display that territory's statistics
           if (location.long_name.trim().valueOf().includes(
-                  report.territory.trim().valueOf()) ||
+              report.territory.trim().valueOf()) ||
               report.territory.trim().valueOf().includes(
-                  location.long_name.trim().valueOf())) {
+              location.long_name.trim().valueOf())) {
             potentialReport = report;
             displayCurrentStats(
                 location.long_name.trim().valueOf(), potentialReport.active,
@@ -82,7 +82,7 @@ function displayLocationData(value) {
         const bigDistance = 1000;
         let minimumDistance = bigDistance;
         potentialReports.forEach((report) => {
-          let reportDistance = Math.abs(report.lat - value['lat']) +
+          const reportDistance = Math.abs(report.lat - value['lat']) +
               Math.abs(report.lng - value['lng']);
           if (reportDistance < minimumDistance) {
             minimumDistance = reportDistance;
