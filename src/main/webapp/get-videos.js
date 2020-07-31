@@ -1,6 +1,6 @@
 /* exported searchForVideos */
 /* globals gapi, player */
-function searchForVideos() {
+function searchForVideos(map) {
   gapi.client.setApiKey(keys.YOUTUBE_API_KEY);
   if (document.getElementById('latitude').value === '') {
     alert('No location found: Search or click somewhere on the map');
@@ -9,7 +9,7 @@ function searchForVideos() {
         .load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest')
         .then(
             function() {
-              executeSearch();
+              executeSearch(map);
               console.log('load was successful');
             },
             function(err) {
@@ -19,26 +19,35 @@ function searchForVideos() {
 }
 // Make sure the client is loaded and sign-in is complete before calling this
 // method.
-function executeSearch() {
+function executeSearch(map) {
   return gapi.client.youtube.search
       .list({
         'part': ['snippet'],
         'location': document.getElementById('latitude').value + ',' +
             document.getElementById('longitude').value,
-        'locationRadius': '50km',
+        // the location radius is size of the legend provided in Google Maps
+        // which changes based on the zoom of the map (i.e. at zoom === 5,
+        // the legends shows how far 200 miles is)
+        'locationRadius': 6400 * Math.pow(.5, map.getZoom()) + 'mi',
         'q': 'COVID-19',
         'type': ['video'],
       })
       .then(
           function(response) {
+            console.log('response', response.result);
             // Handle the results here (response.result has the parsed body).
-            const parsedVideoList = response.result;
-            // console.log('Response', parsedVideoList.items); use for debugging
-            const videoList = [];
-            parsedVideoList.items.forEach((item) => {
-              videoList.push(item.id.videoId);
-            });
-            player.playVideos(videoList);
+            const videoListToPlay = [];
+            const videoItemsFromSearch = response.result.items;
+            if (videoItemsFromSearch.length === 0) {
+              alert(
+                  'There are no COVID-19 related videos in this area.' +
+                  'Please try a new area.');
+            } else {
+              videoItemsFromSearch.forEach((item) => {
+                videoListToPlay.push(item.id.videoId);
+              });
+              player.playVideos(videoListToPlay);
+            }
           },
           function(err) {
             console.error('Execute error', err);

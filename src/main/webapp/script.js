@@ -60,12 +60,12 @@ function createMap() {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
   });
   document.getElementById('videos').addEventListener('click', () => {
-    searchForVideos();
+    searchForVideos(map);
   });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      searchForVideos();
+      searchForVideos(map);
     }
   };
 }
