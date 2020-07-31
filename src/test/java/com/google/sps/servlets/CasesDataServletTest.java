@@ -67,15 +67,25 @@ public final class CasesDataServletTest {
   }
 
   @Test
-  public void servletReturnsCorrectValues() {
+  public void servletReturnsCorrectFields() {
     String reportsJson = servlet.getReportsJson();
-    Assert.assertTrue(reportsJson.contains("\"lat\":33.034"));
-    Assert.assertTrue(reportsJson.contains("\"lng\":-116.736"));
-    Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
-    Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
+    Assert.assertTrue(reportsJson.contains("\"territory\""));
+    Assert.assertTrue(reportsJson.contains("\"lat\""));
+    Assert.assertTrue(reportsJson.contains("\"lng\""));
     Assert.assertTrue(reportsJson.contains("\"active\""));
     Assert.assertTrue(reportsJson.contains("\"confirmed\""));
     Assert.assertTrue(reportsJson.contains("\"deaths\""));
     Assert.assertTrue(reportsJson.contains("\"recovered\""));
+  }
+
+  @Test
+  public void servletReturnsCorrectValues() {
+    String reportsJson = servlet.getReportsJson();
+    Assert.assertTrue(reportsJson.contains("\"San Diego\""));
+    Assert.assertTrue(reportsJson.contains("\"Los Angeles\""));
+    Assert.assertTrue(reportsJson.contains("\"lat\":33.034"));
+    Assert.assertTrue(reportsJson.contains("\"lng\":-116.736"));
+    Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
+    Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
   }
 }
