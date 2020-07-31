@@ -60,6 +60,11 @@
   left: 127px;
 }
 
+#location {
+  text-align: center;
+  font-size: 160%;
+}
+
 #covidStats {
   position: absolute;
   top: 90px;

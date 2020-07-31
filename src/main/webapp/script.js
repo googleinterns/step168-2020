@@ -33,7 +33,7 @@ function displayLatitudeLongitude(value) {
 
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
-  var potentialReports = [];
+  let potentialReports = [];
   const RADIUS = 1.5;
   // Look for closest reports
   fetch('/report').then((response) => response.json()).then((reports) => {
@@ -56,8 +56,8 @@ function displayLocationData(value) {
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
         value['lat'] + ',' + value['lng'] + '&key=' +
         mykey.substring(44, 83);  // Indices represent the actual API key
-    var potentialReport = potentialReports[0];
-    var foundFlag = false;
+    let potentialReport = potentialReports[0];
+    let foundFlag = false;
     // Compare location names with territory names from potential reports
     fetch(lookupURL).then((response) => response.json()).then((data) => {
       data.results[0].address_components.forEach((location) => {
@@ -80,9 +80,9 @@ function displayLocationData(value) {
       // If no match was found, take the report closest to the user request
       if (foundFlag == false) {
         const bigDistance = 1000;
-        var minimumDistance = bigDistance;
+        let minimumDistance = bigDistance;
         potentialReports.forEach((report) => {
-          var reportDistance = Math.abs(report.lat - value['lat']) +
+          let reportDistance = Math.abs(report.lat - value['lat']) +
               Math.abs(report.lng - value['lng']);
           if (reportDistance < minimumDistance) {
             minimumDistance = reportDistance;
@@ -99,10 +99,10 @@ function displayLocationData(value) {
 }
 
 // Initialize global data
-var globalActive = 0;
-var globalConfirmed = 0;
-var globalDeaths = 0;
-var globalRecovered = 0;
+let globalActive = 0;
+let globalConfirmed = 0;
+let globalDeaths = 0;
+let globalRecovered = 0;
 function displayCurrentStats(location, active, confirmed, deaths, recovered) {
   // Display global data
   document.getElementById('location').innerHTML = location;
