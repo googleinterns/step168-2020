@@ -50,7 +50,6 @@
   display: inline-block;
   z-index: 5;
   top: 60px;
-  left: 210px;
 }
 
 #videos {
@@ -58,5 +57,18 @@
   display: inline-block;
   z-index: 5;
   top: 60px;
-  left: 336px;
+  left: 127px;
+}
+
+#location {
+  text-align: center;
+  font-size: 160%;
+}
+
+#covidStats {
+  position: absolute;
+  top: 90px;
+  z-index: 5;
+  border-left: 6px solid white;
+  background-color: whitesmoke;
 }
