@@ -19,6 +19,11 @@ let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
 
+/**
+ * Get route from Directions API
+ * Calulate cases for each route
+ * Display route with fewest cases
+ */
 function calculateAndDisplayRoute(directionsService, mapObject) {
   directionsService.route(
       {
@@ -28,7 +33,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
         provideRouteAlternatives: true,
       },
       (response, status) => {
-        console.log(response);
+        console.debug(response);
         for (let i = 0; i < routeLines.length; i++) {
           routeLines[i].route.setMap(null);
         }
@@ -57,6 +62,15 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
       });
 }
 
+/**
+ * Calculates number of active cases close to route
+ *
+ * Each directions response gives a list of points along the route
+ * This function loop through those points and finds the closest cases data
+ * point which is added to the routes total (excluding duplicates) This function
+ * also creates markers that show which points are used but the markers are
+ * hidden by default
+ */
 function processRoute(mapObject, response, i) {
   routeLines.push({
     route: new google.maps.DirectionsRenderer(
@@ -92,19 +106,25 @@ function processRoute(mapObject, response, i) {
         position: closeLatLng,
         visible: false,
       });
-      marker.setMap(map);
+      marker.setMap(mapObject);
       routeMarkers.push(marker);
     }
   }
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
 }
 
+/**
+ * Make route markers hidden
+ */
 function hideRouteMarkers() {
   for (let i = 0; i < routeMarkers.length; i++) {
     routeMarkers[i].setVisible(false);
   }
 }
 
+/**
+ * Make route markers visible
+ */
 function showRouteMarkers() {
   showAlternateRoutes();
   for (let i = 0; i < routeMarkers.length; i++) {
@@ -112,6 +132,9 @@ function showRouteMarkers() {
   }
 }
 
+/**
+ * Make alternate routes hidden
+ */
 function hideAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
@@ -120,12 +143,18 @@ function hideAlternateRoutes() {
   }
 }
 
+/**
+ * Make alternate routes visible
+ */
 function showAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(map);
   }
 }
 
+/**
+ * Return the case with latitude and longotude closest to given
+ */
 function findClosest(lat, lng) {
   let closest = {};
   let closestValue = null;
