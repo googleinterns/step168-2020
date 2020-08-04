@@ -119,7 +119,6 @@ const activeHeatmapData = [];
 const deathsHeatmapData = [];
 const recoveredHeatmapData = [];
 const populationHeatmapData = [];
-let heatmap;
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(
@@ -161,7 +160,7 @@ function createMap() {
       data: confirmedHeatmapData,
       dissipating: false,
       map: map,
-      radius: 2.5
+      radius: 2.5,
     });
     // Display worldwide data initially
     displayCurrentStats(
@@ -186,6 +185,9 @@ function createMap() {
   });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
+  });
+  document.getElementById('heatMapType').addEventListener('change', () => {
+    changeHeat();
   });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
