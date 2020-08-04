@@ -19,6 +19,7 @@ const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
 let player;
+let map;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -114,7 +115,7 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
 
 // Create a map zoomed in on Googleplex
 function createMap() {
-  const map = new google.maps.Map(
+  map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
   // Gets active case data and displays as heat map
@@ -123,7 +124,7 @@ function createMap() {
     reports.forEach((report) => {
       heatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
-        weight: report.active,
+        weight: report.confirmed,
       });
       // Calculate worldwide data
       globalActive += report.active;
@@ -132,12 +133,21 @@ function createMap() {
       globalRecovered += report.recovered;
     });
     heatmap = new google.maps.visualization.HeatmapLayer(
-        {data: heatmapData, dissipating: false, map: map});
+        {data: heatmapData, dissipating: false, map: map, radius: 2.5});
     // Display worldwide data initially
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
         globalRecovered);
   });
+
+  // Switch heat on and off
+  function toggleHeatMap(heatmap) {
+    if (heatmap.getMap() == null) {
+      heatmap.setMap(map);
+    } else {
+      heatmap.setMap(null);
+    }
+  }
 
   const geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
@@ -153,6 +163,9 @@ function createMap() {
   });
   document.getElementById('videos').addEventListener('click', () => {
     searchForVideos(map);
+  });
+  document.getElementById('toggle-heat').addEventListener('click', () => {
+    toggleHeatMap(heatmap);
   });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;

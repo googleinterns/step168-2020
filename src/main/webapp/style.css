@@ -45,11 +45,19 @@
   width: 20%;
 }
 
+#toggle-heat {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+}
+
 #my-location {
   position: absolute;
   display: inline-block;
   z-index: 5;
   top: 60px;
+  left: 127px;
 }
 
 #videos {
@@ -57,7 +65,7 @@
   display: inline-block;
   z-index: 5;
   top: 60px;
-  left: 127px;
+  left: 254px;
 }
 
 #location {
