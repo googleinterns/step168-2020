@@ -113,6 +113,12 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
       `Recovered: ${recovered}`;
 }
 
+
+const confirmedHeatmapData = [];
+const activeHeatmapData = [];
+const deathsHeatmapData = [];
+const recoveredHeatmapData = [];
+const populationHeatmapData = [];
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(
@@ -120,20 +126,41 @@ function createMap() {
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
   // Gets active case data and displays as heat map
   fetch('/report').then((response) => response.json()).then((reports) => {
-    const heatmapData = [];
     reports.forEach((report) => {
-      heatmapData.push({
+      confirmedHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.confirmed,
       });
+      if (report.active > -1) {
+        activeHeatmapData.push({
+          location: new google.maps.LatLng(report.lat, report.lng),
+          weight: report.active,
+        });
+      }
+      deathsHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.deaths,
+      });
+      recoveredHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.recovered,
+      });
+      // populationHeatmapData.push({
+      // location: new google.maps.LatLng(report.lat, report.lng),
+      // weight: report.perCap,
+      //});
       // Calculate worldwide data
       globalActive += report.active;
       globalConfirmed += report.confirmed;
       globalDeaths += report.deaths;
       globalRecovered += report.recovered;
     });
-    heatmap = new google.maps.visualization.HeatmapLayer(
-        {data: heatmapData, dissipating: false, map: map, radius: 2.5});
+    heatmap = new google.maps.visualization.HeatmapLayer({
+      data: confirmedHeatmapData,
+      dissipating: false,
+      map: map,
+      radius: 2.5
+    });
     // Display worldwide data initially
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
@@ -146,6 +173,37 @@ function createMap() {
       heatmap.setMap(map);
     } else {
       heatmap.setMap(null);
+    }
+  }
+
+  // Switch heatmap to show confirmed cases
+  function setHeatConfirmed(heatmap, confirmedHeatmapData) {
+    if (heatmap.getData() != confirmedHeatmapData) {
+      heatmap.setData(confirmedHeatmapData);
+    }
+  }
+  // Switch heatmap to show confirmed cases
+  function setHeatActive(heatmap, activeHeatmapData) {
+    if (heatmap.getData() != activeHeatmapData) {
+      heatmap.setData(activeHeatmapData);
+    }
+  }
+  // Switch heatmap to show confirmed cases
+  function setHeatDeaths(heatmap, deathsHeatmapData) {
+    if (heatmap.getData() != deathsHeatmapData) {
+      heatmap.setData(deathsHeatmapData);
+    }
+  }
+  // Switch heatmap to show confirmed cases
+  function setHeatRecovered(heatmap, recoveredHeatmapData) {
+    if (heatmap.getData() != recoveredHeatmapData) {
+      heatmap.setData(recoveredHeatmapData);
+    }
+  }
+  // Switch heatmap to show confirmed cases
+  function setHeatPopulation(heatmap, populationHeatmapData) {
+    if (heatmap.getData() != populationHeatmapData) {
+      heatmap.setData(populationHeatmapData);
     }
   }
 
@@ -166,6 +224,21 @@ function createMap() {
   });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap(heatmap);
+  });
+  document.getElementById('toggle-confirmed').addEventListener('click', () => {
+    setHeatConfirmed(heatmap, confirmedHeatmapData);
+  });
+  document.getElementById('toggle-active').addEventListener('click', () => {
+    setHeatActive(heatmap, activeHeatmapData);
+  });
+  document.getElementById('toggle-deaths').addEventListener('click', () => {
+    setHeatDeaths(heatmap, deathsHeatmapData);
+  });
+  document.getElementById('toggle-recovered').addEventListener('click', () => {
+    setHeatRecovered(heatmap, recoveredHeatmapData);
+  });
+  document.getElementById('toggle-population').addEventListener('click', () => {
+    setHeatPopulation(heatmap, populationHeatmapData);
   });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;

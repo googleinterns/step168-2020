@@ -52,7 +52,7 @@
   top: 60px;
 }
 
-#my-location {
+#toggle-confirmed {
   position: absolute;
   display: inline-block;
   z-index: 5;
@@ -60,12 +60,52 @@
   left: 127px;
 }
 
-#videos {
+#toggle-active {
   position: absolute;
   display: inline-block;
   z-index: 5;
   top: 60px;
   left: 254px;
+}
+
+#toggle-deaths {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+  left: 361px;
+}
+
+#toggle-recovered {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+  left: 488px;
+}
+
+#toggle-population {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+  left: 615px;
+}
+
+#my-location {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+  left: 742px;
+}
+
+#videos {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 60px;
+  left: 869px;
 }
 
 #location {
