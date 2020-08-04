@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers */
+/* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers
+ * toggleAlternateRoutes */
 /* globals casesData map */
 
 let chosenRoute = 0;
@@ -149,6 +150,14 @@ function hideAlternateRoutes() {
 function showAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(map);
+  }
+}
+
+function toggleAlternateRoutes() {
+  if (document.getElementById('show-alternate-routes').checked) {
+    showAlternateRoutes();
+  } else {
+    hideAlternateRoutes();
   }
 }
 

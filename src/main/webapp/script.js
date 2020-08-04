@@ -13,7 +13,8 @@
 // limitations under the License.
 
 /* exported casesData */
-/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute */
+/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute
+   toggleAlternateRoutes */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -26,6 +27,7 @@ let map;
 // When the page loads, call createMap
 window.onload = function() {
   createMap();
+  addDirectionsListeners();
 };
 
 // Update currently displayed coordinates
@@ -170,6 +172,13 @@ function createMap() {
       searchForVideos(map);
     }
   };
+}
+
+function addDirectionsListeners() {
+  document.getElementById('show-alternate-routes')
+      .addEventListener('click', () => {
+        toggleAlternateRoutes();
+      });
 }
 
 // Recenter map to location searched and update current coordinates
