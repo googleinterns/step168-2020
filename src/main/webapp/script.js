@@ -145,10 +145,10 @@ function createMap() {
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.recovered,
       });
-      // populationHeatmapData.push({
-      // location: new google.maps.LatLng(report.lat, report.lng),
-      // weight: report.perCap,
-      //});
+      populationHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.perCap,
+      });
       // Calculate worldwide data
       globalActive += report.active;
       globalConfirmed += report.confirmed;

@@ -139,6 +139,7 @@ public class CasesDataServlet extends HttpServlet {
   private void addReport(Collection<Report> reports, String[] cells, int commaFlag) {
     double lat = Double.parseDouble(cells[5 + commaFlag]);
     double lng = Double.parseDouble(cells[6 + commaFlag]);
+    double perCap = 0.0;
     int active = 0;
     int confirmed = 0;
     int deaths = 0;
@@ -166,7 +167,11 @@ public class CasesDataServlet extends HttpServlet {
     if (territory.substring(0, 1).equals("\"")) { // Some countries have " in name, remove the "
       territory = territory.substring(1);
     }
-    reports.add(new Report(territory, lat, lng, active, confirmed, deaths, recovered));
+    if (!(cells[cells.length - 2].equals("") || confirmed == 0)) { // Cases per 100,000 persons
+      perCap = Double.parseDouble(cells[cells.length - 2]);
+      System.out.println(perCap);
+    }
+    reports.add(new Report(territory, lat, lng, active, confirmed, deaths, recovered, perCap));
   }
 
   /**
@@ -177,13 +182,14 @@ public class CasesDataServlet extends HttpServlet {
     private String territory;
     private double lat;
     private double lng;
+    private double perCap;
     private int active;
     private int confirmed;
     private int deaths;
     private int recovered;
 
     public Report(String territory, double lat, double lng, int active, int confirmed, int deaths,
-        int recovered) {
+        int recovered, double perCap) {
       this.territory = territory;
       this.lat = lat;
       this.lng = lng;
@@ -191,6 +197,7 @@ public class CasesDataServlet extends HttpServlet {
       this.confirmed = confirmed;
       this.deaths = deaths;
       this.recovered = recovered;
+      this.perCap = perCap;
     }
   }
 }
