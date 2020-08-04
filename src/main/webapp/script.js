@@ -113,18 +113,19 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
       `Recovered: ${recovered}`;
 }
 
-
+// Initialize heat maps
 const confirmedHeatmapData = [];
 const activeHeatmapData = [];
 const deathsHeatmapData = [];
 const recoveredHeatmapData = [];
 const populationHeatmapData = [];
+let heatmap;
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
-  // Gets active case data and displays as heat map
+  // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     reports.forEach((report) => {
       confirmedHeatmapData.push({
@@ -155,6 +156,7 @@ function createMap() {
       globalDeaths += report.deaths;
       globalRecovered += report.recovered;
     });
+    // Initially display confirmed cases heat map
     heatmap = new google.maps.visualization.HeatmapLayer({
       data: confirmedHeatmapData,
       dissipating: false,
@@ -166,46 +168,6 @@ function createMap() {
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
         globalRecovered);
   });
-
-  // Switch heat on and off
-  function toggleHeatMap(heatmap) {
-    if (heatmap.getMap() == null) {
-      heatmap.setMap(map);
-    } else {
-      heatmap.setMap(null);
-    }
-  }
-
-  // Switch heatmap to show confirmed cases
-  function setHeatConfirmed(heatmap, confirmedHeatmapData) {
-    if (heatmap.getData() != confirmedHeatmapData) {
-      heatmap.setData(confirmedHeatmapData);
-    }
-  }
-  // Switch heatmap to show confirmed cases
-  function setHeatActive(heatmap, activeHeatmapData) {
-    if (heatmap.getData() != activeHeatmapData) {
-      heatmap.setData(activeHeatmapData);
-    }
-  }
-  // Switch heatmap to show confirmed cases
-  function setHeatDeaths(heatmap, deathsHeatmapData) {
-    if (heatmap.getData() != deathsHeatmapData) {
-      heatmap.setData(deathsHeatmapData);
-    }
-  }
-  // Switch heatmap to show confirmed cases
-  function setHeatRecovered(heatmap, recoveredHeatmapData) {
-    if (heatmap.getData() != recoveredHeatmapData) {
-      heatmap.setData(recoveredHeatmapData);
-    }
-  }
-  // Switch heatmap to show confirmed cases
-  function setHeatPopulation(heatmap, populationHeatmapData) {
-    if (heatmap.getData() != populationHeatmapData) {
-      heatmap.setData(populationHeatmapData);
-    }
-  }
 
   const geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
@@ -223,22 +185,7 @@ function createMap() {
     searchForVideos(map);
   });
   document.getElementById('toggle-heat').addEventListener('click', () => {
-    toggleHeatMap(heatmap);
-  });
-  document.getElementById('toggle-confirmed').addEventListener('click', () => {
-    setHeatConfirmed(heatmap, confirmedHeatmapData);
-  });
-  document.getElementById('toggle-active').addEventListener('click', () => {
-    setHeatActive(heatmap, activeHeatmapData);
-  });
-  document.getElementById('toggle-deaths').addEventListener('click', () => {
-    setHeatDeaths(heatmap, deathsHeatmapData);
-  });
-  document.getElementById('toggle-recovered').addEventListener('click', () => {
-    setHeatRecovered(heatmap, recoveredHeatmapData);
-  });
-  document.getElementById('toggle-population').addEventListener('click', () => {
-    setHeatPopulation(heatmap, populationHeatmapData);
+    toggleHeatMap();
   });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
@@ -246,6 +193,31 @@ function createMap() {
       searchForVideos(map);
     }
   };
+}
+
+// Switch heat on and off
+function toggleHeatMap() {
+  if (heatmap.getMap() == null) {
+    heatmap.setMap(map);
+  } else {
+    heatmap.setMap(null);
+  }
+}
+
+// Switch heatmap to show user chosen statistic
+function changeHeat() {
+  const userChoice = document.getElementById('heatMapType').value;
+  if (userChoice == 'confirmed') {
+    heatmap.setData(confirmedHeatmapData);
+  } else if (userChoice == 'active') {
+    heatmap.setData(activeHeatmapData);
+  } else if (userChoice == 'deaths') {
+    heatmap.setData(deathsHeatmapData);
+  } else if (userChoice == 'recovered') {
+    heatmap.setData(recoveredHeatmapData);
+  } else if (userChoice == 'population') {
+    heatmap.setData(populationHeatmapData);
+  }
 }
 
 // Recenter map to location searched and update current coordinates

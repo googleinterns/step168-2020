@@ -32,12 +32,6 @@
       <input type="text" placeholder="Latitude" id="latitude" readonly />
       <input type="text" placeholder="Longitude" id="longitude" readonly />
     </div>
-    <button type="button" id="toggle-heat">Toogle Heatmap</button>
-    <button type="button" id="toggle-confirmed">Show Confirmed Cases Heatmap</button>
-    <button type="button" id="toggle-active">Show Active Cases Heatmap</button>
-    <button type="button" id="toggle-deaths">Show Deaths Heatmap</button>
-    <button type="button" id="toggle-recovered">Show Recovered Heatmap</button>
-    <button type="button" id="toggle-population">Show Per-Capita Confirmed Cases Heatmap</button>
     <button type="button" id="my-location">Go to my location</button>
     <button type="button" id="videos">Show Videos</button>
 
@@ -48,5 +42,14 @@
       <p id="displayDeaths"></p>
       <p id="displayRecovered"></p>
     </div>
+
+    <button type="button" id="toggle-heat">Toogle Heatmap</button>
+    <select id="heatMapType" onchange="changeHeat()">
+      <option value="confirmed">Show Confirmed Cases Heatmap </option>
+      <option value="active">Show Active Cases Heatmap </option>
+      <option value="deaths">Show Number of Deaths Heatmap </option>
+      <option value="recovered">Show Recovered Cases Heatmap </option>
+      <option value="population">Show Per-Capita Cases Heatmap </option>
+    </select>
   </body>
 </html>

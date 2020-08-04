@@ -169,14 +169,13 @@ public class CasesDataServlet extends HttpServlet {
     }
     if (!(cells[cells.length - 2].equals("") || confirmed == 0)) { // Cases per 100,000 persons
       perCap = Double.parseDouble(cells[cells.length - 2]);
-      System.out.println(perCap);
     }
     reports.add(new Report(territory, lat, lng, active, confirmed, deaths, recovered, perCap));
   }
 
   /**
-   * Represents number of active, confirmed, deaths, and recovered cases
-   * at a specific lat lng point
+   * Represents number of active, confirmed, deaths, recovered, and per-capita cases
+   * at a specific lat lng point in a territory
    */
   class Report {
     private String territory;

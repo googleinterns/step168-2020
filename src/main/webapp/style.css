@@ -49,47 +49,16 @@
   position: absolute;
   display: inline-block;
   z-index: 5;
-  top: 60px;
+  top: 21px;
+  right: 90px;
 }
 
-#toggle-confirmed {
+#heatMapType {
   position: absolute;
   display: inline-block;
   z-index: 5;
-  top: 60px;
-  left: 127px;
-}
-
-#toggle-active {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 60px;
-  left: 254px;
-}
-
-#toggle-deaths {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 60px;
-  left: 361px;
-}
-
-#toggle-recovered {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 60px;
-  left: 488px;
-}
-
-#toggle-population {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 60px;
-  left: 615px;
+  top: 22px;
+  right: 210px;
 }
 
 #my-location {
@@ -97,7 +66,6 @@
   display: inline-block;
   z-index: 5;
   top: 60px;
-  left: 742px;
 }
 
 #videos {
@@ -105,7 +73,7 @@
   display: inline-block;
   z-index: 5;
   top: 60px;
-  left: 869px;
+  left: 127px;
 }
 
 #location {
