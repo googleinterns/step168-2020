@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer, searchForVideos */
+/* exported casesData */
+/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
 let player;
+let casesData;
+let map;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -114,11 +117,12 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
 
 // Create a map zoomed in on Googleplex
 function createMap() {
-  const map = new google.maps.Map(
+  map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
   // Gets active case data and displays as heat map
   fetch('/report').then((response) => response.json()).then((reports) => {
+    casesData = reports;
     const heatmapData = [];
     reports.forEach((report) => {
       heatmapData.push({
@@ -150,6 +154,12 @@ function createMap() {
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
+  });
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+  document.getElementById('directions-search').addEventListener('click', () => {
+    calculateAndDisplayRoute(directionsService, map);
   });
   document.getElementById('videos').addEventListener('click', () => {
     searchForVideos(map);
