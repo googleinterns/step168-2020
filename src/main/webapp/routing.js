@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers
- * toggleAlternateRoutes */
+ * toggleAlternateRoutes toggleExpandedRouteInfo */
 /* globals casesData map */
 
 let chosenRoute = 0;
@@ -44,6 +44,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
         }
         routeMarkers = [];
         if (status === 'OK') {
+          resetRouteTable();
           for (let i = 0; i < response.routes.length; i++) {
             processRoute(mapObject, response, i);
           }
@@ -78,8 +79,9 @@ function processRoute(mapObject, response, i) {
         {map: mapObject, directions: response, routeIndex: i}),
     active: 0,
   });
+  const route = response.routes[i];
   const counted = [];
-  const points = response.routes[i].overview_path;
+  const points = route.overview_path;
   for (let j = 0; j < points.length; j += 1) {
     const latLng = new google.maps.LatLng(points[j].lat(), points[j].lng());
     const marker = new google.maps.Marker({
@@ -111,7 +113,31 @@ function processRoute(mapObject, response, i) {
       routeMarkers.push(marker);
     }
   }
+  addTableRow(
+      'TEMP', routeLines[i].active, route.legs[0].distance.text,
+      route.legs[0].duration.text);
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
+}
+
+function resetRouteTable() {
+  const table =
+      document.getElementById('route-info').getElementsByTagName('tbody')[0];
+  for (let i = 0; i < table.rows.length; i++) {
+    table.deleteRow(0);
+  }
+}
+
+function addTableRow(color, cases, distance, time) {
+  const table =
+      document.getElementById('route-info').getElementsByTagName('tbody')[0];
+  const row = table.insertRow();
+  for (let i = 0; i < 4; i++) {
+    row.insertCell();
+  }
+  row.cells[0].textContent = color;
+  row.cells[1].textContent = cases;
+  row.cells[2].textContent = distance;
+  row.cells[3].textContent = time;
 }
 
 /**
@@ -158,6 +184,22 @@ function toggleAlternateRoutes() {
     showAlternateRoutes();
   } else {
     hideAlternateRoutes();
+  }
+}
+
+function showRouteInfo() {
+  document.getElementById('expanded-routing').style.display = 'block';
+}
+
+function hideRouteInfo() {
+  document.getElementById('expanded-routing').style.display = 'none';
+}
+
+function toggleExpandedRouteInfo() {
+  if (document.getElementById('show-expanded-routes').checked) {
+    showRouteInfo();
+  } else {
+    hideRouteInfo();
   }
 }
 

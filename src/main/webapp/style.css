@@ -79,5 +79,22 @@
   left: 10px;
   z-index: 5;
   width: 250px;
+  height: 250px;
   background-color: whitesmoke;
+}
+
+#expanded-routing {
+  display: none;
+  position: absolute;
+  bottom: 30px;
+  left: 260px;
+  z-index: 5;
+  width: 500px;
+  height: 250px;
+  background-color: whitesmoke;
+}
+
+#route-info td,
+#route-info td {
+  padding: 5px 10px 5px 10px;
 }

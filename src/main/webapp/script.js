@@ -14,7 +14,7 @@
 
 /* exported casesData */
 /* globals VideoPlayer, searchForVideos calculateAndDisplayRoute
-   toggleAlternateRoutes */
+   toggleAlternateRoutes toggleExpandedRouteInfo */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -178,6 +178,10 @@ function addDirectionsListeners() {
   document.getElementById('show-alternate-routes')
       .addEventListener('click', () => {
         toggleAlternateRoutes();
+      });
+  document.getElementById('show-expanded-routes')
+      .addEventListener('click', () => {
+        toggleExpandedRouteInfo();
       });
 }
 
