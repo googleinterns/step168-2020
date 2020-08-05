@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer, searchForVideos */
+/* exported casesData */
+/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
 document.getElementById('mapUrl').src = mykey;
 
 let player;
+let casesData;
 let map;
 
 // When the page loads, call createMap
@@ -126,6 +128,7 @@ function createMap() {
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
+    casesData = reports;
     reports.forEach((report) => {
       confirmedHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
@@ -179,6 +182,12 @@ function createMap() {
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
+  });
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+  document.getElementById('directions-search').addEventListener('click', () => {
+    calculateAndDisplayRoute(directionsService, map);
   });
   document.getElementById('videos').addEventListener('click', () => {
     searchForVideos(map);

@@ -9,6 +9,7 @@
     <script id="mapUrl"></script>
     <script defer src="get-videos.js"></script>
     <script defer src="videoplayer.js"></script>
+    <script defer src="routing.js"></script>
     <script defer src="script.js"></script>
     <script defer src="https://www.youtube.com/iframe_api"></script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
@@ -34,6 +35,16 @@
     </div>
     <button type="button" id="my-location">Go to my location</button>
     <button type="button" id="videos">Show Videos</button>
+
+    <div id="routing">
+      <p>Directions</p>
+      <input type="text" id="start" placeholder="Start" />
+      <input type="text" id="end" placeholder="End" />
+      <button type="button" id="directions-search">Directions</button><br />
+      <button type="button" onclick="hideAlternateRoutes()">Hide Alternate Routes</button>
+      <button type="button" onclick="showAlternateRoutes()">Show Alternate Routes</button>
+      <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
+    </div>
 
     <div id="covidStats">
       <p id="location"></p>
