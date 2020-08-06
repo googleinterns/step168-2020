@@ -28,12 +28,6 @@ window.onload = function() {
   createMap();
 };
 
-// Update currently displayed coordinates
-function displayLatitudeLongitude(value) {
-  document.getElementById('latitude').value = value['lat'];
-  document.getElementById('longitude').value = value['lng'];
-}
-
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
   const potentialReports = [];
@@ -183,7 +177,6 @@ function createMap() {
     gotoUserLocation(map);
   });
   map.addListener('click', function(mapsMouseEvent) {
-    displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
   });
   const directionsService = new google.maps.DirectionsService();
@@ -240,7 +233,6 @@ function getCoordsFromSearch(geocoder, map) {
   geocoder.geocode({address: address}, (results, status) => {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
-      displayLatitudeLongitude(results[0].geometry.location.toJSON());
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -279,7 +271,6 @@ function gotoUserLocation(map) {
     map.setCenter(location);
     const zoomLargeEnoughToShowMultipleCities = 8;
     map.setZoom(zoomLargeEnoughToShowMultipleCities);
-    displayLatitudeLongitude(location.toJSON());
   };
   const geoError = function(error) {
     console.log('Error occurred. Error code: ' + error.code);
