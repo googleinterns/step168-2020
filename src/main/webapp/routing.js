@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers
- * toggleAlternateRoutes toggleExpandedRouteInfo */
+/* exported calculateAndDisplayRoute addDirectionsListeners hideRouteMarkers
+ * showRouteMarkers */
 /* globals casesData map */
 
 let chosenRoute = 0;
@@ -21,6 +21,20 @@ let routeLines = [];
 let routeMarkers = [];
 const routeColors =
     ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
+
+function addDirectionsListeners() {
+  document.getElementById('show-alternate-routes')
+      .addEventListener('click', () => {
+        toggleAlternateRoutes();
+      });
+  document.getElementById('show-expanded-routes')
+      .addEventListener('click', () => {
+        toggleExpandedRouteInfo();
+      });
+  document.getElementById('route-selector').addEventListener('input', () => {
+    changeSelectedRoute(document.getElementById('route-selector').value);
+  });
+}
 
 /**
  * Get route from Directions API
@@ -57,8 +71,12 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
               chosenRoute = i;
             }
           }
-          console.log('Route with least cases is', chosenRoute);
-          hideAlternateRoutes();
+          changeSelectedRoute(chosenRoute);
+          if (!document.getElementById('show-alternate-routes').checked) {
+            hideAlternateRoutes();
+          }
+          document.getElementById('show-expanded-routes').checked = true;
+          showRouteInfo();
           document.getElementById('route-active-count').textContent = minCases;
         } else {
           window.alert('Directions request failed due to ' + status);
@@ -85,7 +103,7 @@ function processRoute(mapObject, response, i) {
         polylineOptions: {
           strokeColor: routeColors[i],
           strokeOpacity: 1,
-          strokeWeight: 5,
+          strokeWeight: 3,
         },
       },
     }),
@@ -135,17 +153,22 @@ function resetRouteTable() {
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
   const length = table.rows.length;
+  const selector = document.getElementById('route-selector');
   for (let i = 0; i < length; i++) {
-    console.log(`Delete row ${i} ${table.rows.length}`);
     table.deleteRow(0);
+    selector.remove(0);
   }
 }
 
 function addTableRow(color, cases, distance, time) {
-  console.log('Add table row', color, cases, distance, time);
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
   const row = table.insertRow();
+  const selector = document.getElementById('route-selector');
+  const option = document.createElement('option');
+  option.value = table.rows.length - 1;
+  option.textContent = color;
+  selector.appendChild(option);
   for (let i = 0; i < 5; i++) {
     row.insertCell();
   }
@@ -153,6 +176,27 @@ function addTableRow(color, cases, distance, time) {
   row.cells[1].textContent = cases;
   row.cells[2].textContent = distance;
   row.cells[3].textContent = time;
+}
+
+function changeSelectedRoute(route) {
+  chosenRoute = route;
+  for (let i = 0; i < routeLines.length; i++) {
+    const options = {
+      strokeColor: routeColors[i],
+      strokeOpacity: 0.6,
+      strokeWeight: 3,
+    };
+    if (i == chosenRoute) {
+      options.strokeOpacity = 1;
+      options.strokeWeight = 7;
+    }
+    routeLines[i].route.setOptions({
+      polylineOptions: options,
+    });
+    document.getElementById('show-alternate-routes').checked = true;
+    showAlternateRoutes();
+  }
+  document.getElementById('route-selector').value = route;
 }
 
 
@@ -182,13 +226,6 @@ function hideAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       routeLines[i].route.setMap(null);
-      routeLines[i].route.setOptions({
-        polylineOptions: {
-          strokeColor: routeColors[i],
-          strokeOpacity: 0.5,
-          strokeWeight: 3,
-        },
-      });
     }
   }
 }

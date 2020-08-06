@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* exported casesData */
 /* globals VideoPlayer, searchForVideos calculateAndDisplayRoute
-   toggleAlternateRoutes toggleExpandedRouteInfo */
+   addDirectionsListeners */
+/* exported casesData */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -172,17 +172,6 @@ function createMap() {
       searchForVideos(map);
     }
   };
-}
-
-function addDirectionsListeners() {
-  document.getElementById('show-alternate-routes')
-      .addEventListener('click', () => {
-        toggleAlternateRoutes();
-      });
-  document.getElementById('show-expanded-routes')
-      .addEventListener('click', () => {
-        toggleExpandedRouteInfo();
-      });
 }
 
 // Recenter map to location searched and update current coordinates
