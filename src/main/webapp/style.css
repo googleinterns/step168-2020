@@ -31,7 +31,7 @@
   z-index: 9;
   position: absolute;
   display: none;
-  padding: .5%;
+  padding: 0.5%;
 }
 
 #video-overlay {
