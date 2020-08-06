@@ -123,9 +123,12 @@ const recoveredHeatmapData = [];
 const populationHeatmapData = [];
 // Create a map zoomed in on Googleplex
 function createMap() {
-  map = new google.maps.Map(
-      document.getElementById('map'),
-      {center: {lat: 39.496, lng: -99.031}, zoom: 5});
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 39.496, lng: -99.031},
+    zoom: 5,
+    mapTypeControl: false,
+    fullscreenControl: false,
+  });
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
