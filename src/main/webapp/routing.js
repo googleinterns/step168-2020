@@ -19,6 +19,8 @@
 let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
+const routeColors =
+    ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
 /**
  * Get route from Directions API
@@ -75,8 +77,18 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
  */
 function processRoute(mapObject, response, i) {
   routeLines.push({
-    route: new google.maps.DirectionsRenderer(
-        {map: mapObject, directions: response, routeIndex: i}),
+    route: new google.maps.DirectionsRenderer({
+      map: mapObject,
+      directions: response,
+      routeIndex: i,
+      options: {
+        polylineOptions: {
+          strokeColor: routeColors[i],
+          strokeOpacity: 1,
+          strokeWeight: 5,
+        },
+      },
+    }),
     active: 0,
   });
   const route = response.routes[i];
@@ -114,7 +126,7 @@ function processRoute(mapObject, response, i) {
     }
   }
   addTableRow(
-      'TEMP', routeLines[i].active, route.legs[0].distance.text,
+      routeColors[i], routeLines[i].active, route.legs[0].distance.text,
       route.legs[0].duration.text);
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
 }
@@ -122,16 +134,19 @@ function processRoute(mapObject, response, i) {
 function resetRouteTable() {
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
-  for (let i = 0; i < table.rows.length; i++) {
+  const length = table.rows.length;
+  for (let i = 0; i < length; i++) {
+    console.log(`Delete row ${i} ${table.rows.length}`);
     table.deleteRow(0);
   }
 }
 
 function addTableRow(color, cases, distance, time) {
+  console.log('Add table row', color, cases, distance, time);
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
   const row = table.insertRow();
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     row.insertCell();
   }
   row.cells[0].textContent = color;
@@ -139,6 +154,7 @@ function addTableRow(color, cases, distance, time) {
   row.cells[2].textContent = distance;
   row.cells[3].textContent = time;
 }
+
 
 /**
  * Make route markers hidden
@@ -166,6 +182,13 @@ function hideAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       routeLines[i].route.setMap(null);
+      routeLines[i].route.setOptions({
+        polylineOptions: {
+          strokeColor: routeColors[i],
+          strokeOpacity: 0.5,
+          strokeWeight: 3,
+        },
+      });
     }
   }
 }
