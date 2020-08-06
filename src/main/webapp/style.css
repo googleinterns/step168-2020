@@ -13,18 +13,6 @@
   z-index: 5;
 }
 
-/* #search-content {
-  position: absolute;
-  top: 10px;
-  left: 620px;
-  z-index: 5;
-}
-
-#seach-content-submit {
-  height: 40px;
-  left: 680px;
-} */
-
 #search-text {
   height: 35px;
 }
@@ -43,7 +31,7 @@
   z-index: 9;
   position: absolute;
   display: none;
-  padding: .5%;
+  padding: 0.5%;
 }
 
 #video-overlay {

@@ -161,23 +161,25 @@ function createMap() {
   document.getElementById('directions-search').addEventListener('click', () => {
     calculateAndDisplayRoute(directionsService, map);
   });
-  document.getElementById('search-content-submit').addEventListener('click', () => {
-    const searchContent = document.getElementById('search-content');
-    if (searchContent === '') {
-      searchForVideos(map, 'COVID-19');
-    } else {
-      searchForVideos(map, searchContent);
-    }
-  });  
+  document.getElementById('search-content-submit')
+      .addEventListener('click', () => {
+        const searched = document.getElementById('search-content').value;
+        if (searched === '') {
+          searchForVideos(map, 'COVID-19');
+        } else {
+          searchForVideos(map, searched);
+        }
+      });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      const searchContent = document.getElementById('search-content');
-      if (searchContent === '') {
+      const searched = document.getElementById('search-content').value;
+      console.log(searched);
+      if (searched === '') {
         searchForVideos(map, 'COVID-19');
       } else {
-          console.log(searchContent)
-        searchForVideos(map, searchContent);
+        console.log(searched);
+        searchForVideos(map, searched);
       }
     }
   };
