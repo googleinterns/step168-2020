@@ -10,8 +10,8 @@ class VideoPlayer {
     this.videoIds = [];
     this.currentVideo = 0;
     this.player = new YT.Player('video', {
-      height: window.innerHeight,
-      width: window.innerWidth,
+      height: window.innerHeight * .6,
+      width: window.innerWidth * .4,
       events: {
         'onStateChange': (event) => {
           this.onVidsoStateChange(event);
@@ -42,6 +42,7 @@ class VideoPlayer {
     }
     this.player.loadVideoById(this.videoIds[this.currentVideo]);
     document.getElementById('video-overlay').style.display = 'block';
+    document.getElementById('video-background').style.display = 'block';
   }
 
   /**
@@ -77,13 +78,14 @@ class VideoPlayer {
     this.currentVideo = 0;
     this.player.stopVideo();
     document.getElementById('video-overlay').style.display = 'none';
+    document.getElementById('video-background').style.display = 'none';
   }
 
   /**
    * Set video width and height to current window size
    */
   resizeVideo() {
-    this.player.setSize(window.innerWidth, window.innerHeight);
+    this.player.setSize(window.innerWidth * .4, window.innerHeight * .6);
   }
 
   /**
