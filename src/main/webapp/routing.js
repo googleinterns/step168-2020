@@ -79,14 +79,12 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           }
           console.log('Route Scores:', score);
           chosenRoute = score.indexOf(Math.min(...score));
-          const minCases = routeLines[chosenRoute].active;
           changeSelectedRoute(chosenRoute);
           if (!document.getElementById('show-alternate-routes').checked) {
             hideAlternateRoutes();
           }
           document.getElementById('show-expanded-routes').checked = true;
           showRouteInfo();
-          document.getElementById('route-active-count').textContent = minCases;
         } else {
           window.alert('Directions request failed due to ' + status);
         }
@@ -220,6 +218,8 @@ function changeSelectedRoute(route) {
     showAlternateRoutes();
   }
   document.getElementById('route-selector').value = route;
+  document.getElementById('route-active-count').textContent =
+      routeLines[route].active;
 }
 
 /**
