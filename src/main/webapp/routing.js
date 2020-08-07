@@ -61,16 +61,26 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
         routeMarkers = [];
         if (status === 'OK') {
           resetRouteTable();
+          const active = [];
+          const distance = [];
+          const time = [];
           for (let i = 0; i < response.routes.length; i++) {
-            processRoute(mapObject, response, i);
+            const values = processRoute(mapObject, response, i);
+            active.push(values[0]);
+            distance.push(values[1]);
+            time.push(values[2]);
           }
+          const activeDiff = percentDifference(active);
+          const distanceDiff = percentDifference(distance);
+          const timeDiff = percentDifference(time);
           let minCases = null;
-          for (let i = 0; i < routeLines.length; i++) {
-            if (minCases === null || routeLines[i].active < minCases) {
-              minCases = routeLines[i].active;
-              chosenRoute = i;
-            }
+          const score = [];
+          for (let i = 0; i < activeDiff.length; i++) {
+            score.push(activeDiff[i] + distanceDiff[i] + timeDiff[i]);
           }
+          console.log('Route Scores:', score);
+          chosenRoute = score.indexOf(Math.min(...score));
+          minCases = routeLines[chosenRoute].active;
           changeSelectedRoute(chosenRoute);
           if (!document.getElementById('show-alternate-routes').checked) {
             hideAlternateRoutes();
@@ -147,6 +157,11 @@ function processRoute(mapObject, response, i) {
       routeColors[i], routeLines[i].active, route.legs[0].distance.text,
       route.legs[0].duration.text);
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
+  return [
+    routeLines[i].active,
+    route.legs[0].distance.value,
+    route.legs[0].duration.value,
+  ];
 }
 
 function resetRouteTable() {
@@ -199,6 +214,14 @@ function changeSelectedRoute(route) {
   document.getElementById('route-selector').value = route;
 }
 
+function percentDifference(values) {
+  const minVal = Math.min(...values);
+  const percents = [];
+  for (let i = 0; i < values.length; i++) {
+    percents.push((values[i] / minVal));
+  }
+  return percents;
+}
 
 /**
  * Make route markers hidden
