@@ -59,8 +59,8 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           routeMarkers[i].setMap(null);
         }
         routeMarkers = [];
+        resetRouteTable();
         if (status === 'OK') {
-          resetRouteTable();
           const active = [];
           const distance = [];
           const time = [];
@@ -73,14 +73,13 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           const activeDiff = percentDifference(active);
           const distanceDiff = percentDifference(distance);
           const timeDiff = percentDifference(time);
-          let minCases = null;
           const score = [];
           for (let i = 0; i < activeDiff.length; i++) {
             score.push(activeDiff[i] + distanceDiff[i] + timeDiff[i]);
           }
           console.log('Route Scores:', score);
           chosenRoute = score.indexOf(Math.min(...score));
-          minCases = routeLines[chosenRoute].active;
+          const minCases = routeLines[chosenRoute].active;
           changeSelectedRoute(chosenRoute);
           if (!document.getElementById('show-alternate-routes').checked) {
             hideAlternateRoutes();
@@ -164,6 +163,9 @@ function processRoute(mapObject, response, i) {
   ];
 }
 
+/**
+ * Clear epanded route info table
+ */
 function resetRouteTable() {
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
@@ -175,6 +177,9 @@ function resetRouteTable() {
   }
 }
 
+/**
+ * Add row to expanded table with route color, cases, distance, and time
+ */
 function addTableRow(color, cases, distance, time) {
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
@@ -193,6 +198,9 @@ function addTableRow(color, cases, distance, time) {
   row.cells[3].textContent = time;
 }
 
+/**
+ * Changes chosen route and shows alternate routes
+ */
 function changeSelectedRoute(route) {
   chosenRoute = route;
   for (let i = 0; i < routeLines.length; i++) {
@@ -214,6 +222,9 @@ function changeSelectedRoute(route) {
   document.getElementById('route-selector').value = route;
 }
 
+/**
+ * Return value / min value for each value in values
+ */
 function percentDifference(values) {
   const minVal = Math.min(...values);
   const percents = [];
@@ -262,6 +273,9 @@ function showAlternateRoutes() {
   }
 }
 
+/**
+ * Show alternate routes if checkbox checked and hide if not
+ */
 function toggleAlternateRoutes() {
   if (document.getElementById('show-alternate-routes').checked) {
     showAlternateRoutes();
@@ -270,14 +284,23 @@ function toggleAlternateRoutes() {
   }
 }
 
+/**
+ * Make table with distance, time, and active cases of each route visible
+ */
 function showRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'block';
 }
 
+/**
+ * Make table with distance, time, and active cases of each route hidden
+ */
 function hideRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'none';
 }
 
+/**
+ * Show expanded route info if checkbox checked and hide if not
+ */
 function toggleExpandedRouteInfo() {
   if (document.getElementById('show-expanded-routes').checked) {
     showRouteInfo();
