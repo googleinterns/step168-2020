@@ -213,47 +213,44 @@ function createMap() {
 }
 
 function initMyLocationControl(map) {
-  document.getElementById('myLocation').onclick = () => {
-    gotoUserLocation(map);
-  }
-  map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(
-    document.querySelector(".my-location")
-  );
+  document.getElementById('myLocation').onclick =
+      () => {
+        gotoUserLocation(map);
+      } map.controls[google.maps.ControlPosition.RIGHT_BOTTOM]
+                .push(document.querySelector('.my-location'));
 }
 
 function initTopBar(map) {
   map.controls[google.maps.ControlPosition.LEFT_TOP].push(
-    document.querySelector(".topnav")
-  );
+      document.querySelector('.topnav'));
 }
 
 function initStatsDisplay(map) {
   map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
-    document.querySelector(".covidStats")
-  );
+      document.querySelector('.covidStats'));
 }
 
 function openNav() {
-  document.getElementById("myNav").style.width = "12.5%";
+  document.getElementById('myNav').style.width = '12.5%';
   document.getElementById('dim').classList.toggle('fade');
 }
 
 function closeNav() {
-  document.getElementById("myNav").style.width = "0%";
+  document.getElementById('myNav').style.width = '0%';
   document.getElementById('dim').classList.toggle('fade');
 }
 
-var coll = document.getElementsByClassName("expand");
+var coll = document.getElementsByClassName('expand');
 var i;
 for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
+  coll[i].addEventListener('click', function() {
+    this.classList.toggle('active');
     var content = this.nextElementSibling;
-    if (content.style.maxHeight){
+    if (content.style.maxHeight) {
       content.style.maxHeight = null;
     } else {
-      content.style.maxHeight = content.scrollHeight + "px";
-    } 
+      content.style.maxHeight = content.scrollHeight + 'px';
+    }
   });
 }
 
