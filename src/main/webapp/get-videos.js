@@ -30,6 +30,7 @@ function executeSearch(map) {
         // the legends shows how far 200 miles is)
         'locationRadius': 6400 * Math.pow(.5, map.getZoom()) + 'mi',
         'q': 'COVID-19',
+        'maxResults': 50,
         'type': ['video'],
       })
       .then(
