@@ -201,6 +201,12 @@ function createMap() {
   document.getElementById('stats').addEventListener('click', () => {
     toggleStats();
   });
+  document.getElementById('openOverlay').addEventListener('click', () => {
+    openNav();
+  });
+  document.getElementById('closebtn').addEventListener('click', () => {
+    closeNav();
+  });
   document.getElementById('heatMapType').addEventListener('change', () => {
     changeHeat();
   });
@@ -240,12 +246,12 @@ function closeNav() {
   document.getElementById('dim').classList.toggle('fade');
 }
 
-var coll = document.getElementsByClassName('expand');
-var i;
+const coll = document.getElementsByClassName('expand');
+let i;
 for (i = 0; i < coll.length; i++) {
   coll[i].addEventListener('click', function() {
     this.classList.toggle('active');
-    var content = this.nextElementSibling;
+    const content = this.nextElementSibling;
     if (content.style.maxHeight) {
       content.style.maxHeight = null;
     } else {

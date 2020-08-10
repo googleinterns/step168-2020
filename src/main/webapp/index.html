@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <title>Video Map</title>
     <link rel="stylesheet" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <script src="apikeys.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script id="mapUrl"></script>
@@ -48,23 +45,17 @@
 
     <div class="noDisplay">
       <div class="controls my-location">
-        <button type="button" id="myLocation">
-          <i class="material-icons">my_location</i>
-        </button>
+        <button type="button" id="myLocation"><i class="material-icons">my_location</i></button>
       </div>
     </div>
 
     <div class="noDisplay">
       <div class="controls topnav">
-        <span id="openOverlay" onclick="openNav()">&#9776;</span>
+        <span id="openOverlay">&#9776;</span>
         <div class="search-container">
           <input type="text" placeholder="Search VideoMap" id="search-text" />
-          <button type="button" id="search-submit">
-            <i class="material-icons">place</i>
-          </button>
-          <button type="button" id="videos">
-            <i class="material-icons">local_movies</i>
-          </button>
+          <button type="button" id="search-submit"><i class="material-icons">place</i></button>
+          <button type="button" id="videos"><i class="material-icons">local_movies</i></button>
         </div>
       </div>
     </div>
@@ -82,17 +73,11 @@
           <span class="yellow">a</span>
           <span class="green">p</span>
         </div>
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
-          >&times;</a
-        >
+        <a id="closebtn" href="javascript:void(0)" class="closebtn">&times;</a>
         <hr class="horizontal" />
 
-        <button type="button" class="tab" id="stats">
-          <i class="material-icons">rate_review</i> Statistics
-        </button>
-        <button type="button" class="tab expand" id="hmap">
-          <i class="material-icons">map</i> Heat Map
-        </button>
+        <button type="button" class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
+        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
         <div class="content">
           <button type="button" id="toggle-heat">Toggle Heatmap</button>
           <select id="heatMapType">
@@ -103,26 +88,16 @@
             <option value="population">Show Per-Capita Cases Heatmap </option>
           </select>
         </div>
-        <button type="button" class="tab expand" id="route">
-          <i class="material-icons">directions</i> Directions
-        </button>
+        <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content">
           <div id="routing">
             <p>Directions</p>
             <input type="text" id="start" placeholder="Start" />
             <input type="text" id="end" placeholder="End" />
-            <button type="button" id="directions-search">Directions</button
-            ><br />
-            <button type="button" onclick="hideAlternateRoutes()">
-              Hide Alternate Routes
-            </button>
-            <button type="button" onclick="showAlternateRoutes()">
-              Show Alternate Routes
-            </button>
-            <p>
-              There are <span id="route-active-count">0</span> active cases
-              along the chosen route
-            </p>
+            <button type="button" id="directions-search">Directions</button><br />
+            <button type="button" onclick="hideAlternateRoutes()">Hide Alternate Routes</button>
+            <button type="button" onclick="showAlternateRoutes()">Show Alternate Routes</button>
+            <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
           </div>
         </div>
       </div>
