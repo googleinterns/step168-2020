@@ -13,12 +13,15 @@
 // limitations under the License.
 
 /* exported calculateAndDisplayRoute addDirectionsListeners hideRouteMarkers
- * showRouteMarkers */
+ * showRouteMarkers getRouteLink */
 /* globals casesData map */
 
+const NUM_WAYPOINTS = 10;
 let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
+let routeStart = '';
+let routeEnd = '';
 const routeColors =
     ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
@@ -42,10 +45,12 @@ function addDirectionsListeners() {
  * Display route with fewest cases
  */
 function calculateAndDisplayRoute(directionsService, mapObject) {
+  routeStart = document.getElementById('start').value;
+  routeEnd = document.getElementById('end').value;
   directionsService.route(
       {
-        origin: {query: document.getElementById('start').value},
-        destination: {query: document.getElementById('end').value},
+        origin: {query: routeStart},
+        destination: {query: routeEnd},
         travelMode: google.maps.TravelMode.DRIVING,
         provideRouteAlternatives: true,
       },
@@ -60,6 +65,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
         }
         routeMarkers = [];
         resetRouteTable();
+
         if (status === 'OK') {
           const active = [];
           const distance = [];
@@ -101,6 +107,9 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
  * hidden by default
  */
 function processRoute(mapObject, response, i) {
+  const route = response.routes[i];
+  const counted = [];
+  const points = route.overview_path;
   routeLines.push({
     route: new google.maps.DirectionsRenderer({
       map: mapObject,
@@ -115,12 +124,14 @@ function processRoute(mapObject, response, i) {
       },
     }),
     active: 0,
+    waypoints: [],
   });
-  const route = response.routes[i];
-  const counted = [];
-  const points = route.overview_path;
+  const waypointInterval = Math.floor(points.length / NUM_WAYPOINTS) - 1;
+  console.log(waypointInterval);
   for (let j = 0; j < points.length; j += 1) {
-    const latLng = new google.maps.LatLng(points[j].lat(), points[j].lng());
+    const lat = points[j].lat();
+    const lng = points[j].lng();
+    const latLng = new google.maps.LatLng(lat, lng);
     const marker = new google.maps.Marker({
       position: latLng,
       icon: {
@@ -130,6 +141,12 @@ function processRoute(mapObject, response, i) {
     });
     marker.setMap(map);
     routeMarkers.push(marker);
+    if (j % waypointInterval === 0) {
+      routeLines[i].waypoints.push({
+        'lat': lat,
+        'lng': lng,
+      });
+    }
     const closest = findClosest(points[j].lat(), points[j].lng());
     let duplicate = false;
     for (let k = 0; k < counted.length; k++) {
@@ -324,4 +341,19 @@ function findClosest(lat, lng) {
     }
   }
   return closest;
+}
+
+function getRouteLink() {
+  let link = 'https://www.google.com/maps/dir/?api=1';
+  link += '&origin=' + routeStart;
+  link += '&destination=' + routeEnd;
+  link += '&waypoints=';
+  const waypoints = routeLines[chosenRoute].waypoints;
+  for (let i = 0; i < waypoints.length; i++) {
+    if (i > 0) {
+      link += '|';
+    }
+    link += waypoints[i].lat + ',' + waypoints[i].lng;
+  }
+  return link;
 }
