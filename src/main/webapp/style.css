@@ -21,12 +21,25 @@
   height: 40px;
 }
 
+#video-background {
+  top: 20%;
+  left: 50%;
+  width: 40%;
+  height: 60%;
+  background-color: whitesmoke;
+  border-radius: 1%;
+  z-index: 9;
+  position: absolute;
+  display: none;
+  padding: 0.5%;
+}
+
 #video-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
   z-index: 10;
   display: none;
+  align-items: center;
+  justify-content: center;
 }
 
 #video-controls {
@@ -45,6 +58,22 @@
   width: 20%;
 }
 
+#toggle-heat {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 21px;
+  right: 90px;
+}
+
+#heatMapType {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 22px;
+  right: 210px;
+}
+
 #my-location {
   position: absolute;
   display: inline-block;
@@ -57,7 +86,7 @@
   display: inline-block;
   z-index: 5;
   top: 60px;
-  left: 127px;
+  left: 133px;
 }
 
 #location {
