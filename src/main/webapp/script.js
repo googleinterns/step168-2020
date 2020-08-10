@@ -213,11 +213,11 @@ function createMap() {
 }
 
 function initMyLocationControl(map) {
-  document.getElementById('myLocation').onclick =
-      () => {
-        gotoUserLocation(map);
-      } map.controls[google.maps.ControlPosition.RIGHT_BOTTOM]
-                .push(document.querySelector('.my-location'));
+  document.getElementById('myLocation').addEventListener('click', () => {
+    gotoUserLocation(map);
+  });
+  map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(
+      document.querySelector('.my-location'));
 }
 
 function initTopBar(map) {
@@ -268,7 +268,6 @@ function toggleStats() {
   document.getElementById('covidStats').classList.toggle('inactive');
 }
 
-// Switch heatmap to show user chosen statistic
 function changeHeat() {
   const userChoice = document.getElementById('heatMapType').value;
   if (userChoice == 'confirmed') {
