@@ -229,6 +229,7 @@ function createMap() {
   };
 }
 
+// Put my location icon in bottom left corner
 function initMyLocationControl(map) {
   document.getElementById('myLocation').addEventListener('click', () => {
     gotoUserLocation(map);
@@ -237,26 +238,31 @@ function initMyLocationControl(map) {
       document.querySelector('.my-location'));
 }
 
+// Put navigation in top left corner
 function initTopBar(map) {
   map.controls[google.maps.ControlPosition.LEFT_TOP].push(
       document.querySelector('.topnav'));
 }
 
+// Put stats in top right corner
 function initStatsDisplay(map) {
   map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
       document.querySelector('.covidStats'));
 }
 
+// Display menu and dim map
 function openNav() {
   document.getElementById('myNav').style.width = '12.5%';
   document.getElementById('dim').classList.toggle('fade');
 }
 
+// Close menu and fade out dim
 function closeNav() {
   document.getElementById('myNav').style.width = '0%';
   document.getElementById('dim').classList.toggle('fade');
 }
 
+// Init each menu tab, opening up when clicked
 const coll = document.getElementsByClassName('expand');
 let i;
 for (i = 0; i < coll.length; i++) {
@@ -280,11 +286,13 @@ function toggleHeatMap() {
   }
 }
 
+// Toggle selected status and stats visability when menu button clicked
 function toggleStats() {
   document.getElementById('stats').classList.toggle('unselected');
   document.getElementById('covidStats').classList.toggle('inactive');
 }
 
+// Display type of data user selects
 function changeHeat() {
   const userChoice = document.getElementById('heatMapType').value;
   if (userChoice == 'confirmed') {
