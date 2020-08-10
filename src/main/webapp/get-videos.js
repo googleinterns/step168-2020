@@ -1,6 +1,6 @@
 /* exported searchForVideos */
 /* globals gapi, player */
-function searchForVideos(map) {
+function searchForVideos(map, searched) {
   gapi.client.setApiKey(keys.YOUTUBE_API_KEY);
   if (document.getElementById('latitude').value === '') {
     alert('No location found: Search or click somewhere on the map');
@@ -9,7 +9,7 @@ function searchForVideos(map) {
         .load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest')
         .then(
             function() {
-              executeSearch(map);
+              executeSearch(map, searched);
               console.log('load was successful');
             },
             function(err) {
@@ -19,7 +19,8 @@ function searchForVideos(map) {
 }
 // Make sure the client is loaded and sign-in is complete before calling this
 // method.
-function executeSearch(map) {
+function executeSearch(map, searchContent) {
+  console.log(searchContent);
   return gapi.client.youtube.search
       .list({
         'part': ['snippet'],
@@ -28,8 +29,8 @@ function executeSearch(map) {
         // the location radius is size of the legend provided in Google Maps
         // which changes based on the zoom of the map (i.e. at zoom === 5,
         // the legends shows how far 200 miles is)
-        'locationRadius': 6400 * Math.pow(.5, map.getZoom()) + 'mi',
-        'q': 'COVID-19',
+        'locationRadius': 3200 * Math.pow(.5, map.getZoom()) + 'mi',
+        'q': searchContent,
         'maxResults': 50,
         'type': ['video'],
       })
