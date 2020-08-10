@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Video Map</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="apikeys.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script id="mapUrl"></script>
@@ -27,38 +28,79 @@
       </div>
     </div>
 
-    <div id="search">
-      <input type="text" placeholder="Enter address here" id="search-text" />
-      <button type="button" id="search-submit">Search</button>
-    </div>
-    <button type="button" id="my-location">Go to my location</button>
-    <button type="button" id="videos">Show Videos</button>
-
-    <div id="routing">
-      <p>Directions</p>
-      <input type="text" id="start" placeholder="Start" />
-      <input type="text" id="end" placeholder="End" />
-      <button type="button" id="directions-search">Directions</button><br />
-      <button type="button" onclick="hideAlternateRoutes()">Hide Alternate Routes</button>
-      <button type="button" onclick="showAlternateRoutes()">Show Alternate Routes</button>
-      <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
+    <div style="display:none">
+      <input type="text" placeholder="Latitude" id="latitude" readonly />
+      <input type="text" placeholder="Longitude" id="longitude" readonly />
     </div>
 
-    <div id="covidStats">
-      <p id="location"></p>
-      <p id="displayActive"></p>
-      <p id="displayConfirmed"></p>
-      <p id="displayDeaths"></p>
-      <p id="displayRecovered"></p>
+    <div style="display:none">
+      <div class="controls covidStats" id="covidStats">
+        <p id="location"></p>
+        <p id="displayActive"></p>
+        <p id="displayConfirmed"></p>
+        <p id="displayDeaths"></p>
+        <p id="displayRecovered"></p>
+      </div>
     </div>
 
-    <button type="button" id="toggle-heat">Toggle Heatmap</button>
-    <select id="heatMapType">
-      <option value="confirmed">Show Confirmed Cases Heatmap </option>
-      <option value="active">Show Active Cases Heatmap </option>
-      <option value="deaths">Show Number of Deaths Heatmap </option>
-      <option value="recovered">Show Recovered Cases Heatmap </option>
-      <option value="population">Show Per-Capita Cases Heatmap </option>
-    </select>
+    <div style="display:none">
+      <div class="controls my-location">
+        <button type="button" id="myLocation"><i class="material-icons">my_location</i></button>
+      </div>
+    </div>
+    
+    <div style="display:none">
+      <div class="controls topnav">
+        <span id="openOverlay" onclick="openNav()">&#9776;</span>
+        <div class="search-container">
+          <input type="text" placeholder="Search VideoMap" id="search-text">
+          <button type="button" id="search-submit"><i class="material-icons">place</i></button>
+          <button type="button" id="videos"><i class="material-icons">local_movies</i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="dim"></div>
+    <div id="myNav" class="overlay">
+      <div class="overlay-content">
+        <div id="logo">
+          <span class="blue">V</span>
+          <span class="red">i</span>
+          <span class="yellow">d</span>
+          <span class="blue">e</span>
+          <span class="green">o</span>
+          <span class="red">M</span>
+          <span class="yellow">a</span>
+          <span class="green">p</span>
+        </div>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <hr class="horizontal">
+        
+        <button class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
+        <button class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
+        <div class="content">
+          <button type="button" id="toggle-heat">Toggle Heatmap</button>
+          <select id="heatMapType">
+            <option value="confirmed">Show Confirmed Cases Heatmap </option>
+            <option value="active">Show Active Cases Heatmap </option>
+            <option value="deaths">Show Number of Deaths Heatmap </option>
+            <option value="recovered">Show Recovered Cases Heatmap </option>
+            <option value="population">Show Per-Capita Cases Heatmap </option>
+          </select>
+        </div>
+        <button class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
+        <div class="content">
+          <div id="routing">
+            <p>Directions</p>
+            <input type="text" id="start" placeholder="Start" />
+            <input type="text" id="end" placeholder="End" />
+            <button type="button" id="directions-search">Directions</button><br />
+            <button type="button" onclick="hideAlternateRoutes()">Hide Alternate Routes</button>
+            <button type="button" onclick="showAlternateRoutes()">Show Alternate Routes</button>
+            <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

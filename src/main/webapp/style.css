@@ -1,24 +1,14 @@
+body {
+  font-family: 'Roboto';
+  font-size: 16px;
+}
+
 #map {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0px;
   left: 0px;
-}
-
-#search {
-  position: absolute;
-  top: 10px;
-  left: 210px;
-  z-index: 5;
-}
-
-#search-text {
-  height: 35px;
-}
-
-#search-submit {
-  height: 40px;
 }
 
 #video-overlay {
@@ -45,55 +35,240 @@
   width: 20%;
 }
 
-#toggle-heat {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 21px;
-  right: 90px;
-}
-
-#heatMapType {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 22px;
-  right: 210px;
-}
-
-#my-location {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 60px;
-}
-
-#videos {
-  position: absolute;
-  display: inline-block;
-  z-index: 5;
-  top: 60px;
-  left: 127px;
-}
-
 #location {
   text-align: center;
   font-size: 160%;
 }
 
 #covidStats {
-  position: absolute;
-  top: 90px;
-  z-index: 5;
   border-left: 6px solid white;
   background-color: whitesmoke;
+  font-size: 125%;
 }
 
-#routing {
+#covidStats.inactive {
+  z-index: -5;
+  opacity: 0;
+}
+
+#myLocation {
   position: absolute;
-  bottom: 30px;
-  left: 10px;
+  cursor: pointer;
+  background-color: white;
+  color: rgba(0, 0, 0, 0.6);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  border: none;
+  outline:none;
   z-index: 5;
-  width: 250px;
-  background-color: whitesmoke;
+  bottom: -79px;
+  right : 12px;
+}
+
+#myLocation:hover {
+  color: rgba(0, 0, 0, .9);
+}
+
+.material-icons {
+  vertical-align: middle;
+}
+
+#dim {
+  width: 100%;
+  height: 100%;
+  z-index: -5;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  transition: opacity 0.5s; 
+}
+
+#dim.fade {
+  opacity: 1;
+  z-index: 10;
+}
+
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  background-color: rgba(255,255,255, 1);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: absolute;
+  width: 100%;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 24px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+#logo {
+  position: absolute;
+  top: 15px;
+  left: 5px;
+  text-decoration: none;
+  font-size: 28px;
+  display: inline-block;
+  transition: 0.3s;
+}
+
+.horizontal {
+  height: 0.75px;
+  border-width: 0;
+  color: lightgray;
+  background-color: lightgray;
+  margin-top: 4em;
+}
+
+.blue {
+  color: #4285F4;
+  font-weight:bold;
+}
+
+.red {
+  color: #DB4437;
+  font-weight:bold;
+}
+
+.yellow {
+  color: #F4B400;
+  font-weight:bold;
+}
+
+.green {
+  color: #0F9D58;
+  font-weight:bold;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #4285F4;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  font-size: 36px;
+  top: 5px;
+  right: 0px;
+}
+
+#openOverlay {
+  font-size: 28px;
+  cursor: pointer;
+  float : left;
+  padding: 4px 12px 0px 12px;
+  z-index: 6;
+  position: relative;
+  color:#4d4d4d;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: white;
+  width: 15.5%;
+  z-index: 6;
+  position: absolute;
+  border-radius: 16px;
+  top: 5px;
+  right: 5px;
+}
+
+.topnav .search-container {
+  float: left;
+  z-index: 6;
+  position: relative;
+}
+
+.topnav input[type=text] {
+  padding: 8px 0px 0px 0px;
+  margin-top: 8px;
+  font-size: 17px;
+  border: none;
+  outline: none;
+  z-index: 6;
+  position: relative;
+  color: black;
+}
+
+::placeholder {
+  color: #d3d3d3;
+}
+
+.topnav .search-container button {
+  padding: 6px 10px 12px 10px;
+  background: white;
+  font-size: 28px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  z-index: 6;
+  position: relative;
+}
+
+.topnav .search-container > button:not(:last-child) {
+  border-right: 1px solid #d3d3d3;
+  box-sizing: border-box;
+}
+
+#search-submit {
+  color:#4285F4;
+}
+
+#videos {
+  color:#DB4437;
+}
+
+.tab {
+  border: none;
+  outline: none;
+  background-color: inherit;
+  padding: 28px 28px;
+  width: 100%;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+  color:#4d4d4d;
+  text-align: left;
+}
+
+.tab:hover, #stats, .active {
+  color: #4385F4;
+}
+
+#stats.unselected {
+  color:#4d4d4d;
+}
+
+.expand:after {
+  content: '\2207';
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: '\0394';
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
 }

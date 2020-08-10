@@ -28,6 +28,12 @@ window.onload = function() {
   createMap();
 };
 
+// Update currently displayed coordinates
+function displayLatitudeLongitude(value) {
+  document.getElementById('latitude').value = value['lat'];
+  document.getElementById('longitude').value = value['lng'];
+}
+
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
   const potentialReports = [];
@@ -123,6 +129,9 @@ function createMap() {
     mapTypeControl: false,
     fullscreenControl: false,
   });
+  initMyLocationControl(map);
+  initTopBar(map);
+  initStatsDisplay(map);
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
@@ -159,7 +168,7 @@ function createMap() {
     heatmap = new google.maps.visualization.HeatmapLayer({
       data: confirmedHeatmapData,
       dissipating: false,
-      map: map,
+      map: null,
       radius: 2.5,
     });
     // Display worldwide data initially
@@ -173,10 +182,8 @@ function createMap() {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
   });
-  document.getElementById('my-location').addEventListener('click', () => {
-    gotoUserLocation(map);
-  });
   map.addListener('click', function(mapsMouseEvent) {
+    displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
   });
   const directionsService = new google.maps.DirectionsService();
@@ -191,6 +198,9 @@ function createMap() {
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
   });
+  document.getElementById('stats').addEventListener('click', () => {
+    toggleStats();
+  });
   document.getElementById('heatMapType').addEventListener('change', () => {
     changeHeat();
   });
@@ -202,6 +212,51 @@ function createMap() {
   };
 }
 
+function initMyLocationControl(map) {
+  document.getElementById('myLocation').onclick = () => {
+    gotoUserLocation(map);
+  }
+  map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(
+    document.querySelector(".my-location")
+  );
+}
+
+function initTopBar(map) {
+  map.controls[google.maps.ControlPosition.LEFT_TOP].push(
+    document.querySelector(".topnav")
+  );
+}
+
+function initStatsDisplay(map) {
+  map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+    document.querySelector(".covidStats")
+  );
+}
+
+function openNav() {
+  document.getElementById("myNav").style.width = "12.5%";
+  document.getElementById('dim').classList.toggle('fade');
+}
+
+function closeNav() {
+  document.getElementById("myNav").style.width = "0%";
+  document.getElementById('dim').classList.toggle('fade');
+}
+
+var coll = document.getElementsByClassName("expand");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+  });
+}
+
 // Switch heat on and off
 function toggleHeatMap() {
   if (heatmap.getMap() == null) {
@@ -209,6 +264,11 @@ function toggleHeatMap() {
   } else {
     heatmap.setMap(null);
   }
+}
+
+function toggleStats() {
+  document.getElementById('stats').classList.toggle('unselected');
+  document.getElementById('covidStats').classList.toggle('inactive');
 }
 
 // Switch heatmap to show user chosen statistic
@@ -233,6 +293,7 @@ function getCoordsFromSearch(geocoder, map) {
   geocoder.geocode({address: address}, (results, status) => {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
+      displayLatitudeLongitude(results[0].geometry.location.toJSON());
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -271,6 +332,7 @@ function gotoUserLocation(map) {
     map.setCenter(location);
     const zoomLargeEnoughToShowMultipleCities = 8;
     map.setZoom(zoomLargeEnoughToShowMultipleCities);
+    displayLatitudeLongitude(location.toJSON());
   };
   const geoError = function(error) {
     console.log('Error occurred. Error code: ' + error.code);
