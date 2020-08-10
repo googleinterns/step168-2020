@@ -192,9 +192,15 @@ function createMap() {
   document.getElementById('directions-search').addEventListener('click', () => {
     calculateAndDisplayRoute(directionsService, map);
   });
-  document.getElementById('videos').addEventListener('click', () => {
-    searchForVideos(map);
-  });
+  document.getElementById('search-content-submit')
+      .addEventListener('click', () => {
+        const searched = document.getElementById('search-content').value;
+        if (searched === '') {
+          searchForVideos(map, 'COVID-19');
+        } else {
+          searchForVideos(map, searched);
+        }
+      });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
   });
@@ -213,7 +219,12 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      searchForVideos(map);
+      const searched = document.getElementById('search-content').value;
+      if (searched === '') {
+        searchForVideos(map, 'COVID-19');
+      } else {
+        searchForVideos(map, searched);
+      }
     }
   };
 }

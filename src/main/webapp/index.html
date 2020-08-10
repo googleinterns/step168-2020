@@ -19,18 +19,22 @@
   <body>
     <div id="map"></div>
 
-    <div id="video-overlay">
-      <div id="video"></div>
-      <div id="video-controls">
-        <button type="button" id="prev-video">Previous Video</button>
-        <button type="button" id="exit-video">Exit Video</button>
-        <button type="button" id="next-video">Next Video</button>
+    <div id="video-background">
+      <div id="video-overlay">
+        <div id="video"></div>
+        <div id="video-controls">
+          <button type="button" id="prev-video">Previous Video</button>
+          <button type="button" id="exit-video">Exit Video</button>
+          <button type="button" id="next-video">Next Video</button>
+        </div>
       </div>
     </div>
 
     <div class="noDisplay">
       <input type="text" placeholder="Latitude" id="latitude" readonly />
       <input type="text" placeholder="Longitude" id="longitude" readonly />
+      <input type="text" placeholder="Search" value="" id="search-content" />
+      <button type="button" id="search-content-submit">Show Videos</button>
     </div>
 
     <div class="noDisplay">
