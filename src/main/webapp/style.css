@@ -1,5 +1,5 @@
 body {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-size: 16px;
 }
 
@@ -64,14 +64,14 @@ body {
   box-sizing: border-box;
   border-radius: 2px;
   border: none;
-  outline:none;
+  outline: none;
   z-index: 5;
   bottom: -79px;
-  right : 12px;
+  right: 12px;
 }
 
 #myLocation:hover {
-  color: rgba(0, 0, 0, .9);
+  color: rgba(0, 0, 0, 0.9);
 }
 
 .material-icons {
@@ -86,9 +86,9 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   opacity: 0;
-  transition: opacity 0.5s; 
+  transition: opacity 0.5s;
 }
 
 #dim.fade {
@@ -103,7 +103,7 @@ body {
   z-index: 10;
   top: 0;
   left: 0;
-  background-color: rgba(255,255,255, 1);
+  background-color: rgba(255, 255, 255, 1);
   overflow-x: hidden;
   transition: 0.5s;
 }
@@ -141,27 +141,28 @@ body {
 }
 
 .blue {
-  color: #4285F4;
-  font-weight:bold;
+  color: #4285f4;
+  font-weight: bold;
 }
 
 .red {
-  color: #DB4437;
-  font-weight:bold;
+  color: #db4437;
+  font-weight: bold;
 }
 
 .yellow {
-  color: #F4B400;
-  font-weight:bold;
+  color: #f4b400;
+  font-weight: bold;
 }
 
 .green {
-  color: #0F9D58;
-  font-weight:bold;
+  color: #0f9d58;
+  font-weight: bold;
 }
 
-.overlay a:hover, .overlay a:focus {
-  color: #4285F4;
+.overlay a:hover,
+.overlay a:focus {
+  color: #4285f4;
 }
 
 .overlay .closebtn {
@@ -174,11 +175,11 @@ body {
 #openOverlay {
   font-size: 28px;
   cursor: pointer;
-  float : left;
+  float: left;
   padding: 4px 12px 0px 12px;
   z-index: 6;
   position: relative;
-  color:#4d4d4d;
+  color: #4d4d4d;
 }
 
 .topnav {
@@ -198,7 +199,7 @@ body {
   position: relative;
 }
 
-.topnav input[type=text] {
+.topnav input[type="text"] {
   padding: 8px 0px 0px 0px;
   margin-top: 8px;
   font-size: 17px;
@@ -230,11 +231,11 @@ body {
 }
 
 #search-submit {
-  color:#4285F4;
+  color: #4285f4;
 }
 
 #videos {
-  color:#DB4437;
+  color: #db4437;
 }
 
 .tab {
@@ -246,27 +247,29 @@ body {
   font-size: 16px;
   cursor: pointer;
   display: inline-block;
-  color:#4d4d4d;
+  color: #4d4d4d;
   text-align: left;
 }
 
-.tab:hover, #stats, .active {
-  color: #4385F4;
+.tab:hover,
+#stats,
+.active {
+  color: #4385f4;
 }
 
 #stats.unselected {
-  color:#4d4d4d;
+  color: #4d4d4d;
 }
 
 .expand:after {
-  content: '\2207';
+  content: "\2207";
   font-weight: bold;
   float: right;
   margin-left: 5px;
 }
 
 .active:after {
-  content: '\0394';
+  content: "\0394";
 }
 
 .content {
