@@ -28,12 +28,12 @@
       </div>
     </div>
 
-    <div style="display:none">
+    <div class="noDisplay">
       <input type="text" placeholder="Latitude" id="latitude" readonly />
       <input type="text" placeholder="Longitude" id="longitude" readonly />
     </div>
 
-    <div style="display:none">
+    <div class="noDisplay">
       <div class="controls covidStats" id="covidStats">
         <p id="location"></p>
         <p id="displayActive"></p>
@@ -43,13 +43,13 @@
       </div>
     </div>
 
-    <div style="display:none">
+    <div class="noDisplay">
       <div class="controls my-location">
         <button type="button" id="myLocation"><i class="material-icons">my_location</i></button>
       </div>
     </div>
-    
-    <div style="display:none">
+
+    <div class="noDisplay">
       <div class="controls topnav">
         <span id="openOverlay" onclick="openNav()">&#9776;</span>
         <div class="search-container">
@@ -75,9 +75,9 @@
         </div>
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <hr class="horizontal">
-        
-        <button class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
-        <button class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
+
+        <button type="button" class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
+        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
         <div class="content">
           <button type="button" id="toggle-heat">Toggle Heatmap</button>
           <select id="heatMapType">
@@ -88,7 +88,7 @@
             <option value="population">Show Per-Capita Cases Heatmap </option>
           </select>
         </div>
-        <button class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
+        <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content">
           <div id="routing">
             <p>Directions</p>

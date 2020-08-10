@@ -35,6 +35,10 @@ body {
   width: 20%;
 }
 
+.noDisplay {
+  display: none;
+}
+
 #location {
   text-align: center;
   font-size: 160%;
