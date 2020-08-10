@@ -353,6 +353,7 @@ function gotoUserLocation(map) {
     map.setCenter(location);
     const zoomLargeEnoughToShowMultipleCities = 8;
     map.setZoom(zoomLargeEnoughToShowMultipleCities);
+    displayLocationData(location.toJSON());
     displayLatitudeLongitude(location.toJSON());
   };
   const geoError = function(error) {
