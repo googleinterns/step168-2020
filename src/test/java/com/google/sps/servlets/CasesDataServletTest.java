@@ -76,6 +76,7 @@ public final class CasesDataServletTest {
     Assert.assertTrue(reportsJson.contains("\"confirmed\""));
     Assert.assertTrue(reportsJson.contains("\"deaths\""));
     Assert.assertTrue(reportsJson.contains("\"recovered\""));
+    Assert.assertTrue(reportsJson.contains("\"perCap\""));
   }
 
   @Test

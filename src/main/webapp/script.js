@@ -115,19 +115,42 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
       `Recovered: ${recovered}`;
 }
 
+// Initialize heat maps
+const confirmedHeatmapData = [];
+const activeHeatmapData = [];
+const deathsHeatmapData = [];
+const recoveredHeatmapData = [];
+const populationHeatmapData = [];
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(
       document.getElementById('map'),
       {center: {lat: 39.496, lng: -99.031}, zoom: 5});
-  // Gets active case data and displays as heat map
+  // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
-    const heatmapData = [];
     reports.forEach((report) => {
-      heatmapData.push({
+      confirmedHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
-        weight: report.active,
+        weight: report.confirmed,
+      });
+      if (report.active > -1) {
+        activeHeatmapData.push({
+          location: new google.maps.LatLng(report.lat, report.lng),
+          weight: report.active,
+        });
+      }
+      deathsHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.deaths,
+      });
+      recoveredHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.recovered,
+      });
+      populationHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.perCap,
       });
       // Calculate worldwide data
       globalActive += report.active;
@@ -135,8 +158,13 @@ function createMap() {
       globalDeaths += report.deaths;
       globalRecovered += report.recovered;
     });
-    heatmap = new google.maps.visualization.HeatmapLayer(
-        {data: heatmapData, dissipating: false, map: map});
+    // Initially display confirmed cases heat map
+    heatmap = new google.maps.visualization.HeatmapLayer({
+      data: confirmedHeatmapData,
+      dissipating: false,
+      map: map,
+      radius: 2.5,
+    });
     // Display worldwide data initially
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
@@ -170,19 +198,48 @@ function createMap() {
           searchForVideos(map, searched);
         }
       });
+  document.getElementById('toggle-heat').addEventListener('click', () => {
+    toggleHeatMap();
+  });
+  document.getElementById('heatMapType').addEventListener('change', () => {
+    changeHeat();
+  });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
       const searched = document.getElementById('search-content').value;
-      console.log(searched);
       if (searched === '') {
         searchForVideos(map, 'COVID-19');
       } else {
-        console.log(searched);
         searchForVideos(map, searched);
       }
     }
   };
+}
+
+// Switch heat on and off
+function toggleHeatMap() {
+  if (heatmap.getMap() == null) {
+    heatmap.setMap(map);
+  } else {
+    heatmap.setMap(null);
+  }
+}
+
+// Switch heatmap to show user chosen statistic
+function changeHeat() {
+  const userChoice = document.getElementById('heatMapType').value;
+  if (userChoice == 'confirmed') {
+    heatmap.setData(confirmedHeatmapData);
+  } else if (userChoice == 'active') {
+    heatmap.setData(activeHeatmapData);
+  } else if (userChoice == 'deaths') {
+    heatmap.setData(deathsHeatmapData);
+  } else if (userChoice == 'recovered') {
+    heatmap.setData(recoveredHeatmapData);
+  } else if (userChoice == 'population') {
+    heatmap.setData(populationHeatmapData);
+  }
 }
 
 // Recenter map to location searched and update current coordinates

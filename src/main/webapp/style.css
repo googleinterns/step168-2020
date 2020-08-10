@@ -58,6 +58,22 @@
   width: 20%;
 }
 
+#toggle-heat {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 21px;
+  right: 90px;
+}
+
+#heatMapType {
+  position: absolute;
+  display: inline-block;
+  z-index: 5;
+  top: 22px;
+  right: 210px;
+}
+
 #my-location {
   position: absolute;
   display: inline-block;
