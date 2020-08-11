@@ -252,7 +252,7 @@ function initStatsDisplay(map) {
 
 // Display menu and dim map
 function openNav() {
-  document.getElementById('myNav').style.width = '12.5%';
+  document.getElementById('myNav').style.width = '350px';
   document.getElementById('dim').classList.toggle('fade');
 }
 

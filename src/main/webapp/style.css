@@ -127,9 +127,9 @@ body {
 }
 
 .overlay a {
-  padding: 8px;
+  padding: 2.5%;
   text-decoration: none;
-  font-size: 24px;
+  font-size: 150%;
   color: #818181;
   display: block;
   transition: 0.3s;
@@ -140,7 +140,7 @@ body {
   top: 15px;
   left: 5px;
   text-decoration: none;
-  font-size: 28px;
+  font-size: 175%;
   display: inline-block;
   transition: 0.3s;
 }
@@ -180,7 +180,7 @@ body {
 
 .overlay .closebtn {
   position: absolute;
-  font-size: 36px;
+  font-size: 225%;
   top: 5px;
   right: 0px;
 }
@@ -198,7 +198,7 @@ body {
 .topnav {
   overflow: hidden;
   background-color: white;
-  width: 15.5%;
+  width: 397px;
   z-index: 6;
   position: absolute;
   border-radius: 16px;
