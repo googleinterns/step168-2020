@@ -34,6 +34,9 @@ function addDirectionsListeners() {
       .addEventListener('click', () => {
         toggleExpandedRouteInfo();
       });
+  document.getElementById('open-map-link').addEventListener('click', () => {
+    window.open(getRouteLink(), '_blank');
+  });
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
   });
@@ -355,5 +358,5 @@ function getRouteLink() {
     }
     link += waypoints[i].lat + ',' + waypoints[i].lng;
   }
-  return link;
+  return encodeURI(link);
 }
