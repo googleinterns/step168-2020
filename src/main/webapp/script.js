@@ -480,3 +480,7 @@ function gotoUserLocation(map) {
 
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }
+
+$ ('#video-background').draggable( {
+  cursor: 'move'
+});
