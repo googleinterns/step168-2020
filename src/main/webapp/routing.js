@@ -26,6 +26,12 @@ const routeColors =
     ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
 function addDirectionsListeners() {
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+  document.getElementById('directions-search').addEventListener('click', () => {
+    calculateAndDisplayRoute(directionsService, map);
+  });
   document.getElementById('show-alternate-routes')
       .addEventListener('click', () => {
         toggleAlternateRoutes();
@@ -57,11 +63,12 @@ function addDirectionsListeners() {
 function calculateAndDisplayRoute(directionsService, mapObject) {
   routeStart = document.getElementById('start').value;
   routeEnd = document.getElementById('end').value;
+  const selectedMode = document.getElementById('travel-mode').value;
   directionsService.route(
       {
         origin: {query: routeStart},
         destination: {query: routeEnd},
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode[selectedMode],
         provideRouteAlternatives: true,
       },
       (response, status) => {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute
+/* globals VideoPlayer, searchForVideos
    addDirectionsListeners */
 /* exported casesData */
 
@@ -156,12 +156,6 @@ function createMap() {
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
-  });
-  const directionsService = new google.maps.DirectionsService();
-  const directionsRenderer = new google.maps.DirectionsRenderer();
-  directionsRenderer.setMap(map);
-  document.getElementById('directions-search').addEventListener('click', () => {
-    calculateAndDisplayRoute(directionsService, map);
   });
   document.getElementById('videos').addEventListener('click', () => {
     searchForVideos(map);
