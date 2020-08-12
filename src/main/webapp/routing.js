@@ -35,7 +35,14 @@ function addDirectionsListeners() {
         toggleExpandedRouteInfo();
       });
   document.getElementById('open-map-link').addEventListener('click', () => {
-    window.open(getRouteLink(), '_blank');
+    window.open(encodeURI(getRouteLink()), '_blank');
+  });
+  document.getElementById('open-map-email').addEventListener('click', () => {
+    const LINE_BREAK = '%0D%0A';
+    let body = 'Click on the link below to open in Google Maps:';
+    body += LINE_BREAK + LINE_BREAK;
+    body += encodeURIComponent(encodeURI(getRouteLink()));
+    window.open('mailto:?subject=Videomap Route&body=' + body);
   });
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
@@ -350,6 +357,7 @@ function getRouteLink() {
   let link = 'https://www.google.com/maps/dir/?api=1';
   link += '&origin=' + routeStart;
   link += '&destination=' + routeEnd;
+  link += '&travelmode=driving';
   link += '&waypoints=';
   const waypoints = routeLines[chosenRoute].waypoints;
   for (let i = 0; i < waypoints.length; i++) {
@@ -358,5 +366,6 @@ function getRouteLink() {
     }
     link += waypoints[i].lat + ',' + waypoints[i].lng;
   }
-  return encodeURI(link);
+  console.log('Link', encodeURI(link));
+  return link;
 }
