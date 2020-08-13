@@ -281,8 +281,10 @@ for (i = 0; i < coll.length; i++) {
 function toggleHeatMap() {
   if (heatmap.getMap() == null) {
     heatmap.setMap(map);
+    document.getElementById('toggle-heat').style.color = 'white';
   } else {
     heatmap.setMap(null);
+    document.getElementById('toggle-heat').style.color = '#f4b400';
   }
 }
 

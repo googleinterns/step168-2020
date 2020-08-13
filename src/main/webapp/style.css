@@ -61,6 +61,7 @@ body {
   border-left: 6px solid white;
   background-color: whitesmoke;
   font-size: 125%;
+  padding: 0% 0.5% 0% 0.5%;
 }
 
 #covidStats.inactive {
@@ -223,7 +224,7 @@ body {
   color: black;
 }
 
-::placeholder {
+.topnav input[type='text']::placeholder {
   color: #d3d3d3;
 }
 
@@ -267,7 +268,7 @@ body {
 .tab:hover,
 #stats,
 .active {
-  color: #4385f4;
+  color: #4285f4;
 }
 
 #stats.unselected {
@@ -290,5 +291,98 @@ body {
   max-height: 0px;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
-  background-color: #f1f1f1;
+  background-color: #4285f4;
+  color: white;
+  font-family: 'Roboto';
+  font-size: 16px;
+}
+
+#heatMapType {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: inherit;
+  color: whitesmoke;
+  font-size: 100%;
+}
+
+#heatMapType:hover {
+  color: white;
+}
+
+#toggle-heat {
+  float: right;
+}
+
+.inputdata {
+  padding: 0px 36px 0px 0px;
+}
+
+.routing-icons {
+  color: white;
+}
+
+.content input[type='text'] {
+  padding: 16px 0px 0px 0px;
+  margin-top: 8px;
+  font-size: 95%;
+  border: none;
+  outline: none;
+  z-index: 6;
+  position: relative;
+  color: white;
+  background: #4285f4;
+  width: 88%;
+}
+
+.content input[type='text']::placeholder {
+  font-size: 95%;
+  color: #d3d3d3;
+}
+
+.content.routingHorizontal {
+  height: 0.5px;
+  color: white;
+  background-color: white;
+}
+
+#directions-search {
+  position: relative;
+  bottom: 35px;
+  left: 5px;
+  background: #4285f4;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  z-index: 6;
+  color: whitesmoke;
+  float: right;
+  padding: 0px 0px 0px 8px;
+}
+
+#directions-search:hover {
+  color: white;
+}
+
+.contentToggle {
+  border: none;
+  outline: none;
+  background-color: inherit;
+  cursor: pointer;
+  display: inline-block;
+  color: #f4b400;
+}
+
+#alternateRoutes {
+  width: 88%;
+  text-align: left;
+  padding: 16px 0px 0px 0px;
+}
+
+.contentToggle:hover {
+  color: white;
+}
+
+#directionsInfo {
+  padding: 16px 0px 0px 0px;
 }

@@ -152,6 +152,23 @@ function showAlternateRoutes() {
   }
 }
 
+function toggleAlternateRoutes() {
+  for (let i = 0; i < routeLines.length; i++) {
+    if (i != chosenRoute) {
+      if (routeLines[i].route.getMap() == null) {
+        routeLines[i].route.setMap(map)
+        document.getElementById('alternateRoutes').style.color = 'white';
+      } else {
+        routeLines[i].route.setMap(null);
+        document.getElementById('alternateRoutes').style.color = '#f4b400';
+      }
+    }
+  }
+}
+
+document.getElementById('alternateRoutes').addEventListener('click', () => {
+  toggleAlternateRoutes();
+});
 /**
  * Return the case with latitude and longotude closest to given
  */

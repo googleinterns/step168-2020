@@ -83,24 +83,32 @@
         <button type="button" class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
         <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
         <div class="content">
-          <button type="button" id="toggle-heat">Toggle Heatmap</button>
           <select id="heatMapType">
-            <option value="confirmed">Show Confirmed Cases Heatmap </option>
-            <option value="active">Show Active Cases Heatmap </option>
-            <option value="deaths">Show Number of Deaths Heatmap </option>
-            <option value="recovered">Show Recovered Cases Heatmap </option>
-            <option value="population">Show Per-Capita Cases Heatmap </option>
+            <option value="confirmed">Show Confirmed Cases </option>
+            <option value="active">Show Active Cases </option>
+            <option value="deaths">Show Number of Deaths </option>
+            <option value="recovered">Show Recovered Cases </option>
+            <option value="population">Show Per-Capita Cases </option>
           </select>
+          <button type="button" class="contentToggle" id="toggle-heat">
+            <i class="material-icons">layers</i> Heat Map
+          </button>
         </div>
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content">
-          <div id="routing">
-            <p>Directions</p>
-            <input type="text" id="start" placeholder="Start" />
-            <input type="text" id="end" placeholder="End" />
-            <button type="button" id="directions-search">Directions</button><br />
-            <button type="button" onclick="hideAlternateRoutes()">Hide Alternate Routes</button>
-            <button type="button" onclick="showAlternateRoutes()">Show Alternate Routes</button>
+          <div class="inputdata">
+            <i class="material-icons routing-icons">person_pin</i>
+            <input type="text" id="start" placeholder="Choose starting point" />
+            <hr class="rountingHorizontal" />
+            <i class="material-icons routing-icons">pin_drop</i>
+            <input type="text" id="end" placeholder="Choose destination" />
+            <hr class="rountingHorizontal" />
+          </div>
+          <button type="button" id="directions-search"><i class="material-icons">beenhere</i></button>
+          <button type="button" class="contentToggle" id="alternateRoutes">
+            <i class="material-icons">navigation</i> Alternate Routes
+          </button>
+          <div id="directionsInfo">
             <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
           </div>
         </div>
