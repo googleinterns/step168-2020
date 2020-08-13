@@ -152,6 +152,9 @@ function showAlternateRoutes() {
   }
 }
 
+/**
+ * Switch alternate routes on and off
+ */
 function toggleAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
@@ -166,9 +169,13 @@ function toggleAlternateRoutes() {
   }
 }
 
+/**
+ * Set button to toggle alternate routes
+ */
 document.getElementById('alternateRoutes').addEventListener('click', () => {
   toggleAlternateRoutes();
 });
+
 /**
  * Return the case with latitude and longotude closest to given
  */
