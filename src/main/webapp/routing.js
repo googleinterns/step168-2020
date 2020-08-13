@@ -26,12 +26,10 @@ const routeColors =
     ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
 function addDirectionsListeners() {
-  console.log("Directions listeners")
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
   document.getElementById('directions-search').addEventListener('click', () => {
-    console.log("Directions");
     calculateAndDisplayRoute(directionsService, map);
   });
   document.getElementById('show-alternate-routes')

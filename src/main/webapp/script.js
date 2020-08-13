@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /* globals VideoPlayer, searchForVideos
-   addDirectionsListeners */
+   addDirectionsListeners calculateAndDisplayRoute */
 /* exported casesData */
 
 // Get API key from hidden file and use it to get the map
