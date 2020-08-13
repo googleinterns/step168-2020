@@ -14,7 +14,7 @@
 
 /* exported calculateAndDisplayRoute addDirectionsListeners hideRouteMarkers
  * showRouteMarkers getRouteLink */
-/* globals casesData map */
+/* globals casesData map geocoder */
 
 const NUM_WAYPOINTS = 10;
 let chosenRoute = 0;
@@ -39,6 +39,10 @@ function addDirectionsListeners() {
   document.getElementById('show-expanded-routes')
       .addEventListener('click', () => {
         toggleExpandedRouteInfo();
+      });
+  document.getElementById('start-current-location')
+      .addEventListener('click', () => {
+        setCurrentLocation();
       });
   document.getElementById('open-map-link').addEventListener('click', () => {
     window.open(encodeURI(getRouteLink()), '_blank');
@@ -375,4 +379,31 @@ function getRouteLink() {
   }
   console.log('Link', encodeURI(link));
   return link;
+}
+
+function setCurrentLocation() {
+  const geoOptions = {
+    timeout: 10 * 1000,         // 10 seconds
+    maximumAge: 5 * 60 * 1000,  // last 5 minutes
+  };
+
+  const geoSuccess = function(position) {
+    const latlng = {
+      'lat': position.coords.latitude,
+      'lng': position.coords.longitude,
+    };
+    geocoder.geocode({location: latlng}, (results, status) => {
+      if (status === 'OK') {
+        console.log(results);
+        document.getElementById('start').value = results[0].formatted_address;
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  };
+  const geoError = function(error) {
+    console.log('Error occurred. Error code: ' + error.code);
+  };
+
+  navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }

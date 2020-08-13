@@ -23,6 +23,7 @@ document.getElementById('mapUrl').src = mykey;
 let player;
 let casesData;
 let map;
+let geocoder;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -145,7 +146,7 @@ function createMap() {
         globalRecovered);
   });
 
-  const geocoder = new google.maps.Geocoder();
+  geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
