@@ -95,7 +95,7 @@
           </button>
         </div>
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
-        <div class="content">
+        <div class="content" id="routeContent">
           <div class="inputdata">
             <i class="material-icons routing-icons">person_pin</i>
             <input type="text" id="start" placeholder="Choose starting point" />
@@ -108,8 +108,27 @@
           <button type="button" class="contentToggle" id="alternateRoutes">
             <i class="material-icons">navigation</i> Alternate Routes
           </button>
+          <button type="button" class="contentToggle" id="show-expanded-routes">
+            <i class="material-icons">edit_location</i> Expanded Information
+          </button>
           <div id="directionsInfo">
             <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
+          </div>
+          <div id="expanded-routing">
+            <p>Route Information</p>
+            Selected:
+            <select id="route-selector"> </select>
+            <table id="route-info">
+              <thead>
+                <tr>
+                  <th scope="col">Color</th>
+                  <th scope="col">Cases</th>
+                  <th scope="col">Distance</th>
+                  <th scope="col">Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
           </div>
         </div>
       </div>

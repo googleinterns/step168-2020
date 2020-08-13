@@ -297,11 +297,12 @@ body {
   font-size: 16px;
 }
 
-#heatMapType {
+#heatMapType,
+#route-selector {
   border: none;
   outline: none;
   cursor: pointer;
-  background-color: inherit;
+  background-color: #4285f4;
   color: whitesmoke;
   font-size: 100%;
 }
@@ -373,16 +374,27 @@ body {
   color: #f4b400;
 }
 
-#alternateRoutes {
+#alternateRoutes,
+#show-expanded-routes {
   width: 88%;
   text-align: left;
   padding: 16px 0px 0px 0px;
 }
 
-.contentToggle:hover {
+.contentToggle:hover,
+.contentToggle.selected {
   color: white;
 }
 
 #directionsInfo {
   padding: 16px 0px 0px 0px;
+}
+
+#expanded-routing {
+  display: none;
+}
+
+#route-info td,
+#route-info th {
+  padding: 2px 10px 2px 10px;
 }
