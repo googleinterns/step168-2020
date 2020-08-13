@@ -118,19 +118,48 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
       `Recovered: ${recovered}`;
 }
 
+// Initialize heat maps
+const confirmedHeatmapData = [];
+const activeHeatmapData = [];
+const deathsHeatmapData = [];
+const recoveredHeatmapData = [];
+const populationHeatmapData = [];
 // Create a map zoomed in on Googleplex
 function createMap() {
-  map = new google.maps.Map(
-      document.getElementById('map'),
-      {center: {lat: 39.496, lng: -99.031}, zoom: 5});
-  // Gets active case data and displays as heat map
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 39.496, lng: -99.031},
+    zoom: 5,
+    mapTypeControl: false,
+    fullscreenControl: false,
+  });
+  initMyLocationControl(map);
+  initTopBar(map);
+  initStatsDisplay(map);
+  // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
-    const heatmapData = [];
     reports.forEach((report) => {
-      heatmapData.push({
+      confirmedHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
-        weight: report.active,
+        weight: report.confirmed,
+      });
+      if (report.active > -1) {
+        activeHeatmapData.push({
+          location: new google.maps.LatLng(report.lat, report.lng),
+          weight: report.active,
+        });
+      }
+      deathsHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.deaths,
+      });
+      recoveredHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.recovered,
+      });
+      populationHeatmapData.push({
+        location: new google.maps.LatLng(report.lat, report.lng),
+        weight: report.perCap,
       });
       // Calculate worldwide data
       globalActive += report.active;
@@ -138,8 +167,13 @@ function createMap() {
       globalDeaths += report.deaths;
       globalRecovered += report.recovered;
     });
-    heatmap = new google.maps.visualization.HeatmapLayer(
-        {data: heatmapData, dissipating: false, map: map});
+    // Initially display confirmed cases heat map
+    heatmap = new google.maps.visualization.HeatmapLayer({
+      data: confirmedHeatmapData,
+      dissipating: false,
+      map: null,
+      radius: 2.5,
+    });
     // Display worldwide data initially
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
@@ -151,9 +185,6 @@ function createMap() {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
   });
-  document.getElementById('my-location').addEventListener('click', () => {
-    gotoUserLocation(map);
-  });
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
@@ -161,12 +192,126 @@ function createMap() {
   document.getElementById('videos').addEventListener('click', () => {
     searchForVideos(map);
   });
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+  document.getElementById('directions-search').addEventListener('click', () => {
+    calculateAndDisplayRoute(directionsService, map);
+  });
+  document.getElementById('search-content-submit')
+      .addEventListener('click', () => {
+        const searched = document.getElementById('search-content').value;
+        if (searched === '') {
+          searchForVideos(map, 'COVID-19');
+        } else {
+          searchForVideos(map, searched);
+        }
+      });
+  document.getElementById('toggle-heat').addEventListener('click', () => {
+    toggleHeatMap();
+  });
+  document.getElementById('stats').addEventListener('click', () => {
+    toggleStats();
+  });
+  document.getElementById('openOverlay').addEventListener('click', () => {
+    openNav();
+  });
+  document.getElementById('closebtn').addEventListener('click', () => {
+    closeNav();
+  });
+  document.getElementById('heatMapType').addEventListener('change', () => {
+    changeHeat();
+  });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      searchForVideos(map);
+      const searched = document.getElementById('search-content').value;
+      if (searched === '') {
+        searchForVideos(map, 'COVID-19');
+      } else {
+        searchForVideos(map, searched);
+      }
     }
   };
+}
+
+// Put my location icon in bottom left corner
+function initMyLocationControl(map) {
+  document.getElementById('myLocation').addEventListener('click', () => {
+    gotoUserLocation(map);
+  });
+  map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(
+      document.querySelector('.my-location'));
+}
+
+// Put navigation in top left corner
+function initTopBar(map) {
+  map.controls[google.maps.ControlPosition.LEFT_TOP].push(
+      document.querySelector('.topnav'));
+}
+
+// Put stats in top right corner
+function initStatsDisplay(map) {
+  map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+      document.querySelector('.covidStats'));
+}
+
+// Display menu and dim map
+function openNav() {
+  document.getElementById('myNav').style.width = '350px';
+  document.getElementById('dim').classList.toggle('fade');
+}
+
+// Close menu and fade out dim
+function closeNav() {
+  document.getElementById('myNav').style.width = '0%';
+  document.getElementById('dim').classList.toggle('fade');
+}
+
+// Init each menu tab, opening up when clicked
+const coll = document.getElementsByClassName('expand');
+let i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener('click', function() {
+    this.classList.toggle('active');
+    const content = this.nextElementSibling;
+    if (content.style.maxHeight) {
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + 'px';
+    }
+  });
+}
+
+// Switch heat on and off
+function toggleHeatMap() {
+  if (heatmap.getMap() == null) {
+    heatmap.setMap(map);
+  } else {
+    heatmap.setMap(null);
+  }
+}
+
+// Toggle selected status and stats visability when menu button clicked
+function toggleStats() {
+  document.getElementById('stats').classList.toggle('unselected');
+  document.getElementById('covidStats').classList.toggle('inactive');
+}
+
+// Display type of data user selects
+function changeHeat() {
+  const userChoice = document.getElementById('heatMapType').value;
+  if (userChoice == 'confirmed') {
+    heatmap.setData(confirmedHeatmapData);
+  } else if (userChoice == 'active') {
+    heatmap.setData(activeHeatmapData);
+  } else if (userChoice == 'deaths') {
+    heatmap.setData(deathsHeatmapData);
+  } else if (userChoice == 'recovered') {
+    heatmap.setData(recoveredHeatmapData);
+  } else if (userChoice == 'population') {
+    heatmap.setData(populationHeatmapData);
+  }
 }
 
 // Recenter map to location searched and update current coordinates
@@ -214,6 +359,7 @@ function gotoUserLocation(map) {
     map.setCenter(location);
     const zoomLargeEnoughToShowMultipleCities = 8;
     map.setZoom(zoomLargeEnoughToShowMultipleCities);
+    displayLocationData(location.toJSON());
     displayLatitudeLongitude(location.toJSON());
   };
   const geoError = function(error) {
