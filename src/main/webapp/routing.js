@@ -22,9 +22,13 @@ let routeLines = [];
 let routeMarkers = [];
 let routeStart = '';
 let routeEnd = '';
+let travelMode = '';
 const routeColors =
     ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
+/**
+ * Set functions that run when directions inputs are changed
+ */
 function addDirectionsListeners() {
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -67,12 +71,12 @@ function addDirectionsListeners() {
 function calculateAndDisplayRoute(directionsService, mapObject) {
   routeStart = document.getElementById('start').value;
   routeEnd = document.getElementById('end').value;
-  const selectedMode = document.getElementById('travel-mode').value;
+  travelMode = document.getElementById('travel-mode').value;
   directionsService.route(
       {
         origin: {query: routeStart},
         destination: {query: routeEnd},
-        travelMode: google.maps.TravelMode[selectedMode],
+        travelMode: google.maps.TravelMode[travelMode],
         provideRouteAlternatives: true,
       },
       (response, status) => {
@@ -364,11 +368,14 @@ function findClosest(lat, lng) {
   return closest;
 }
 
+/**
+ * Generate link to open google maps with selected route
+ */
 function getRouteLink() {
   let link = 'https://www.google.com/maps/dir/?api=1';
   link += '&origin=' + routeStart;
   link += '&destination=' + routeEnd;
-  link += '&travelmode=driving';
+  link += '&travelmode=' + travelMode.toLowerCase();
   link += '&waypoints=';
   const waypoints = routeLines[chosenRoute].waypoints;
   for (let i = 0; i < waypoints.length; i++) {
@@ -381,6 +388,9 @@ function getRouteLink() {
   return link;
 }
 
+/**
+ * Set route start to current location
+ */
 function setCurrentLocation() {
   const geoOptions = {
     timeout: 10 * 1000,         // 10 seconds
