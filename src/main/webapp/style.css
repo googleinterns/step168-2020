@@ -190,7 +190,7 @@ body {
   font-size: 28px;
   cursor: pointer;
   float: left;
-  padding: 4px 12px 0px 12px;
+  padding: 4px 4px 0px 12px;
   z-index: 6;
   position: relative;
   color: #4d4d4d;
@@ -199,7 +199,7 @@ body {
 .topnav {
   overflow: hidden;
   background-color: white;
-  width: 397px;
+  width: 555px;
   z-index: 6;
   position: absolute;
   border-radius: 16px;
@@ -214,7 +214,7 @@ body {
 }
 
 .topnav input[type='text'] {
-  padding: 8px 0px 0px 0px;
+  padding: 8px 0px 0px 8px;
   margin-top: 8px;
   font-size: 17px;
   border: none;
@@ -226,6 +226,10 @@ body {
 
 .topnav input[type='text']::placeholder {
   color: #d3d3d3;
+}
+
+#search-content {
+  width: 150px;
 }
 
 .topnav .search-container button {
