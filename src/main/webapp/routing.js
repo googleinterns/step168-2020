@@ -12,12 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* exported calculateAndDisplayRoute hideRouteMarkers showRouteMarkers */
+/* exported calculateAndDisplayRoute addDirectionsListeners hideRouteMarkers
+ * showRouteMarkers */
 /* globals casesData map */
 
 let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
+const routeColors =
+    ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
+
+function addDirectionsListeners() {
+  document.getElementById('show-alternate-routes')
+      .addEventListener('click', () => {
+        toggleAlternateRoutes();
+      });
+  document.getElementById('show-expanded-routes')
+      .addEventListener('click', () => {
+        toggleExpandedRouteInfo();
+      });
+  document.getElementById('route-selector').addEventListener('input', () => {
+    changeSelectedRoute(document.getElementById('route-selector').value);
+  });
+}
 
 /**
  * Get route from Directions API
@@ -42,20 +59,32 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           routeMarkers[i].setMap(null);
         }
         routeMarkers = [];
+        resetRouteTable();
         if (status === 'OK') {
+          const active = [];
+          const distance = [];
+          const time = [];
           for (let i = 0; i < response.routes.length; i++) {
-            processRoute(mapObject, response, i);
+            const values = processRoute(mapObject, response, i);
+            active.push(values[0]);
+            distance.push(values[1]);
+            time.push(values[2]);
           }
-          let minCases = null;
-          for (let i = 0; i < routeLines.length; i++) {
-            if (minCases === null || routeLines[i].active < minCases) {
-              minCases = routeLines[i].active;
-              chosenRoute = i;
-            }
+          const activeDiff = percentDifference(active);
+          const distanceDiff = percentDifference(distance);
+          const timeDiff = percentDifference(time);
+          const score = [];
+          for (let i = 0; i < activeDiff.length; i++) {
+            score.push(activeDiff[i] + distanceDiff[i] + timeDiff[i]);
           }
-          console.log('Route with least cases is', chosenRoute);
-          hideAlternateRoutes();
-          document.getElementById('route-active-count').textContent = minCases;
+          console.log('Route Scores:', score);
+          chosenRoute = score.indexOf(Math.min(...score));
+          changeSelectedRoute(chosenRoute);
+          if (!document.getElementById('show-alternate-routes').checked) {
+            hideAlternateRoutes();
+          }
+          document.getElementById('show-expanded-routes').checked = true;
+          showRouteInfo();
         } else {
           window.alert('Directions request failed due to ' + status);
         }
@@ -73,12 +102,23 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
  */
 function processRoute(mapObject, response, i) {
   routeLines.push({
-    route: new google.maps.DirectionsRenderer(
-        {map: mapObject, directions: response, routeIndex: i}),
+    route: new google.maps.DirectionsRenderer({
+      map: mapObject,
+      directions: response,
+      routeIndex: i,
+      options: {
+        polylineOptions: {
+          strokeColor: routeColors[i],
+          strokeOpacity: 1,
+          strokeWeight: 3,
+        },
+      },
+    }),
     active: 0,
   });
+  const route = response.routes[i];
   const counted = [];
-  const points = response.routes[i].overview_path;
+  const points = route.overview_path;
   for (let j = 0; j < points.length; j += 1) {
     const latLng = new google.maps.LatLng(points[j].lat(), points[j].lng());
     const marker = new google.maps.Marker({
@@ -110,7 +150,88 @@ function processRoute(mapObject, response, i) {
       routeMarkers.push(marker);
     }
   }
+  addTableRow(
+      routeColors[i], routeLines[i].active, route.legs[0].distance.text,
+      route.legs[0].duration.text);
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
+  return [
+    routeLines[i].active,
+    route.legs[0].distance.value,
+    route.legs[0].duration.value,
+  ];
+}
+
+/**
+ * Clear epanded route info table
+ */
+function resetRouteTable() {
+  const table =
+      document.getElementById('route-info').getElementsByTagName('tbody')[0];
+  const length = table.rows.length;
+  const selector = document.getElementById('route-selector');
+  for (let i = 0; i < length; i++) {
+    table.deleteRow(0);
+    selector.remove(0);
+  }
+}
+
+/**
+ * Add row to expanded table with route color, cases, distance, and time
+ */
+function addTableRow(color, cases, distance, time) {
+  const table =
+      document.getElementById('route-info').getElementsByTagName('tbody')[0];
+  const row = table.insertRow();
+  const selector = document.getElementById('route-selector');
+  const option = document.createElement('option');
+  option.value = table.rows.length - 1;
+  option.textContent = color;
+  selector.appendChild(option);
+  for (let i = 0; i < 5; i++) {
+    row.insertCell();
+  }
+  row.cells[0].textContent = color;
+  row.cells[1].textContent = cases;
+  row.cells[2].textContent = distance;
+  row.cells[3].textContent = time;
+}
+
+/**
+ * Changes chosen route and shows alternate routes
+ */
+function changeSelectedRoute(route) {
+  chosenRoute = route;
+  for (let i = 0; i < routeLines.length; i++) {
+    const options = {
+      strokeColor: routeColors[i],
+      strokeOpacity: 0.6,
+      strokeWeight: 3,
+    };
+    if (i == chosenRoute) {
+      options.strokeOpacity = 1;
+      options.strokeWeight = 7;
+    }
+    routeLines[i].route.setOptions({
+      polylineOptions: options,
+    });
+    document.getElementById('show-alternate-routes').checked = true;
+    showAlternateRoutes();
+  }
+  document.getElementById('route-selector').value = route;
+  document.getElementById('route-active-count').textContent =
+      routeLines[route].active;
+}
+
+/**
+ * Return value / min value for each value in values
+ */
+function percentDifference(values) {
+  const minVal = Math.min(...values);
+  const percents = [];
+  for (let i = 0; i < values.length; i++) {
+    percents.push((values[i] / minVal));
+  }
+  return percents;
 }
 
 /**
@@ -149,6 +270,42 @@ function hideAlternateRoutes() {
 function showAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(map);
+  }
+}
+
+/**
+ * Show alternate routes if checkbox checked and hide if not
+ */
+function toggleAlternateRoutes() {
+  if (document.getElementById('show-alternate-routes').checked) {
+    showAlternateRoutes();
+  } else {
+    hideAlternateRoutes();
+  }
+}
+
+/**
+ * Make table with distance, time, and active cases of each route visible
+ */
+function showRouteInfo() {
+  document.getElementById('expanded-routing').style.display = 'block';
+}
+
+/**
+ * Make table with distance, time, and active cases of each route hidden
+ */
+function hideRouteInfo() {
+  document.getElementById('expanded-routing').style.display = 'none';
+}
+
+/**
+ * Show expanded route info if checkbox checked and hide if not
+ */
+function toggleExpandedRouteInfo() {
+  if (document.getElementById('show-expanded-routes').checked) {
+    showRouteInfo();
+  } else {
+    hideRouteInfo();
   }
 }
 

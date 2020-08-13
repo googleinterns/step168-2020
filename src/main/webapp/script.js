@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute
+   addDirectionsListeners */
 /* exported casesData */
-/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -26,6 +27,7 @@ let map;
 // When the page loads, call createMap
 window.onload = function() {
   createMap();
+  addDirectionsListeners();
 };
 
 // Update currently displayed coordinates
