@@ -295,6 +295,7 @@ body {
   color: white;
   font-family: 'Roboto';
   font-size: 16px;
+  font-weight: bold;
 }
 
 #heatMapType,
@@ -305,6 +306,7 @@ body {
   background-color: #4285f4;
   color: whitesmoke;
   font-size: 100%;
+  font-weight: bold;
 }
 
 #heatMapType:hover {
@@ -334,11 +336,13 @@ body {
   color: white;
   background: #4285f4;
   width: 88%;
+  font-weight: bold;
 }
 
 .content input[type='text']::placeholder {
   font-size: 95%;
   color: #d3d3d3;
+  font-weight: bold;
 }
 
 .content.routingHorizontal {
@@ -372,6 +376,7 @@ body {
   cursor: pointer;
   display: inline-block;
   color: #f4b400;
+  font-weight: bold;
 }
 
 #alternateRoutes,
