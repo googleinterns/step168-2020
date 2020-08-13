@@ -83,7 +83,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           document.getElementById('alternateRoutes')
               .classList.remove('selected');
           document.getElementById('show-expanded-routes')
-              .classList.remove('selected')
+              .classList.remove('selected');
           hideAlternateRoutes();
           hideRouteInfo();
         } else {
@@ -215,8 +215,8 @@ function changeSelectedRoute(route) {
     routeLines[i].route.setOptions({
       polylineOptions: options,
     });
-    if (!document.getElementById('alternateRoutes')
-             .classList.contains('selected')) {
+    const aR = document.getElementById('alternateRoutes');
+    if (!aR.classList.contains('selected')) {
       document.getElementById('alternateRoutes').classList.toggle('selected');
     }
     showAlternateRoutes();
@@ -313,8 +313,8 @@ function hideRouteInfo() {
  * Show expanded route info if hidden and hide if not
  */
 function toggleExpandedRouteInfo() {
-  if (!document.getElementById('show-expanded-routes')
-           .classList.contains('selected')) {
+  const eR = document.getElementById('show-expanded-routes');
+  if (!eR.classList.contains('selected')) {
     showRouteInfo();
   } else {
     hideRouteInfo();
