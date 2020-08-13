@@ -123,9 +123,15 @@ const recoveredHeatmapData = [];
 const populationHeatmapData = [];
 // Create a map zoomed in on Googleplex
 function createMap() {
-  map = new google.maps.Map(
-      document.getElementById('map'),
-      {center: {lat: 39.496, lng: -99.031}, zoom: 5});
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 39.496, lng: -99.031},
+    zoom: 5,
+    mapTypeControl: false,
+    fullscreenControl: false,
+  });
+  initMyLocationControl(map);
+  initTopBar(map);
+  initStatsDisplay(map);
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
@@ -162,7 +168,7 @@ function createMap() {
     heatmap = new google.maps.visualization.HeatmapLayer({
       data: confirmedHeatmapData,
       dissipating: false,
-      map: map,
+      map: null,
       radius: 2.5,
     });
     // Display worldwide data initially
@@ -175,9 +181,6 @@ function createMap() {
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
-  });
-  document.getElementById('my-location').addEventListener('click', () => {
-    gotoUserLocation(map);
   });
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
@@ -201,6 +204,15 @@ function createMap() {
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
   });
+  document.getElementById('stats').addEventListener('click', () => {
+    toggleStats();
+  });
+  document.getElementById('openOverlay').addEventListener('click', () => {
+    openNav();
+  });
+  document.getElementById('closebtn').addEventListener('click', () => {
+    closeNav();
+  });
   document.getElementById('heatMapType').addEventListener('change', () => {
     changeHeat();
   });
@@ -217,6 +229,54 @@ function createMap() {
   };
 }
 
+// Put my location icon in bottom left corner
+function initMyLocationControl(map) {
+  document.getElementById('myLocation').addEventListener('click', () => {
+    gotoUserLocation(map);
+  });
+  map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(
+      document.querySelector('.my-location'));
+}
+
+// Put navigation in top left corner
+function initTopBar(map) {
+  map.controls[google.maps.ControlPosition.LEFT_TOP].push(
+      document.querySelector('.topnav'));
+}
+
+// Put stats in top right corner
+function initStatsDisplay(map) {
+  map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+      document.querySelector('.covidStats'));
+}
+
+// Display menu and dim map
+function openNav() {
+  document.getElementById('myNav').style.width = '350px';
+  document.getElementById('dim').classList.toggle('fade');
+}
+
+// Close menu and fade out dim
+function closeNav() {
+  document.getElementById('myNav').style.width = '0%';
+  document.getElementById('dim').classList.toggle('fade');
+}
+
+// Init each menu tab, opening up when clicked
+const coll = document.getElementsByClassName('expand');
+let i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener('click', function() {
+    this.classList.toggle('active');
+    const content = this.nextElementSibling;
+    if (content.style.maxHeight) {
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + 'px';
+    }
+  });
+}
+
 // Switch heat on and off
 function toggleHeatMap() {
   if (heatmap.getMap() == null) {
@@ -226,7 +286,13 @@ function toggleHeatMap() {
   }
 }
 
-// Switch heatmap to show user chosen statistic
+// Toggle selected status and stats visability when menu button clicked
+function toggleStats() {
+  document.getElementById('stats').classList.toggle('unselected');
+  document.getElementById('covidStats').classList.toggle('inactive');
+}
+
+// Display type of data user selects
 function changeHeat() {
   const userChoice = document.getElementById('heatMapType').value;
   if (userChoice == 'confirmed') {
@@ -287,6 +353,7 @@ function gotoUserLocation(map) {
     map.setCenter(location);
     const zoomLargeEnoughToShowMultipleCities = 8;
     map.setZoom(zoomLargeEnoughToShowMultipleCities);
+    displayLocationData(location.toJSON());
     displayLatitudeLongitude(location.toJSON());
   };
   const geoError = function(error) {
