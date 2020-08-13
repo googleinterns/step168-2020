@@ -156,7 +156,7 @@ function toggleAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       if (routeLines[i].route.getMap() == null) {
-        routeLines[i].route.setMap(map)
+        routeLines[i].route.setMap(map);
         document.getElementById('alternateRoutes').style.color = 'white';
       } else {
         routeLines[i].route.setMap(null);
