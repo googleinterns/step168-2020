@@ -380,3 +380,25 @@ $ ('#video-background').draggable( {
   cursor: 'move',
   iframeFix: true
 });
+
+$(".resizable").resizable({
+    start: function(event, ui) {
+        ui.element.append($("<div/>", {
+            id: "iframe-overlay",
+            css: {
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                "z-index": 10
+        }
+        }));
+    },
+    stop: function(event, ui) {
+        $("#iframe-overlay", ui.element).remove();
+    },
+    resize: function(event, ui) {
+        $("iframe", ui.element).width(ui.size.width).height(ui.size.height);
+    }
+});
