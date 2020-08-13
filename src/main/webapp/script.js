@@ -201,6 +201,10 @@ function createMap() {
   document.getElementById('directions-search').addEventListener('click', () => {
     calculateAndDisplayRoute(directionsService, map);
   });
+  document.getElementById('search-content-submit')
+      .addEventListener('click', () => {
+        findWhatToSearch();
+      });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
   });
@@ -234,14 +238,21 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      const searched = document.getElementById('search-content').value;
-      if (searched === '') {
-        searchForVideos(map, 'COVID-19');
-      } else {
-        searchForVideos(map, searched);
-      }
+      getCoordsFromSearch(geocoder, map);
+      displayLocationDataFromSearch(geocoder);
+      findWhatToSearch();
     }
   };
+}
+
+// searches 'COVID-19' if user doesn't specify search
+function findWhatToSearch() {
+  const searched = document.getElementById('search-content').value;
+  if (searched === '') {
+    searchForVideos(map, 'COVID-19');
+  } else {
+    searchForVideos(map, searched);
+  }
 }
 
 // Put my location icon in bottom left corner
@@ -424,26 +435,30 @@ function changeRelativeHeat() {
 // Recenter map to location searched and update current coordinates
 function getCoordsFromSearch(geocoder, map) {
   const address = document.getElementById('search-text').value;
-  geocoder.geocode({address: address}, (results, status) => {
+  if (address !== '') {
+    geocoder.geocode({address: address}, (results, status) => {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
       displayLatitudeLongitude(results[0].geometry.location.toJSON());
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
-  });
+    });
+  }
 }
 
 // Update displayed COVID stats based on address
 function displayLocationDataFromSearch(geocoder) {
   const address = document.getElementById('search-text').value;
-  geocoder.geocode({address: address}, (results, status) => {
-    if (status === 'OK') {
-      displayLocationData(results[0].geometry.location.toJSON());
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
+  if (address !== '') {
+    geocoder.geocode({address: address}, (results, status) => {
+      if (status === 'OK') {
+        displayLocationData(results[0].geometry.location.toJSON());
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
 }
 
 /**
@@ -482,5 +497,6 @@ function gotoUserLocation(map) {
 }
 
 $ ('#video-background').draggable( {
-  cursor: 'move'
+  cursor: 'move',
+  iframeFix: true
 });
