@@ -194,15 +194,6 @@ function createMap() {
   document.getElementById('directions-search').addEventListener('click', () => {
     calculateAndDisplayRoute(directionsService, map);
   });
-  document.getElementById('search-content-submit')
-      .addEventListener('click', () => {
-        const searched = document.getElementById('search-content').value;
-        if (searched === '') {
-          searchForVideos(map, 'COVID-19');
-        } else {
-          searchForVideos(map, searched);
-        }
-      });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
   });
@@ -217,6 +208,14 @@ function createMap() {
   });
   document.getElementById('heatMapType').addEventListener('change', () => {
     changeHeat();
+  });
+  document.getElementById('videos').addEventListener('click', () => {
+    const searched = document.getElementById('search-content').value;
+    if (searched === '') {
+      searchForVideos(map, 'COVID-19');
+    } else {
+      searchForVideos(map, searched);
+    }
   });
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
@@ -286,6 +285,7 @@ function toggleHeatMap() {
   } else {
     heatmap.setMap(null);
   }
+  document.getElementById('toggle-heat').classList.toggle('selected');
 }
 
 // Toggle selected status and stats visability when menu button clicked

@@ -33,8 +33,6 @@
     <div class="noDisplay">
       <input type="text" placeholder="Latitude" id="latitude" readonly />
       <input type="text" placeholder="Longitude" id="longitude" readonly />
-      <input type="text" placeholder="Search" value="" id="search-content" />
-      <button type="button" id="search-content-submit">Show Videos</button>
     </div>
 
     <div class="noDisplay">
@@ -57,8 +55,9 @@
       <div class="controls topnav">
         <span id="openOverlay">&#9776;</span>
         <div class="search-container">
-          <input type="text" placeholder="Search VideoMap" id="search-text" />
+          <input type="text" placeholder="Search Location" id="search-text" />
           <button type="button" id="search-submit"><i class="material-icons">place</i></button>
+          <input type="text" placeholder="Covid-19 Videos" value="" id="search-content" />
           <button type="button" id="videos"><i class="material-icons">local_movies</i></button>
         </div>
       </div>
@@ -83,45 +82,54 @@
         <button type="button" class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
         <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
         <div class="content">
-          <button type="button" id="toggle-heat">Toggle Heatmap</button>
           <select id="heatMapType">
-            <option value="confirmed">Show Confirmed Cases Heatmap </option>
-            <option value="active">Show Active Cases Heatmap </option>
-            <option value="deaths">Show Number of Deaths Heatmap </option>
-            <option value="recovered">Show Recovered Cases Heatmap </option>
-            <option value="population">Show Per-Capita Cases Heatmap </option>
+            <option value="confirmed">Show Confirmed Cases </option>
+            <option value="active">Show Active Cases </option>
+            <option value="deaths">Show Number of Deaths </option>
+            <option value="recovered">Show Recovered Cases </option>
+            <option value="population">Show Per-Capita Cases </option>
           </select>
+          <button type="button" class="contentToggle" id="toggle-heat">
+            <i class="material-icons">layers</i> Heat Map
+          </button>
         </div>
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
-        <div class="content">
-          <div id="routing">
-            <p>Directions</p>
-            <input type="text" id="start" placeholder="Start" />
-            <input type="text" id="end" placeholder="End" />
-            <button type="button" id="directions-search">Directions</button><br />
-            <input type="checkbox" id="show-alternate-routes" />Show Alternate Routes<br />
-            <input type="checkbox" id="show-expanded-routes" />Show Expanded Information<br />
+        <div class="content" id="routeContent">
+          <div class="inputdata">
+            <i class="material-icons routing-icons">person_pin</i>
+            <input type="text" id="start" placeholder="Choose starting point" />
+            <hr class="rountingHorizontal" />
+            <i class="material-icons routing-icons">pin_drop</i>
+            <input type="text" id="end" placeholder="Choose destination" />
+            <hr class="rountingHorizontal" />
+          </div>
+          <button type="button" id="directions-search"><i class="material-icons">beenhere</i></button>
+          <button type="button" class="contentToggle" id="alternateRoutes">
+            <i class="material-icons">navigation</i> Alternate Routes
+          </button>
+          <button type="button" class="contentToggle" id="show-expanded-routes">
+            <i class="material-icons">edit_location</i> Expanded Information
+          </button>
+          <div id="directionsInfo">
             <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
           </div>
+          <div id="expanded-routing">
+            <p>Route Information</p>
+            Selected:
+            <select id="route-selector"> </select>
+            <table id="route-info">
+              <thead>
+                <tr>
+                  <th scope="col">Color</th>
+                  <th scope="col">Cases</th>
+                  <th scope="col">Distance</th>
+                  <th scope="col">Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
-        <!-- <div class="content"> -->
-        <div id="expanded-routing">
-          <p>Route Information</p>
-          Selected:
-          <select id="route-selector"> </select>
-          <table id="route-info">
-            <thead>
-              <tr>
-                <th scope="col">Color</th>
-                <th scope="col">Cases</th>
-                <th scope="col">Distance</th>
-                <th scope="col">Time</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <!-- </div> -->
       </div>
     </div>
   </body>

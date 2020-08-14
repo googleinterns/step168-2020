@@ -23,16 +23,15 @@ const routeColors =
     ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
 function addDirectionsListeners() {
-  document.getElementById('show-alternate-routes')
-      .addEventListener('click', () => {
-        toggleAlternateRoutes();
-      });
   document.getElementById('show-expanded-routes')
       .addEventListener('click', () => {
         toggleExpandedRouteInfo();
       });
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
+  });
+  document.getElementById('alternateRoutes').addEventListener('click', () => {
+    toggleAlternateRoutes();
   });
 }
 
@@ -80,11 +79,13 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           console.log('Route Scores:', score);
           chosenRoute = score.indexOf(Math.min(...score));
           changeSelectedRoute(chosenRoute);
-          if (!document.getElementById('show-alternate-routes').checked) {
-            hideAlternateRoutes();
-          }
-          document.getElementById('show-expanded-routes').checked = true;
-          showRouteInfo();
+
+          document.getElementById('alternateRoutes')
+              .classList.remove('selected');
+          document.getElementById('show-expanded-routes')
+              .classList.remove('selected');
+          hideAlternateRoutes();
+          hideRouteInfo();
         } else {
           window.alert('Directions request failed due to ' + status);
         }
@@ -214,7 +215,10 @@ function changeSelectedRoute(route) {
     routeLines[i].route.setOptions({
       polylineOptions: options,
     });
-    document.getElementById('show-alternate-routes').checked = true;
+    const aR = document.getElementById('alternateRoutes');
+    if (!aR.classList.contains('selected')) {
+      document.getElementById('alternateRoutes').classList.toggle('selected');
+    }
     showAlternateRoutes();
   }
   document.getElementById('route-selector').value = route;
@@ -274,14 +278,19 @@ function showAlternateRoutes() {
 }
 
 /**
- * Show alternate routes if checkbox checked and hide if not
+ * Switch alternate routes on and off
  */
 function toggleAlternateRoutes() {
-  if (document.getElementById('show-alternate-routes').checked) {
-    showAlternateRoutes();
-  } else {
-    hideAlternateRoutes();
+  for (let i = 0; i < routeLines.length; i++) {
+    if (i != chosenRoute) {
+      if (routeLines[i].route.getMap() == null) {
+        routeLines[i].route.setMap(map);
+      } else {
+        routeLines[i].route.setMap(null);
+      }
+    }
   }
+  document.getElementById('alternateRoutes').classList.toggle('selected');
 }
 
 /**
@@ -289,6 +298,8 @@ function toggleAlternateRoutes() {
  */
 function showRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'block';
+  document.getElementById('routeContent').style.maxHeight =
+      document.getElementById('routeContent').scrollHeight + 'px';
 }
 
 /**
@@ -299,14 +310,16 @@ function hideRouteInfo() {
 }
 
 /**
- * Show expanded route info if checkbox checked and hide if not
+ * Show expanded route info if hidden and hide if not
  */
 function toggleExpandedRouteInfo() {
-  if (document.getElementById('show-expanded-routes').checked) {
+  const eR = document.getElementById('show-expanded-routes');
+  if (!eR.classList.contains('selected')) {
     showRouteInfo();
   } else {
     hideRouteInfo();
   }
+  document.getElementById('show-expanded-routes').classList.toggle('selected');
 }
 
 /**
