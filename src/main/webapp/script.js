@@ -14,7 +14,7 @@
 
 /* globals VideoPlayer, searchForVideos addDirectionsListeners */
 /* globals calculateAndDisplayRoute */
-/* exported casesData getBoundries */
+/* exported casesData setBoundries */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -329,6 +329,7 @@ function getCoordsFromSearch(geocoder, map) {
       console.log(results);
       map.fitBounds(results[0].geometry.bounds);
       displayLatitudeLongitude(results[0].geometry.location.toJSON());
+      setBoundries(address);
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -337,24 +338,31 @@ function getCoordsFromSearch(geocoder, map) {
 
 let bound;
 
-function getBoundries(query) {
+function setBoundries(query) {
   let url = 'https://nominatim.openstreetmap.org/search?q=';
   url += encodeURI(query);
   url += '&format=json&polygon_geojson=1';
+  bound.setPaths([]);
   fetch(url).then((response) => response.json()).then((data) => {
+    console.log('Boundries:', data);
+    if (!('geojson' in data[0])) {
+      return;
+    }
     const coords = data[0].geojson.coordinates;
-    console.log(coords);
     const latlngs = [];
     for (let i = 0; i < coords.length; i++) {
       latlngs.push([]);
-      for (let j = 0; j < coords[i].length; j++) {
+      let path = coords[i];
+      if (Array.isArray(path[0][0])) {
+        path = coords[i][0];
+      }
+      for (let k = 0; k < path.length; k++) {
         latlngs[i].push({
-          'lat': parseFloat(coords[i][j][1]),
-          'lng': parseFloat(coords[i][j][0]),
+          'lat': parseFloat(path[k][1]),
+          'lng': parseFloat(path[k][0]),
         });
       }
     }
-    console.log(latlngs);
     bound.setPaths(latlngs);
     bound.setMap(map);
   });
