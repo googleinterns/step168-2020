@@ -117,12 +117,12 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
       `Recovered: ${recovered}`;
 }
 
-// Initialize heat maps
-const confirmedHeatmapData = [];
-const activeHeatmapData = [];
-const deathsHeatmapData = [];
-const recoveredHeatmapData = [];
-const populationHeatmapData = [];
+// Initialize global heat maps
+const globalConfirmedHeatmapData = [];
+const globalActiveHeatmapData = [];
+const globalDeathsHeatmapData = [];
+const globalRecoveredHeatmapData = [];
+const globalPopulationHeatmapData = [];
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -138,25 +138,25 @@ function createMap() {
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
     reports.forEach((report) => {
-      confirmedHeatmapData.push({
+      globalConfirmedHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.confirmed,
       });
       if (report.active > -1) {
-        activeHeatmapData.push({
+        globalActiveHeatmapData.push({
           location: new google.maps.LatLng(report.lat, report.lng),
           weight: report.active,
         });
       }
-      deathsHeatmapData.push({
+      globalDeathsHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.deaths,
       });
-      recoveredHeatmapData.push({
+      globalRecoveredHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.recovered,
       });
-      populationHeatmapData.push({
+      globalPopulationHeatmapData.push({
         location: new google.maps.LatLng(report.lat, report.lng),
         weight: report.perCap,
       });
@@ -168,7 +168,7 @@ function createMap() {
     });
     // Initially display confirmed cases heat map
     heatmap = new google.maps.visualization.HeatmapLayer({
-      data: confirmedHeatmapData,
+      data: globalConfirmedHeatmapData,
       dissipating: false,
       map: null,
       radius: 2.5,
@@ -188,6 +188,12 @@ function createMap() {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
   });
+  map.addListener('idle', function() {
+    if (document.getElementById('relative-heat')
+            .classList.contains('selected')) {
+      changeRelativeHeat();
+    }
+  });
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
@@ -205,6 +211,10 @@ function createMap() {
   });
   document.getElementById('closebtn').addEventListener('click', () => {
     closeNav();
+  });
+  document.getElementById('relative-heat').addEventListener('click', () => {
+    document.getElementById('relative-heat').classList.toggle('selected');
+    changeHeat();
   });
   document.getElementById('heatMapType').addEventListener('change', () => {
     changeHeat();
@@ -296,17 +306,100 @@ function toggleStats() {
 
 // Display type of data user selects
 function changeHeat() {
+  // If relative heat is on, show relative
+  if (document.getElementById('relative-heat').classList.contains('selected')) {
+    changeRelativeHeat();
+    return;
+  }
+  // Otherwise show global heat
   const userChoice = document.getElementById('heatMapType').value;
   if (userChoice == 'confirmed') {
-    heatmap.setData(confirmedHeatmapData);
+    heatmap.setData(globalConfirmedHeatmapData);
   } else if (userChoice == 'active') {
-    heatmap.setData(activeHeatmapData);
+    heatmap.setData(globalActiveHeatmapData);
   } else if (userChoice == 'deaths') {
-    heatmap.setData(deathsHeatmapData);
+    heatmap.setData(globalDeathsHeatmapData);
   } else if (userChoice == 'recovered') {
-    heatmap.setData(recoveredHeatmapData);
+    heatmap.setData(globalRecoveredHeatmapData);
   } else if (userChoice == 'population') {
-    heatmap.setData(populationHeatmapData);
+    heatmap.setData(globalPopulationHeatmapData);
+  }
+}
+
+// Display heat relative to locations on screen
+function changeRelativeHeat() {
+  const userChoice = document.getElementById('heatMapType').value;
+  // Get the coordinates that are on the screen
+  const bounds = map.getBounds();
+  const southWest = bounds.getSouthWest();
+  const northEast = bounds.getNorthEast();
+
+  // Only add data that is contained within the coordinates on the screen
+  if (userChoice == 'confirmed') {
+    const relativeConfirmedCases = [];
+    globalConfirmedHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativeConfirmedCases.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativeConfirmedCases);
+  } else if (userChoice == 'active') {
+    const relativeActiveCases = [];
+    globalActiveHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativeActiveCases.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativeActiveCases);
+  } else if (userChoice == 'deaths') {
+    const relativeDeaths = [];
+    globalDeathsHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativeDeaths.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativeDeaths);
+  } else if (userChoice == 'recovered') {
+    const relativeRecoveredCases = [];
+    globalRecoveredHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativeRecoveredCases.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativeRecoveredCases);
+  } else if (userChoice == 'population') {
+    const relativePerCapCases = [];
+    globalPopulationHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativePerCapCases.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativePerCapCases);
   }
 }
 

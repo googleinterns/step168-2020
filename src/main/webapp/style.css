@@ -313,12 +313,21 @@ body {
   font-weight: bold;
 }
 
+#heatMapType {
+  padding: 16px 0px 0px 0px;
+}
+
 #heatMapType:hover {
   color: white;
 }
 
 #toggle-heat {
+  padding: 16px 0px 0px 0px;
   float: right;
+}
+
+#relative-heat {
+  padding: 16px 0px 8px 0px;
 }
 
 .inputdata {
