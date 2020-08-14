@@ -23,8 +23,6 @@ let routeMarkers = [];
 let routeStart = '';
 let routeEnd = '';
 let travelMode = '';
-const routeColors =
-    ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
 
 /**
  * Set functions that run when directions inputs are changed
@@ -144,7 +142,6 @@ function processRoute(mapObject, response, i) {
       routeIndex: i,
       options: {
         polylineOptions: {
-          // strokeColor: routeColors[i],
           strokeColor: 'grey',
           strokeOpacity: 1,
           strokeWeight: 3,
@@ -197,7 +194,7 @@ function processRoute(mapObject, response, i) {
     }
   }
   addTableRow(
-      routeColors[i], routeLines[i].active, route.legs[0].distance.text,
+      routeLines[i].active, route.legs[0].distance.text,
       route.legs[0].duration.text);
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
   return [
@@ -224,7 +221,7 @@ function resetRouteTable() {
 /**
  * Add row to expanded table with route color, cases, distance, and time
  */
-function addTableRow(color, cases, distance, time) {
+function addTableRow(cases, distance, time) {
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
   const row = table.insertRow();
@@ -249,7 +246,6 @@ function changeSelectedRoute(route) {
   chosenRoute = route;
   for (let i = 0; i < routeLines.length; i++) {
     const options = {
-      // strokeColor: routeColors[i],
       strokeColor: 'grey',
       strokeWeight: 3,
     };
