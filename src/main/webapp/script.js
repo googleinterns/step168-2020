@@ -22,7 +22,7 @@ document.getElementById('mapUrl').src = mykey;
 
 let player;
 let casesData;
-let map;
+let curLocationMarker;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -185,8 +185,10 @@ function createMap() {
     displayLocationDataFromSearch(geocoder);
   });
   map.addListener('click', function(mapsMouseEvent) {
-    displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
-    displayLocationData(mapsMouseEvent.latLng.toJSON());
+    const curLocation = mapsMouseEvent.latLng.toJSON();
+    displayLatitudeLongitude(curLocation);
+    displayLocationData(curLocation);
+    placeMarker(map, curLocation);
   });
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -279,6 +281,17 @@ for (i = 0; i < coll.length; i++) {
       content.style.maxHeight = content.scrollHeight + 'px';
     }
   });
+}
+
+function placeMarker(map, curLocation) {
+  if (typeof curLocationMarker === 'undefined') {
+    curLocationMarker = new google.maps.Marker( {
+      position: curLocation,
+      map: map
+    })
+  } else {
+    curLocationMarker.setPosition(curLocation);
+  }
 }
 
 // Switch heat on and off
