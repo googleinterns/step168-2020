@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer, searchForVideos
-   addDirectionsListeners calculateAndDisplayRoute */
-/* exported casesData */
+/* globals VideoPlayer, searchForVideos addDirectionsListeners */
+/* globals calculateAndDisplayRoute */
+/* exported casesData getBoundries */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -131,6 +131,13 @@ function createMap() {
     zoom: 5,
     mapTypeControl: false,
     fullscreenControl: false,
+  });
+  bound = new google.maps.Polygon({
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35,
   });
   initMyLocationControl(map);
   initTopBar(map);
@@ -319,11 +326,37 @@ function getCoordsFromSearch(geocoder, map) {
   const address = document.getElementById('search-text').value;
   geocoder.geocode({address: address}, (results, status) => {
     if (status === 'OK') {
-      map.setCenter(results[0].geometry.location);
+      console.log(results);
+      map.fitBounds(results[0].geometry.bounds);
       displayLatitudeLongitude(results[0].geometry.location.toJSON());
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
+  });
+}
+
+let bound;
+
+function getBoundries(query) {
+  let url = 'https://nominatim.openstreetmap.org/search?q=';
+  url += encodeURI(query);
+  url += '&format=json&polygon_geojson=1';
+  fetch(url).then((response) => response.json()).then((data) => {
+    const coords = data[0].geojson.coordinates;
+    console.log(coords);
+    const latlngs = [];
+    for (let i = 0; i < coords.length; i++) {
+      latlngs.push([]);
+      for (let j = 0; j < coords[i].length; j++) {
+        latlngs[i].push({
+          'lat': parseFloat(coords[i][j][1]),
+          'lng': parseFloat(coords[i][j][0]),
+        });
+      }
+    }
+    console.log(latlngs);
+    bound.setPaths(latlngs);
+    bound.setMap(map);
   });
 }
 
