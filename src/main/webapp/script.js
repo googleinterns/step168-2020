@@ -22,8 +22,12 @@ document.getElementById('mapUrl').src = mykey;
 
 let player;
 let casesData;
+<<<<<<< HEAD
 let map;
 let geocoder;
+=======
+let curLocationMarker;
+>>>>>>> add markers where users click and remove uncessary jQuery UI library
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -186,8 +190,10 @@ function createMap() {
     displayLocationDataFromSearch(geocoder);
   });
   map.addListener('click', function(mapsMouseEvent) {
-    displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
-    displayLocationData(mapsMouseEvent.latLng.toJSON());
+    const curLocation = mapsMouseEvent.latLng.toJSON();
+    displayLatitudeLongitude(curLocation);
+    displayLocationData(curLocation);
+    placeMarker(map, curLocation);
   });
   map.addListener('idle', function() {
     const relHeat = document.getElementById('relative-heat');
@@ -315,6 +321,16 @@ function updateHeatSize() {
     map: heatmap.getMap(),
     radius: document.getElementById('heatSlider').value,
   });
+
+function placeMarker(map, curLocation) {
+  if (typeof curLocationMarker === 'undefined') {
+    curLocationMarker = new google.maps.Marker( {
+      position: curLocation,
+      map: map
+    })
+  } else {
+    curLocationMarker.setPosition(curLocation);
+  }
 }
 
 // Switch heat on and off
