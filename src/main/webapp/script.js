@@ -189,8 +189,8 @@ function createMap() {
     displayLocationData(mapsMouseEvent.latLng.toJSON());
   });
   map.addListener('idle', function() {
-    if (document.getElementById('relative-heat')
-            .classList.contains('selected')) {
+    const relHeat = document.getElementById('relative-heat');
+    if (relHeat.classList.contains('selected')) {
       changeRelativeHeat();
     }
   });
