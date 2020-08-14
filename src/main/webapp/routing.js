@@ -144,14 +144,18 @@ function processRoute(mapObject, response, i) {
       routeIndex: i,
       options: {
         polylineOptions: {
-          strokeColor: routeColors[i],
+          // strokeColor: routeColors[i],
+          strokeColor: 'grey',
           strokeOpacity: 1,
           strokeWeight: 3,
         },
+        infoWindow: new google.maps.InfoWindow(),
+        suppressInfoWindows: false,
       },
     }),
     active: 0,
     waypoints: [],
+    infoWindow: new google.maps.InfoWindow(),
   });
   const waypointInterval = Math.floor(points.length / NUM_WAYPOINTS) - 1;
   console.log(waypointInterval);
@@ -185,13 +189,11 @@ function processRoute(mapObject, response, i) {
     if (!duplicate) {
       routeLines[i].active += closest.active;
       counted.push(closest);
-      const closeLatLng = new google.maps.LatLng(closest.lat, closest.lng);
-      const marker = new google.maps.Marker({
-        position: closeLatLng,
-        visible: false,
-      });
-      marker.setMap(mapObject);
-      routeMarkers.push(marker);
+    }
+    if (j === Math.floor(points.length / 2)) {
+      routeLines[i].infoWindow.setContent(i.toString());
+      routeLines[i].infoWindow.setPosition(latLng);
+      // routeLines[i].infoWindow.open(map);
     }
   }
   addTableRow(
@@ -229,12 +231,12 @@ function addTableRow(color, cases, distance, time) {
   const selector = document.getElementById('route-selector');
   const option = document.createElement('option');
   option.value = table.rows.length - 1;
-  option.textContent = color;
+  option.textContent = table.rows.length;
   selector.appendChild(option);
   for (let i = 0; i < 5; i++) {
     row.insertCell();
   }
-  row.cells[0].textContent = color;
+  row.cells[0].textContent = table.rows.length;
   row.cells[1].textContent = cases;
   row.cells[2].textContent = distance;
   row.cells[3].textContent = time;
@@ -247,11 +249,12 @@ function changeSelectedRoute(route) {
   chosenRoute = route;
   for (let i = 0; i < routeLines.length; i++) {
     const options = {
-      strokeColor: routeColors[i],
-      strokeOpacity: 0.6,
+      // strokeColor: routeColors[i],
+      strokeColor: 'grey',
       strokeWeight: 3,
     };
     if (i == chosenRoute) {
+      options.strokeColor = 'blue';
       options.strokeOpacity = 1;
       options.strokeWeight = 7;
     }
@@ -325,7 +328,7 @@ function showAlternateRoutes() {
  * Switch alternate routes on and off
  */
 function toggleAlternateRoutes() {
-  console.log('toggle');
+  showRouteInfo();
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       if (routeLines[i].route.getMap() == null) {
@@ -345,6 +348,7 @@ function showRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'block';
   document.getElementById('routeContent').style.maxHeight =
       document.getElementById('routeContent').scrollHeight + 'px';
+  document.getElementById('show-expanded-routes').classList.add('selected');
 }
 
 /**
@@ -352,6 +356,7 @@ function showRouteInfo() {
  */
 function hideRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'none';
+  document.getElementById('show-expanded-routes').classList.remove('selected');
 }
 
 /**
@@ -364,7 +369,6 @@ function toggleExpandedRouteInfo() {
   } else {
     hideRouteInfo();
   }
-  document.getElementById('show-expanded-routes').classList.toggle('selected');
 }
 
 /**
