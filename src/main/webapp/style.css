@@ -59,9 +59,13 @@ body {
 
 #covidStats {
   border-left: 6px solid white;
+  border-right: 6px solid white;
   background-color: whitesmoke;
   font-size: 225%;
   padding: 0% 0.5% 0% 0.5%;
+  border-radius: 16px;
+  margin-right: 4px;
+  margin-top: 4px;
 }
 
 #covidStats.inactive {
@@ -196,15 +200,15 @@ body {
   color: #4d4d4d;
 }
 
-.topnav {
+#topnav {
   overflow: hidden;
   background-color: white;
   width: 555px;
   z-index: 6;
-  position: absolute;
+  position: relative;
   border-radius: 16px;
-  top: 5px;
-  right: 5px;
+  top: 4px;
+  left: 4px;
 }
 
 .topnav .search-container {
