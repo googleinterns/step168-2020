@@ -330,8 +330,38 @@ body {
   float: right;
 }
 
+#heatSlider {
+  -webkit-appearance: none;
+  width: 62%;
+  height: 15px;
+  border-radius: 5px;
+  margin-top: 24px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+#heatSlider:hover {
+  opacity: 1;
+}
+
+#heatSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
 #relative-heat {
-  padding: 16px 0px 8px 0px;
+  padding: 16px 0px 0px 8px;
+  float: right;
+  position: relative;
+  bottom: 40px;
 }
 
 .inputdata {

@@ -216,6 +216,9 @@ function createMap() {
     document.getElementById('relative-heat').classList.toggle('selected');
     changeHeat();
   });
+  document.getElementById('heatSlider').addEventListener('input', () => {
+    updateHeatSize();
+  });
   document.getElementById('heatMapType').addEventListener('change', () => {
     changeHeat();
   });
@@ -286,6 +289,18 @@ for (i = 0; i < coll.length; i++) {
       content.style.maxHeight = content.scrollHeight + 'px';
     }
   });
+}
+
+// Display slider value and update heat map based on slider
+document.getElementById("sliderValue").innerHTML = document.getElementById("heatSlider").value;
+function updateHeatSize() {
+  document.getElementById("sliderValue").innerHTML = document.getElementById("heatSlider").value;
+  heatmap.setOptions({
+      data: heatmap.getData(),
+      dissipating: false,
+      map: heatmap.getMap(),
+      radius: document.getElementById("heatSlider").value,
+    });
 }
 
 // Switch heat on and off
