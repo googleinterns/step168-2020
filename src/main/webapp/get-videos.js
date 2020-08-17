@@ -13,7 +13,9 @@ function searchForVideos(map, searched) {
               // console.log('load was successful');
             },
             function(err) {
-              alert('Internal Video Retrival Error: please try again or a different search');
+              alert(
+                  'Internal Video Retrival Error: ' +
+                  'please try again or a different search');
               console.error('Error loading GAPI client for API', err);
             });
   }
@@ -26,10 +28,11 @@ function executeSearch(map, searchContent) {
         'part': ['snippet'],
         'location': document.getElementById('latitude').value + ',' +
             document.getElementById('longitude').value,
-        // the location radius is approximately the width the cursor covers which
-        // changes based on zoom as represented by the equation below
+        // the location radius is approximately the width the cursor covers
+        // which changes based on zoom as represented by the equation below
         // YouTube API doesnt support a radius greater than 1000 km
-        'locationRadius': Math.min (1720 * Math.pow(.5, map.getZoom()), 1000) + 'km',
+        'locationRadius':
+            Math.min(1720 * Math.pow(.5, map.getZoom()), 1000) + 'km',
         'q': searchContent,
         'maxResults': 50,
         'type': ['video'],
@@ -51,7 +54,9 @@ function executeSearch(map, searchContent) {
             }
           },
           function(err) {
-            alert('Internal Video Retrival Error: please try again or a different search')
+            alert(
+                'Internal Video Retrival Error:' +
+                'please try again or a different search');
             console.error('Execute error', err);
           });
 }

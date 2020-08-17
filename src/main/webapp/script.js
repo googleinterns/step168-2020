@@ -295,10 +295,8 @@ for (i = 0; i < coll.length; i++) {
 // places marker on map of clicked/searched location
 function placeMarker(map, curLocation) {
   if (typeof curLocationMarker === 'undefined') {
-    curLocationMarker = new google.maps.Marker( {
-      position: curLocation,
-      map: map
-    })
+    curLocationMarker =
+        new google.maps.Marker({position: curLocation, map: map})
   } else {
     curLocationMarker.setPosition(curLocation);
   }
@@ -307,19 +305,21 @@ function placeMarker(map, curLocation) {
 // moves video starting position to current marker
 function setUpForMaximizeAnimation() {
   if (typeof curLocationMarker !== 'undefined') {
-
-      const proj = overlay.getProjection();
-      const pos = curLocationMarker.getPosition();
-      const p = proj.fromLatLngToContainerPixel(pos);
-      const markerBubbleOffsetTop = -4;
-      const markerBubbleOffsetLeft = -.5;
-      // the distance between the marker position and the center of the bubble of the marker
-      const startLeft = p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
-      const startTop = p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
-      $('#video-background').css('top', startTop);
-      $('#video-background').css('left', startLeft);
-      $('#video-background').css('width', '0%');
-      $('#video-background').css('height', '0%');
+    const proj = overlay.getProjection();
+    const pos = curLocationMarker.getPosition();
+    const p = proj.fromLatLngToContainerPixel(pos);
+    const markerBubbleOffsetTop = -4;
+    const markerBubbleOffsetLeft = -.5;
+    // the distance between the marker position and the center of the bubble of
+    // the marker
+    const startLeft =
+        p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
+    const startTop =
+        p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
+    $('#video-background').css('top', startTop);
+    $('#video-background').css('left', startLeft);
+    $('#video-background').css('width', '0%');
+    $('#video-background').css('height', '0%');
   }
 }
 
@@ -359,14 +359,14 @@ function getCoordsFromSearch(geocoder, map) {
   const address = document.getElementById('search-text').value;
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
-    if (status === 'OK') {
-      const foundLocation = results[0].geometry.location;
-      map.setCenter(foundLocation);
-      displayLatitudeLongitude(foundLocation.toJSON());
-      placeMarker(map, foundLocation.toJSON());
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
+      if (status === 'OK') {
+        const foundLocation = results[0].geometry.location;
+        map.setCenter(foundLocation);
+        displayLatitudeLongitude(foundLocation.toJSON());
+        placeMarker(map, foundLocation.toJSON());
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
     });
   }
 }
@@ -421,30 +421,27 @@ function gotoUserLocation(map) {
 }
 
 // makes videoplayer draggable
-$ ('#video-background').draggable( {
-  cursor: 'move',
-  iframeFix: true
-});
+$('#video-background').draggable({cursor: 'move', iframeFix: true});
 
 // makes videoplayer resizable
-$(".resizable").resizable({
-    start: function(event, ui) {
-        ui.element.append($("<div/>", {
-            id: "iframe-overlay",
-            css: {
-                position: "absolute",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
-                "z-index": 10
-        }
-        }));
-    },
-    stop: function(event, ui) {
-        $("#iframe-overlay", ui.element).remove();
-    },
-    resize: function(event, ui) {
-        $("iframe", ui.element).width(ui.size.width).height(ui.size.height);
-    }
+$('.resizable').resizable({
+  start: function(event, ui) {
+    ui.element.append($('<div/>', {
+      id: 'iframe-overlay',
+      css: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        'z-index': 10
+      }
+    }));
+  },
+  stop: function(event, ui) {
+    $('#iframe-overlay', ui.element).remove();
+  },
+  resize: function(event, ui) {
+    $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
+  }
 });
