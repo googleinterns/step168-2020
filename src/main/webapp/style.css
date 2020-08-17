@@ -331,7 +331,9 @@ body {
 }
 
 #heatSlider {
+/* csslint ignore:start */
   -webkit-appearance: none;
+/* csslint ignore:end */
   width: 62%;
   height: 15px;
   border-radius: 5px;
@@ -347,8 +349,10 @@ body {
   opacity: 1;
 }
 
+/* csslint ignore:start */
 #heatSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
+/* csslint ignore:end */
   appearance: none;
   width: 25px;
   height: 25px;
