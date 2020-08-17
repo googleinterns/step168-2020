@@ -206,10 +206,6 @@ function createMap() {
   document.getElementById('directions-search').addEventListener('click', () => {
     calculateAndDisplayRoute(directionsService, map);
   });
-  document.getElementById('search-content-submit')
-      .addEventListener('click', () => {
-        findWhatToSearch();
-      });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
   });
@@ -235,7 +231,7 @@ function createMap() {
   document.getElementById('videos').addEventListener('click', () => {
     const searched = document.getElementById('search-content').value;
     if (searched === '') {
-      searchForVideos(map, 'COVID-19');
+      searchForVideos(map, 'COVID-19 News');
     } else {
       searchForVideos(map, searched);
     }
@@ -315,7 +311,6 @@ for (i = 0; i < coll.length; i++) {
     }
   });
 }
-
 
 // Display slider value and update heat map based on slider
 document.getElementById('sliderValue').innerHTML =
