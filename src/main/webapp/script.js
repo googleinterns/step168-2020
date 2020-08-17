@@ -327,9 +327,9 @@ function getCoordsFromSearch(geocoder, map) {
   geocoder.geocode({address: address}, (results, status) => {
     if (status === 'OK') {
       console.log(results);
-      map.fitBounds(results[0].geometry.bounds);
+      map.fitBounds(results[0].geometry.viewport);
       displayLatitudeLongitude(results[0].geometry.location.toJSON());
-      setBoundries(address);
+      setBoundries(address, results);
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -338,17 +338,31 @@ function getCoordsFromSearch(geocoder, map) {
 
 let bound;
 
-function setBoundries(query) {
+function setBoundries(query, googleMapsResponse) {
   let url = 'https://nominatim.openstreetmap.org/search?q=';
   url += encodeURI(query);
   url += '&format=json&polygon_geojson=1';
   bound.setPaths([]);
   fetch(url).then((response) => response.json()).then((data) => {
-    console.log('Boundries:', data);
-    if (!('geojson' in data[0])) {
+    let num = 0;
+    while (num < data.length) {
+      const googleMaps = googleMapsResponse[0].geometry.viewport;
+      const openStreetMap = data[num].boundingbox;
+      if (boundsSimilar(googleMaps, openStreetMap)) {
+        break;
+      }
+      num += 1;
+    }
+    if (num === data.length) {
+      if (!googleMapsResponse[0].types.includes('country')) {
+        return;
+      }
+      num = 0;
+    }
+    if (!('geojson' in data[num])) {
       return;
     }
-    const coords = data[0].geojson.coordinates;
+    const coords = data[num].geojson.coordinates;
     const latlngs = [];
     for (let i = 0; i < coords.length; i++) {
       latlngs.push([]);
@@ -366,6 +380,29 @@ function setBoundries(query) {
     bound.setPaths(latlngs);
     bound.setMap(map);
   });
+}
+
+function boundsSimilar(googleMapsBounds, openStreetMap) {
+  console.log(googleMapsBounds);
+  const MAX_DIFFERENCE = 0.25;
+  const googleMaps = [
+    googleMapsBounds.Va.i,
+    googleMapsBounds.Va.j,
+    googleMapsBounds.Za.i,
+    googleMapsBounds.Za.j,
+  ];
+  let matches = 0;
+  for (let i = 0; i < openStreetMap.length; i++) {
+    const value = parseFloat(openStreetMap[i]);
+    for (let j = 0; j < googleMaps.length; j++) {
+      const diff = Math.abs(value - googleMaps[j]);
+      if (diff <= MAX_DIFFERENCE) {
+        matches += 1;
+        break;
+      }
+    }
+  }
+  return matches === openStreetMap.length;
 }
 
 // Update displayed COVID stats based on address
