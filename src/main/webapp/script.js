@@ -24,6 +24,7 @@ let player;
 let casesData;
 let map;
 let geocoder;
+let bound;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -336,8 +337,9 @@ function getCoordsFromSearch(geocoder, map) {
   });
 }
 
-let bound;
-
+/**
+ * Draws boundries of searched location on the map if it exists
+ */
 function setBoundries(query, googleMapsResponse) {
   let url = 'https://nominatim.openstreetmap.org/search?q=';
   url += encodeURI(query);
@@ -389,6 +391,9 @@ function setBoundries(query, googleMapsResponse) {
   });
 }
 
+/**
+ * Compares google maps bounds with openstreetmap bounds
+ */
 function boundsSimilar(googleMapsResponse, openStreetMap) {
   let googleMapsBounds;
   if (Object.prototype.hasOwnProperty.call(googleMapsResponse, 'bounds')) {
