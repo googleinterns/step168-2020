@@ -6,7 +6,7 @@ class VideoPlayer {
    * Add click event listeners to video player buttons
    */
   constructor() {
-    // video values come from the 'video-background' in style.css 
+    // video values come from the 'video-background' in style.css
     this.videoTop = '20%';
     this.videoLeft = '50%';
     this.videoWidth = '40%';
@@ -49,7 +49,8 @@ class VideoPlayer {
         setUpForMaximizeAnimation();
       }
       $('#video-background').animate({
-        top: this.videoTop, // to force the window to minimize at the bottom corner
+        top: this.videoTop,  // to force the window to minimize at the bottom
+                             // corner
         left: this.videoLeft,
         width: this.videoWidth,
         height: this.videoHeight
@@ -97,39 +98,55 @@ class VideoPlayer {
   hideVideo() {
     this.currentVideo = 0;
     this.player.stopVideo();
-    
+
     this.saveCurVideo();
     // const overlay = new google.maps.OverlayView();
     // overlay.draw = function() {};
     // overlay.setMap(map);
 
-      const proj = overlay.getProjection();
-      const pos = curLocationMarker.getPosition();
-      const p = proj.fromLatLngToContainerPixel(pos);
-      const markerBubbleOffsetTop = -4;
-      const markerBubbleOffsetLeft = -.5;
-      // the distance between the marker position and the center of the bubble of the marker
-      const endLeft = p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
-      const endTop = p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
+    const proj = overlay.getProjection();
+    const pos = curLocationMarker.getPosition();
+    const p = proj.fromLatLngToContainerPixel(pos);
+    const markerBubbleOffsetTop = -4;
+    const markerBubbleOffsetLeft = -.5;
+    // the distance between the marker position and the center of the bubble of
+    // the marker
+    const endLeft =
+        p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
+    const endTop = p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
 
-    $('#video-background').animate({
-      top: endTop, // to force the window to minimize at the bottom corner
-      left: endLeft,
-      width: '0px',
-      height: 0
-    }, function () {
-      document.getElementById('video-overlay').style.display = 'none';
-      document.getElementById('video-background').style.display = 'none';
-    });
+    $('#video-background')
+        .animate(
+            {
+              top: endTop,  // to force the window to minimize at the bottom
+                            // corner
+              left: endLeft,
+              width: '0px',
+              height: 0
+            },
+            function() {
+              document.getElementById('video-overlay').style.display = 'none';
+              document.getElementById('video-background').style.display =
+                  'none';
+            });
   }
 
   // saves current video location and size
   saveCurVideo() {
-    const eleVideo = window.getComputedStyle(document.getElementById('video-background'));
-    this.videoTop = parseFloat(eleVideo.getPropertyValue('top')) / window.innerHeight * 100 + '%';
-    this.videoLeft = parseFloat(eleVideo.getPropertyValue('left')) / window.innerWidth * 100 + '%';
-    this.videoWidth = parseFloat(eleVideo.getPropertyValue('width')) / window.innerWidth * 100 + '%';
-    this.videoHeight = parseFloat(eleVideo.getPropertyValue('height')) / window.innerHeight * 100 + '%';
+    const eleVideo =
+        window.getComputedStyle(document.getElementById('video-background'));
+    this.videoTop = parseFloat(eleVideo.getPropertyValue('top')) /
+            window.innerHeight * 100 +
+        '%';
+    this.videoLeft = parseFloat(eleVideo.getPropertyValue('left')) /
+            window.innerWidth * 100 +
+        '%';
+    this.videoWidth = parseFloat(eleVideo.getPropertyValue('width')) /
+            window.innerWidth * 100 +
+        '%';
+    this.videoHeight = parseFloat(eleVideo.getPropertyValue('height')) /
+            window.innerHeight * 100 +
+        '%';
   }
 
   /**
