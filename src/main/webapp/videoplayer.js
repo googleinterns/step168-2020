@@ -1,4 +1,6 @@
+/* globals overlay, curLocationMarker */
 /* exported VideoPlayer */
+/* eslint-env jquery */
 
 class VideoPlayer {
   /**
@@ -46,17 +48,37 @@ class VideoPlayer {
     } else {
       this.player.loadVideoById(this.videoIds[this.currentVideo]);
       if (changedVideoStyle) {
-        setUpForMaximizeAnimation();
+        this.setUpForMaximizeAnimation();
       }
       $('#video-background').animate({
-        top: this.videoTop,  // to force the window to minimize at the bottom
-                             // corner
+        top: this.videoTop,
         left: this.videoLeft,
         width: this.videoWidth,
-        height: this.videoHeight
+        height: this.videoHeight,
       });
       document.getElementById('video-overlay').style.display = 'block';
       document.getElementById('video-background').style.display = 'block';
+    }
+  }
+
+  // moves video starting position to current marker
+  setUpForMaximizeAnimation() {
+    if (typeof curLocationMarker !== 'undefined') {
+      const proj = overlay.getProjection();
+      const pos = curLocationMarker.getPosition();
+      const p = proj.fromLatLngToContainerPixel(pos);
+      const markerBubbleOffsetTop = -4;
+      const markerBubbleOffsetLeft = -.5;
+      // the distance between the marker position and the center of the bubble
+      // of the marker
+      const startLeft =
+          p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
+      const startTop =
+          p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
+      $('#video-background').css('top', startTop);
+      $('#video-background').css('left', startLeft);
+      $('#video-background').css('width', '0%');
+      $('#video-background').css('height', '0%');
     }
   }
 
@@ -118,11 +140,10 @@ class VideoPlayer {
     $('#video-background')
         .animate(
             {
-              top: endTop,  // to force the window to minimize at the bottom
-                            // corner
+              top: endTop,
               left: endLeft,
               width: '0px',
-              height: 0
+              height: 0,
             },
             function() {
               document.getElementById('video-overlay').style.display = 'none';

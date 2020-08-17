@@ -15,6 +15,7 @@
 /* globals VideoPlayer, searchForVideos
    addDirectionsListeners calculateAndDisplayRoute */
 /* exported casesData */
+/* eslint-env jquery */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -328,35 +329,15 @@ function updateHeatSize() {
     map: heatmap.getMap(),
     radius: document.getElementById('heatSlider').value,
   });
+}
 
 // places marker on map of clicked/searched location
 function placeMarker(map, curLocation) {
   if (typeof curLocationMarker === 'undefined') {
     curLocationMarker =
-        new google.maps.Marker({position: curLocation, map: map})
+        new google.maps.Marker({position: curLocation, map: map});
   } else {
     curLocationMarker.setPosition(curLocation);
-  }
-}
-
-// moves video starting position to current marker
-function setUpForMaximizeAnimation() {
-  if (typeof curLocationMarker !== 'undefined') {
-    const proj = overlay.getProjection();
-    const pos = curLocationMarker.getPosition();
-    const p = proj.fromLatLngToContainerPixel(pos);
-    const markerBubbleOffsetTop = -4;
-    const markerBubbleOffsetLeft = -.5;
-    // the distance between the marker position and the center of the bubble of
-    // the marker
-    const startLeft =
-        p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
-    const startTop =
-        p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
-    $('#video-background').css('top', startTop);
-    $('#video-background').css('left', startLeft);
-    $('#video-background').css('width', '0%');
-    $('#video-background').css('height', '0%');
   }
 }
 
@@ -550,13 +531,13 @@ $('.resizable').resizable({
     ui.element.append($('<div/>', {
       id: 'iframe-overlay',
       css: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        'z-index': 10
-      }
+        'position': 'absolute',
+        'top': '0',
+        'right': '0',
+        'bottom': '0',
+        'left': '0',
+        'z-index': '10',
+      },
     }));
   },
   stop: function(event, ui) {
@@ -564,5 +545,5 @@ $('.resizable').resizable({
   },
   resize: function(event, ui) {
     $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
-  }
+  },
 });
