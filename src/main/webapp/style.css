@@ -59,9 +59,13 @@ body {
 
 #covidStats {
   border-left: 6px solid white;
+  border-right: 6px solid white;
   background-color: whitesmoke;
   font-size: 225%;
   padding: 0% 0.5% 0% 0.5%;
+  border-radius: 16px;
+  margin-right: 4px;
+  margin-top: 4px;
 }
 
 #covidStats.inactive {
@@ -196,15 +200,15 @@ body {
   color: #4d4d4d;
 }
 
-.topnav {
+#topnav {
   overflow: hidden;
   background-color: white;
   width: 555px;
   z-index: 6;
-  position: absolute;
+  position: relative;
   border-radius: 16px;
-  top: 5px;
-  right: 5px;
+  top: 4px;
+  left: 4px;
 }
 
 .topnav .search-container {
@@ -314,12 +318,39 @@ body {
   font-weight: bold;
 }
 
+#heatMapType {
+  padding: 16px 0px 0px 0px;
+}
+
 #heatMapType:hover {
   color: white;
 }
 
 #toggle-heat {
+  padding: 16px 0px 0px 0px;
   float: right;
+}
+
+#heatSlider {
+  width: 62%;
+  height: 15px;
+  border-radius: 5px;
+  margin-top: 24px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+#heatSlider:hover {
+  opacity: 1;
+}
+
+#relative-heat {
+  padding: 16px 0px 0px 8px;
+  float: right;
+  position: relative;
+  bottom: 40px;
 }
 
 .inputdata {
