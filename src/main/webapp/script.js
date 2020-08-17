@@ -343,19 +343,26 @@ function setBoundries(query, googleMapsResponse) {
   url += encodeURI(query);
   url += '&format=json&polygon_geojson=1';
   bound.setPaths([]);
+  const types = googleMapsResponse[0].types;
   fetch(url).then((response) => response.json()).then((data) => {
     let num = 0;
     while (num < data.length) {
-      const googleMaps = googleMapsResponse[0].geometry.viewport;
+      const googleMaps = googleMapsResponse[0].geometry;
       const openStreetMap = data[num].boundingbox;
+      if (data[num].geojson.type === 'Point') {
+        num += 1;
+        continue;
+      }
       if (boundsSimilar(googleMaps, openStreetMap)) {
         break;
       }
       num += 1;
     }
     if (num === data.length) {
-      if (!googleMapsResponse[0].types.includes('country')) {
-        return;
+      if (!types.includes('country')) {
+        if (!types.includes('administrative_area_level_1')) {  // state (in US)
+          return;
+        }
       }
       num = 0;
     }
@@ -367,7 +374,7 @@ function setBoundries(query, googleMapsResponse) {
     for (let i = 0; i < coords.length; i++) {
       latlngs.push([]);
       let path = coords[i];
-      if (Array.isArray(path[0][0])) {
+      if (data[num].geojson.type === 'MultiPolygon') {
         path = coords[i][0];
       }
       for (let k = 0; k < path.length; k++) {
@@ -382,8 +389,13 @@ function setBoundries(query, googleMapsResponse) {
   });
 }
 
-function boundsSimilar(googleMapsBounds, openStreetMap) {
-  console.log(googleMapsBounds);
+function boundsSimilar(googleMapsResponse, openStreetMap) {
+  let googleMapsBounds;
+  if (Object.prototype.hasOwnProperty.call(googleMapsResponse, 'bounds')) {
+    googleMapsBounds = googleMapsResponse.bounds;
+  } else {
+    googleMapsBounds = googleMapsResponse.viewport;
+  }
   const MAX_DIFFERENCE = 0.25;
   const googleMaps = [
     googleMapsBounds.Va.i,
