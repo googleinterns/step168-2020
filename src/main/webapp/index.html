@@ -95,6 +95,14 @@
         </div>
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content" id="routeContent">
+          <select id="travel-mode">
+            <option value="DRIVING">Driving</option>
+            <option value="WALKING">Walking</option>
+            <option value="BICYCLING">Biking</option> </select
+          ><br />
+          <button type="button" class="contentToggle" id="start-current-location">
+            <i class="material-icons">my_location</i> Start At Current Location
+          </button>
           <div class="inputdata">
             <i class="material-icons routing-icons">person_pin</i>
             <input type="text" id="start" placeholder="Choose starting point" />
@@ -104,15 +112,19 @@
             <hr class="rountingHorizontal" />
           </div>
           <button type="button" id="directions-search"><i class="material-icons">beenhere</i></button>
-          <button type="button" class="contentToggle" id="alternateRoutes">
+          <button type="button" class="contentToggle" id="show-alternate-routes">
             <i class="material-icons">navigation</i> Alternate Routes
           </button>
           <button type="button" class="contentToggle" id="show-expanded-routes">
-            <i class="material-icons">edit_location</i> Expanded Information
+            <i class="material-icons">edit_location</i> More Information
           </button>
           <div id="directionsInfo">
-            <p>There are <span id="route-active-count">0</span> active cases along the chosen route</p>
+            <p>There are <span id="route-active-count">0</span> active cases in counties along the chosen route</p>
           </div>
+          <button type="button" class="contentToggle" id="open-map-link">Open Google Maps</button>
+          <button type="button" class="contentToggle" id="open-map-email">Share By Email</button>
+          <div id="test"></div>
+          <div id="test2"></div>
           <div id="expanded-routing">
             <p>Route Information</p>
             Selected:
@@ -120,7 +132,7 @@
             <table id="route-info">
               <thead>
                 <tr>
-                  <th scope="col">Color</th>
+                  <th scope="col">#</th>
                   <th scope="col">Cases</th>
                   <th scope="col">Distance</th>
                   <th scope="col">Time</th>

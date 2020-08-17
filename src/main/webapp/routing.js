@@ -13,25 +13,51 @@
 // limitations under the License.
 
 /* exported calculateAndDisplayRoute addDirectionsListeners hideRouteMarkers
- * showRouteMarkers */
-/* globals casesData map */
+ * showRouteMarkers getRouteLink */
+/* globals casesData map geocoder */
 
+const NUM_WAYPOINTS = 10;
 let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
-const routeColors =
-    ['blue', 'red', 'cyan', 'magenta', 'purple', 'yellow', 'orange'];
+let routeStart = '';
+let routeEnd = '';
+let travelMode = '';
 
+/**
+ * Set functions that run when directions inputs are changed
+ */
 function addDirectionsListeners() {
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+  document.getElementById('directions-search').addEventListener('click', () => {
+    calculateAndDisplayRoute(directionsService, map);
+  });
+  document.getElementById('show-alternate-routes')
+      .addEventListener('click', () => {
+        toggleAlternateRoutes();
+      });
   document.getElementById('show-expanded-routes')
       .addEventListener('click', () => {
         toggleExpandedRouteInfo();
       });
+  document.getElementById('start-current-location')
+      .addEventListener('click', () => {
+        setCurrentLocation();
+      });
+  document.getElementById('open-map-link').addEventListener('click', () => {
+    window.open(encodeURI(getRouteLink()), '_blank');
+  });
+  document.getElementById('open-map-email').addEventListener('click', () => {
+    const LINE_BREAK = '%0D%0A';
+    let body = 'Click on the link below to open in Google Maps:';
+    body += LINE_BREAK + LINE_BREAK;
+    body += encodeURIComponent(encodeURI(getRouteLink()));
+    window.open('mailto:?subject=Videomap Route&body=' + body);
+  });
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
-  });
-  document.getElementById('alternateRoutes').addEventListener('click', () => {
-    toggleAlternateRoutes();
   });
 }
 
@@ -41,11 +67,14 @@ function addDirectionsListeners() {
  * Display route with fewest cases
  */
 function calculateAndDisplayRoute(directionsService, mapObject) {
+  routeStart = document.getElementById('start').value;
+  routeEnd = document.getElementById('end').value;
+  travelMode = document.getElementById('travel-mode').value;
   directionsService.route(
       {
-        origin: {query: document.getElementById('start').value},
-        destination: {query: document.getElementById('end').value},
-        travelMode: google.maps.TravelMode.DRIVING,
+        origin: {query: routeStart},
+        destination: {query: routeEnd},
+        travelMode: google.maps.TravelMode[travelMode],
         provideRouteAlternatives: true,
       },
       (response, status) => {
@@ -59,6 +88,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
         }
         routeMarkers = [];
         resetRouteTable();
+
         if (status === 'OK') {
           const active = [];
           const distance = [];
@@ -80,7 +110,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           chosenRoute = score.indexOf(Math.min(...score));
           changeSelectedRoute(chosenRoute);
 
-          document.getElementById('alternateRoutes')
+          document.getElementById('show-alternate-routes')
               .classList.remove('selected');
           document.getElementById('show-expanded-routes')
               .classList.remove('selected');
@@ -102,6 +132,9 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
  * hidden by default
  */
 function processRoute(mapObject, response, i) {
+  const route = response.routes[i];
+  const counted = [];
+  const points = route.overview_path;
   routeLines.push({
     route: new google.maps.DirectionsRenderer({
       map: mapObject,
@@ -109,19 +142,24 @@ function processRoute(mapObject, response, i) {
       routeIndex: i,
       options: {
         polylineOptions: {
-          strokeColor: routeColors[i],
+          strokeColor: 'grey',
           strokeOpacity: 1,
           strokeWeight: 3,
         },
+        infoWindow: new google.maps.InfoWindow(),
+        suppressInfoWindows: false,
       },
     }),
     active: 0,
+    waypoints: [],
+    infoWindow: new google.maps.InfoWindow(),
   });
-  const route = response.routes[i];
-  const counted = [];
-  const points = route.overview_path;
+  const waypointInterval = Math.floor(points.length / NUM_WAYPOINTS) - 1;
+  console.log(waypointInterval);
   for (let j = 0; j < points.length; j += 1) {
-    const latLng = new google.maps.LatLng(points[j].lat(), points[j].lng());
+    const lat = points[j].lat();
+    const lng = points[j].lng();
+    const latLng = new google.maps.LatLng(lat, lng);
     const marker = new google.maps.Marker({
       position: latLng,
       icon: {
@@ -131,6 +169,12 @@ function processRoute(mapObject, response, i) {
     });
     marker.setMap(map);
     routeMarkers.push(marker);
+    if (j % waypointInterval === 0) {
+      routeLines[i].waypoints.push({
+        'lat': lat,
+        'lng': lng,
+      });
+    }
     const closest = findClosest(points[j].lat(), points[j].lng());
     let duplicate = false;
     for (let k = 0; k < counted.length; k++) {
@@ -142,17 +186,15 @@ function processRoute(mapObject, response, i) {
     if (!duplicate) {
       routeLines[i].active += closest.active;
       counted.push(closest);
-      const closeLatLng = new google.maps.LatLng(closest.lat, closest.lng);
-      const marker = new google.maps.Marker({
-        position: closeLatLng,
-        visible: false,
-      });
-      marker.setMap(mapObject);
-      routeMarkers.push(marker);
+    }
+    if (j === Math.floor(points.length / 2)) {
+      routeLines[i].infoWindow.setContent(i.toString());
+      routeLines[i].infoWindow.setPosition(latLng);
+      // routeLines[i].infoWindow.open(map);
     }
   }
   addTableRow(
-      routeColors[i], routeLines[i].active, route.legs[0].distance.text,
+      routeLines[i].active, route.legs[0].distance.text,
       route.legs[0].duration.text);
   console.log(`"Route ${i} has ${routeLines[i].active} cases"`);
   return [
@@ -179,19 +221,19 @@ function resetRouteTable() {
 /**
  * Add row to expanded table with route color, cases, distance, and time
  */
-function addTableRow(color, cases, distance, time) {
+function addTableRow(cases, distance, time) {
   const table =
       document.getElementById('route-info').getElementsByTagName('tbody')[0];
   const row = table.insertRow();
   const selector = document.getElementById('route-selector');
   const option = document.createElement('option');
   option.value = table.rows.length - 1;
-  option.textContent = color;
+  option.textContent = table.rows.length;
   selector.appendChild(option);
   for (let i = 0; i < 5; i++) {
     row.insertCell();
   }
-  row.cells[0].textContent = color;
+  row.cells[0].textContent = table.rows.length;
   row.cells[1].textContent = cases;
   row.cells[2].textContent = distance;
   row.cells[3].textContent = time;
@@ -204,20 +246,21 @@ function changeSelectedRoute(route) {
   chosenRoute = route;
   for (let i = 0; i < routeLines.length; i++) {
     const options = {
-      strokeColor: routeColors[i],
-      strokeOpacity: 0.6,
+      strokeColor: 'grey',
       strokeWeight: 3,
     };
     if (i == chosenRoute) {
+      options.strokeColor = 'blue';
       options.strokeOpacity = 1;
       options.strokeWeight = 7;
     }
     routeLines[i].route.setOptions({
       polylineOptions: options,
     });
-    const aR = document.getElementById('alternateRoutes');
+    const aR = document.getElementById('show-alternate-routes');
     if (!aR.classList.contains('selected')) {
-      document.getElementById('alternateRoutes').classList.toggle('selected');
+      document.getElementById('show-alternate-routes')
+          .classList.toggle('selected');
     }
     showAlternateRoutes();
   }
@@ -281,6 +324,7 @@ function showAlternateRoutes() {
  * Switch alternate routes on and off
  */
 function toggleAlternateRoutes() {
+  showRouteInfo();
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       if (routeLines[i].route.getMap() == null) {
@@ -290,7 +334,7 @@ function toggleAlternateRoutes() {
       }
     }
   }
-  document.getElementById('alternateRoutes').classList.toggle('selected');
+  document.getElementById('show-alternate-routes').classList.toggle('selected');
 }
 
 /**
@@ -300,6 +344,7 @@ function showRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'block';
   document.getElementById('routeContent').style.maxHeight =
       document.getElementById('routeContent').scrollHeight + 'px';
+  document.getElementById('show-expanded-routes').classList.add('selected');
 }
 
 /**
@@ -307,6 +352,7 @@ function showRouteInfo() {
  */
 function hideRouteInfo() {
   document.getElementById('expanded-routing').style.display = 'none';
+  document.getElementById('show-expanded-routes').classList.remove('selected');
 }
 
 /**
@@ -319,7 +365,6 @@ function toggleExpandedRouteInfo() {
   } else {
     hideRouteInfo();
   }
-  document.getElementById('show-expanded-routes').classList.toggle('selected');
 }
 
 /**
@@ -337,4 +382,54 @@ function findClosest(lat, lng) {
     }
   }
   return closest;
+}
+
+/**
+ * Generate link to open google maps with selected route
+ */
+function getRouteLink() {
+  let link = 'https://www.google.com/maps/dir/?api=1';
+  link += '&origin=' + routeStart;
+  link += '&destination=' + routeEnd;
+  link += '&travelmode=' + travelMode.toLowerCase();
+  link += '&waypoints=';
+  const waypoints = routeLines[chosenRoute].waypoints;
+  for (let i = 0; i < waypoints.length; i++) {
+    if (i > 0) {
+      link += '|';
+    }
+    link += waypoints[i].lat + ',' + waypoints[i].lng;
+  }
+  console.log('Link', encodeURI(link));
+  return link;
+}
+
+/**
+ * Set route start to current location
+ */
+function setCurrentLocation() {
+  const geoOptions = {
+    timeout: 10 * 1000,         // 10 seconds
+    maximumAge: 5 * 60 * 1000,  // last 5 minutes
+  };
+
+  const geoSuccess = function(position) {
+    const latlng = {
+      'lat': position.coords.latitude,
+      'lng': position.coords.longitude,
+    };
+    geocoder.geocode({location: latlng}, (results, status) => {
+      if (status === 'OK') {
+        console.log(results);
+        document.getElementById('start').value = results[0].formatted_address;
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  };
+  const geoError = function(error) {
+    console.log('Error occurred. Error code: ' + error.code);
+  };
+
+  navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }

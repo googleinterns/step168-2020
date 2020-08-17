@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer, searchForVideos calculateAndDisplayRoute
-   addDirectionsListeners */
+/* globals VideoPlayer, searchForVideos
+   addDirectionsListeners calculateAndDisplayRoute */
 /* exported casesData */
 
 // Get API key from hidden file and use it to get the map
@@ -23,6 +23,7 @@ document.getElementById('mapUrl').src = mykey;
 let player;
 let casesData;
 let map;
+let geocoder;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -179,7 +180,7 @@ function createMap() {
         globalRecovered);
   });
 
-  const geocoder = new google.maps.Geocoder();
+  geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
@@ -187,6 +188,9 @@ function createMap() {
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
+  });
+  document.getElementById('videos').addEventListener('click', () => {
+    searchForVideos(map);
   });
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();

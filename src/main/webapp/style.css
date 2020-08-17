@@ -303,6 +303,7 @@ body {
 }
 
 #heatMapType,
+#travel-mode,
 #route-selector {
   border: none;
   outline: none;
@@ -383,7 +384,7 @@ body {
   font-weight: bold;
 }
 
-#alternateRoutes,
+#show-alternate-routes,
 #show-expanded-routes {
   width: 88%;
   text-align: left;
