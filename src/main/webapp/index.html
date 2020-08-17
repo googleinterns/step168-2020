@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <title>Video Map</title>
     <link rel="stylesheet" href="style.css" />
+    <script>
+      document.write(
+        "<style> #heatSlider {-webkit-appearance: none;-webkit-transition: 0.2s;} #heatSlider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 25px;height: 25px;border-radius: 50%;background: white;cursor: pointer;} </style>"
+      )
+    </script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <script src="apikeys.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
@@ -53,12 +58,14 @@
 
     <div class="noDisplay">
       <div class="controls topnav">
-        <span id="openOverlay">&#9776;</span>
-        <div class="search-container">
-          <input type="text" placeholder="Search Location" id="search-text" />
-          <button type="button" id="search-submit"><i class="material-icons">place</i></button>
-          <input type="text" placeholder="Covid-19 Videos" value="" id="search-content" />
-          <button type="button" id="videos"><i class="material-icons">local_movies</i></button>
+        <div id="topnav">
+          <span id="openOverlay">&#9776;</span>
+          <div class="search-container">
+            <input type="text" placeholder="Search Location" id="search-text" />
+            <button type="button" id="search-submit"><i class="material-icons">place</i></button>
+            <input type="text" placeholder="Covid-19 Videos" value="" id="search-content" />
+            <button type="button" id="videos"><i class="material-icons">local_movies</i></button>
+          </div>
         </div>
       </div>
     </div>
@@ -92,6 +99,11 @@
           <button type="button" class="contentToggle" id="toggle-heat">
             <i class="material-icons">layers</i> Heat Map
           </button>
+          <input type="range" id="heatSlider" min="0" max="10" value="2.5" step="0.5" />
+          <button type="button" class="contentToggle" id="relative-heat">
+            <i class="material-icons">local_activity</i> Relative Heat
+          </button>
+          <p><i class="material-icons">local_florist</i> Heat Size: <span id="sliderValue"></span></p>
         </div>
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content" id="routeContent">
