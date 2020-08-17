@@ -22,12 +22,10 @@ document.getElementById('mapUrl').src = mykey;
 
 let player;
 let casesData;
-<<<<<<< HEAD
 let map;
 let geocoder;
-=======
+let overlay;
 let curLocationMarker;
->>>>>>> add markers where users click and remove uncessary jQuery UI library
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -249,6 +247,14 @@ function createMap() {
       findWhatToSearch();
     }
   };
+  initOverlay();
+}
+
+// creates overlay of map
+function initOverlay() {
+  overlay = new google.maps.OverlayView();
+  overlay.draw = function() {};
+  overlay.setMap(map);
 }
 
 // searches 'COVID-19' if user doesn't specify search
@@ -309,6 +315,7 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 
+
 // Display slider value and update heat map based on slider
 document.getElementById('sliderValue').innerHTML =
     document.getElementById('heatSlider').value;
@@ -322,6 +329,7 @@ function updateHeatSize() {
     radius: document.getElementById('heatSlider').value,
   });
 
+// places marker on map of clicked/searched location
 function placeMarker(map, curLocation) {
   if (typeof curLocationMarker === 'undefined') {
     curLocationMarker = new google.maps.Marker( {
@@ -330,6 +338,25 @@ function placeMarker(map, curLocation) {
     })
   } else {
     curLocationMarker.setPosition(curLocation);
+  }
+}
+
+// moves video starting position to current marker
+function setUpForMaximizeAnimation() {
+  if (typeof curLocationMarker !== 'undefined') {
+
+      const proj = overlay.getProjection();
+      const pos = curLocationMarker.getPosition();
+      const p = proj.fromLatLngToContainerPixel(pos);
+      const markerBubbleOffsetTop = -4;
+      const markerBubbleOffsetLeft = -.5;
+      // the distance between the marker position and the center of the bubble of the marker
+      const startLeft = p.x / window.innerWidth * 100 + markerBubbleOffsetLeft + '%';
+      const startTop = p.y / window.innerHeight * 100 + markerBubbleOffsetTop + '%';
+      $('#video-background').css('top', startTop);
+      $('#video-background').css('left', startLeft);
+      $('#video-background').css('width', '0%');
+      $('#video-background').css('height', '0%');
   }
 }
 
@@ -454,8 +481,10 @@ function getCoordsFromSearch(geocoder, map) {
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
     if (status === 'OK') {
-      map.setCenter(results[0].geometry.location);
-      displayLatitudeLongitude(results[0].geometry.location.toJSON());
+      const foundLocation = results[0].geometry.location;
+      map.setCenter(foundLocation);
+      displayLatitudeLongitude(foundLocation.toJSON());
+      placeMarker(map, foundLocation.toJSON());
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -512,11 +541,13 @@ function gotoUserLocation(map) {
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }
 
+// makes videoplayer draggable
 $ ('#video-background').draggable( {
   cursor: 'move',
   iframeFix: true
 });
 
+// makes videoplayer resizable
 $(".resizable").resizable({
     start: function(event, ui) {
         ui.element.append($("<div/>", {
