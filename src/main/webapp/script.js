@@ -14,7 +14,7 @@
 
 /* globals VideoPlayer, searchForVideos addDirectionsListeners */
 /* globals calculateAndDisplayRoute */
-/* exported casesData setBoundries */
+/* exported casesData setBoundaries */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -330,7 +330,7 @@ function getCoordsFromSearch(geocoder, map) {
       console.log(results);
       map.fitBounds(results[0].geometry.viewport);
       displayLatitudeLongitude(results[0].geometry.location.toJSON());
-      setBoundries(address, results);
+      setBoundaries(address, results);
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -338,9 +338,9 @@ function getCoordsFromSearch(geocoder, map) {
 }
 
 /**
- * Draws boundries of searched location on the map if it exists
+ * Draws Boundaries of searched location on the map if it exists
  */
-function setBoundries(query, googleMapsResponse) {
+function setBoundaries(query, googleMapsResponse) {
   let url = 'https://nominatim.openstreetmap.org/search?q=';
   url += encodeURI(query);
   url += '&format=json&polygon_geojson=1';
