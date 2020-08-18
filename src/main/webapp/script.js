@@ -518,7 +518,8 @@ function gotoUserLocation(map) {
 }
 
 // makes videoplayer draggable
-$('#video-background').draggable({cursor: 'move', iframeFix: true});
+$('#video-background')
+    .draggable({cursor: 'move', iframeFix: true, containment: 'window'});
 
 // makes videoplayer resizable
 $('.resizable').resizable({
