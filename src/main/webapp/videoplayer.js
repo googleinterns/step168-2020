@@ -87,6 +87,7 @@ class VideoPlayer {
    */
   nextVideo() {
     this.currentVideo += 1;
+    this.saveCurVideo();
     const changedVideoStyle = false;
     // i.e. this method does not change visual attributes of video player
     this.playVideo(changedVideoStyle);
@@ -97,6 +98,7 @@ class VideoPlayer {
    */
   previousVideo() {
     this.currentVideo -= 1;
+    this.saveCurVideo();
     const changedVideoStyle = false;
     // i.e. this method does not change visual attributes of video player
     this.playVideo(changedVideoStyle);

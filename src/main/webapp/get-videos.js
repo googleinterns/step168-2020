@@ -28,12 +28,13 @@ function executeSearch(map, searchContent) {
         'part': ['snippet'],
         'location': document.getElementById('latitude').value + ',' +
             document.getElementById('longitude').value,
-        // the location radius is approximately the width the cursor covers
-        // which changes based on zoom as represented by the equation below
-        // YouTube API doesnt support a radius greater than 1000 km
+        // the location radius is approximately 1.5 times the width the cursor
+        // covers which changes based on zoom as represented by the equation
+        // below YouTube API doesnt support a radius greater than 1000 km
         'locationRadius':
-            Math.min(1720 * Math.pow(.5, map.getZoom()), 1000) + 'km',
+            Math.min(2600 * Math.pow(.5, map.getZoom()), 1000) + 'km',
         'q': searchContent,
+        'videoEmbeddable': 'true',
         'maxResults': 50,
         'type': ['video'],
       })

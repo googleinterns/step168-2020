@@ -258,7 +258,7 @@ function initOverlay() {
 function findWhatToSearch() {
   const searched = document.getElementById('search-content').value;
   if (searched === '') {
-    searchForVideos(map, 'COVID-19');
+    searchForVideos(map, 'COVID-19 News');
   } else {
     searchForVideos(map, searched);
   }
@@ -518,8 +518,12 @@ function gotoUserLocation(map) {
 }
 
 // makes videoplayer draggable
-$('#video-background')
-    .draggable({cursor: 'move', iframeFix: true, containment: 'window'});
+$('#video-background').draggable({
+  cursor: 'move',
+  iframeFix: true,
+  scroll: false,
+  containment: 'window',
+});
 
 // makes videoplayer resizable
 $('.resizable').resizable({
