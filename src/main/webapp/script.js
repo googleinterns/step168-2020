@@ -775,6 +775,7 @@ $('#video-background').draggable({
 
 // makes videoplayer resizable
 $('.resizable').resizable({
+  autohide: true,
   start: function(event, ui) {
     ui.element.append($('<div/>', {
       id: 'iframe-overlay',
