@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/linkshorten")
 public class LinkShortenServlet extends HttpServlet {
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  public static final String CTYPE = "application/json"; // HttpServletResponse content type
+  public static final String CTYPE = "text/html"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
@@ -44,17 +44,18 @@ public class LinkShortenServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setCharacterEncoding(ENCODING);
+    response.setContentType(CTYPE);
     String url = getRequestParameterOrDefault(request, "url", "");
     if (url.length() < 1) {
-      response.setContentType("text/html;");
       response.getWriter().println("No url recieved");
       return;
     }
+    System.out.println("Url: " + url);
     Entity urlEntity = new Entity("url");
     urlEntity.setProperty("url", url);
     Key key = urlEntity.getKey();
     datastore.put(urlEntity);
-    response.setContentType("text/html;");
     response.getWriter().println(key.getId());
   }
 
