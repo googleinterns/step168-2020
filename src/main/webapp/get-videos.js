@@ -10,7 +10,6 @@ function searchForVideos(map, searched) {
         .then(
             function() {
               executeSearch(map, searched);
-              // console.log('load was successful');
             },
             function(err) {
               alert(
