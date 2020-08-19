@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* globals VideoPlayer, searchForVideos addDirectionsListeners */
-/* globals calculateAndDisplayRoute */
-/* exported casesData setBoundaries */
+/* globals VideoPlayer, searchForVideos
+   addDirectionsListeners calculateAndDisplayRoute */
+/* exported casesData */
+/* eslint-env jquery */
 
 // Get API key from hidden file and use it to get the map
 const mykey = keys.MAPS_API_KEY;
@@ -25,6 +26,8 @@ let casesData;
 let map;
 let geocoder;
 let bound;
+let overlay;
+let curLocationMarker;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -134,11 +137,12 @@ function createMap() {
     fullscreenControl: false,
   });
   bound = new google.maps.Polygon({
-    strokeColor: '#FF0000',
-    strokeOpacity: 0.8,
+    strokeColor: '#0000FF',
+    strokeOpacity: 1,
     strokeWeight: 2,
-    fillColor: '#FF0000',
-    fillOpacity: 0.35,
+    fillColor: '#0000FF',
+    fillOpacity: 0.15,
+    clickable: false,
   });
   initMyLocationControl(map);
   initTopBar(map);
@@ -193,9 +197,15 @@ function createMap() {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
   });
+  document.getElementById('search-clear').addEventListener('click', () => {
+    document.getElementById('search-text').value = '';
+    bound.setPaths([]);
+  });
   map.addListener('click', function(mapsMouseEvent) {
-    displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
-    displayLocationData(mapsMouseEvent.latLng.toJSON());
+    const curLocation = mapsMouseEvent.latLng.toJSON();
+    displayLatitudeLongitude(curLocation);
+    displayLocationData(curLocation);
+    placeMarker(map, curLocation);
   });
   map.addListener('idle', function() {
     const relHeat = document.getElementById('relative-heat');
@@ -234,7 +244,7 @@ function createMap() {
   document.getElementById('videos').addEventListener('click', () => {
     const searched = document.getElementById('search-content').value;
     if (searched === '') {
-      searchForVideos(map, 'COVID-19');
+      searchForVideos(map, 'COVID-19 News');
     } else {
       searchForVideos(map, searched);
     }
@@ -242,14 +252,29 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      const searched = document.getElementById('search-content').value;
-      if (searched === '') {
-        searchForVideos(map, 'COVID-19');
-      } else {
-        searchForVideos(map, searched);
-      }
+      getCoordsFromSearch(geocoder, map);
+      displayLocationDataFromSearch(geocoder);
+      findWhatToSearch();
     }
   };
+  initOverlay();
+}
+
+// creates overlay of map
+function initOverlay() {
+  overlay = new google.maps.OverlayView();
+  overlay.draw = function() {};
+  overlay.setMap(map);
+}
+
+// searches 'COVID-19' if user doesn't specify search
+function findWhatToSearch() {
+  const searched = document.getElementById('search-content').value;
+  if (searched === '') {
+    searchForVideos(map, 'COVID-19 News');
+  } else {
+    searchForVideos(map, searched);
+  }
 }
 
 // Put my location icon in bottom left corner
@@ -314,12 +339,24 @@ function updateHeatSize() {
   });
 }
 
+// places marker on map of clicked/searched location
+function placeMarker(map, curLocation) {
+  if (typeof curLocationMarker === 'undefined') {
+    curLocationMarker =
+        new google.maps.Marker({position: curLocation, map: map});
+  } else {
+    curLocationMarker.setPosition(curLocation);
+  }
+}
+
 // Switch heat on and off
 function toggleHeatMap() {
   if (heatmap.getMap() == null) {
     heatmap.setMap(map);
+    bound.setOptions({'fillOpacity': 0.00});
   } else {
     heatmap.setMap(null);
+    bound.setOptions({'fillOpacity': 0.15});
   }
   document.getElementById('toggle-heat').classList.toggle('selected');
 }
@@ -432,16 +469,19 @@ function changeRelativeHeat() {
 // Recenter map to location searched and update current coordinates
 function getCoordsFromSearch(geocoder, map) {
   const address = document.getElementById('search-text').value;
-  geocoder.geocode({address: address}, (results, status) => {
-    if (status === 'OK') {
-      console.log(results);
-      map.fitBounds(results[0].geometry.viewport);
-      displayLatitudeLongitude(results[0].geometry.location.toJSON());
-      setBoundaries(address, results);
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
+  if (address !== '') {
+    geocoder.geocode({address: address}, (results, status) => {
+      if (status === 'OK') {
+        const foundLocation = results[0].geometry.location;
+        map.setCenter(foundLocation);
+        displayLatitudeLongitude(foundLocation.toJSON());
+        placeMarker(map, foundLocation.toJSON());
+        setBoundaries(address, results);
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
 }
 
 /**
@@ -532,13 +572,15 @@ function boundsSimilar(googleMapsResponse, openStreetMap) {
 // Update displayed COVID stats based on address
 function displayLocationDataFromSearch(geocoder) {
   const address = document.getElementById('search-text').value;
-  geocoder.geocode({address: address}, (results, status) => {
-    if (status === 'OK') {
-      displayLocationData(results[0].geometry.location.toJSON());
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
+  if (address !== '') {
+    geocoder.geocode({address: address}, (results, status) => {
+      if (status === 'OK') {
+        displayLocationData(results[0].geometry.location.toJSON());
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
 }
 
 /**
@@ -575,3 +617,34 @@ function gotoUserLocation(map) {
 
   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 }
+
+// makes videoplayer draggable
+$('#video-background').draggable({
+  cursor: 'move',
+  iframeFix: true,
+  scroll: false,
+  containment: 'window',
+});
+
+// makes videoplayer resizable
+$('.resizable').resizable({
+  start: function(event, ui) {
+    ui.element.append($('<div/>', {
+      id: 'iframe-overlay',
+      css: {
+        'position': 'absolute',
+        'top': '0',
+        'right': '0',
+        'bottom': '0',
+        'left': '0',
+        'z-index': '10',
+      },
+    }));
+  },
+  stop: function(event, ui) {
+    $('#iframe-overlay', ui.element).remove();
+  },
+  resize: function(event, ui) {
+    $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
+  },
+});

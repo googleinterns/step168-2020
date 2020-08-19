@@ -1,6 +1,7 @@
 body {
   font-family: 'Roboto';
   font-size: 16px;
+  overflow: hidden;
 }
 
 #map {
@@ -203,7 +204,7 @@ body {
 #topnav {
   overflow: hidden;
   background-color: white;
-  width: 555px;
+  width: 600px;
   z-index: 6;
   position: relative;
   border-radius: 16px;
@@ -254,6 +255,11 @@ body {
 
 #search-submit {
   color: #4285f4;
+  border: none;
+}
+
+#search-clear {
+  color: #db4437;
 }
 
 #videos {
