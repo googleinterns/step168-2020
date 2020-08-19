@@ -40,7 +40,7 @@ function displayLatitudeLongitude(value) {
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
   const potentialReports = [];
-  const RADIUS = 1.5;
+  const RADIUS = 3;
   // Look for closest reports
   casesData.forEach((report) => {
     if (Math.abs(report.lat - value['lat']) < RADIUS &&
