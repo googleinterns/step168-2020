@@ -407,15 +407,18 @@ function shortenLinkThenEmail() {
   const link = encodeURIComponent(getRouteLink());
   fetch(`/linkshorten?url=${link}`)
       .then((response) => response.text())
-      .then((reports) => {
-        console.log('lol', reports);
-        console.log('asdas');
+      .then((id) => {
+        createEmail(`${location.origin}/link?id=${id}`);
       });
 }
 
-function createEmail() {
+function createEmail(shortLink) {
   const LINE_BREAK = '%0D%0A';
   let body = 'Click on the link below to open in Google Maps:';
+  body += LINE_BREAK + LINE_BREAK;
+  body += encodeURI(shortLink);
+  body += LINE_BREAK + LINE_BREAK;
+  body += 'Direct link:';
   body += LINE_BREAK + LINE_BREAK;
   body += encodeURIComponent(encodeURI(getRouteLink()));
   window.open('mailto:?subject=Videomap Route&body=' + body);
