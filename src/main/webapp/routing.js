@@ -42,10 +42,56 @@ function addDirectionsListeners() {
       .addEventListener('click', () => {
         toggleExpandedRouteInfo();
       });
-  document.getElementById('start-current-location')
-      .addEventListener('click', () => {
-        setCurrentLocation();
-      });
+  document.getElementById('driving').classList.add('selected');
+  travelMode = 'DRIVING';
+  document.getElementById('driving').addEventListener('click', () => {
+    sameMode = false;
+    if (document.getElementById('driving').classList.contains('selected')) {
+      sameMode = true;
+    }
+    document.getElementById('walking').classList.remove('selected');
+    document.getElementById('biking').classList.remove('selected');
+    document.getElementById('driving').classList.add('selected');
+    travelMode = 'DRIVING';
+    rS = document.getElementById('start').value;
+    rE = document.getElementById('end').value;
+    cL = document.getElementById('driving').classList;
+    if (rS != "" && rE != "" && sameMode == false) {
+      calculateAndDisplayRoute(directionsService, map);
+    }
+  });
+  document.getElementById('walking').addEventListener('click', () => {
+    sameMode = false;
+    if (document.getElementById('walking').classList.contains('selected')) {
+      sameMode = true;
+    }
+    document.getElementById('driving').classList.remove('selected');
+    document.getElementById('biking').classList.remove('selected');
+    document.getElementById('walking').classList.add('selected');
+    travelMode = 'WALKING';
+    rS = document.getElementById('start').value;
+    rE = document.getElementById('end').value;
+    cL = document.getElementById('walking').classList;
+    if (rS != "" && rE != "" && sameMode == false) {
+      calculateAndDisplayRoute(directionsService, map);
+    }
+  });
+  document.getElementById('biking').addEventListener('click', () => {
+    sameMode = false;
+    if (document.getElementById('biking').classList.contains('selected')) {
+      sameMode = true;
+    }
+    document.getElementById('walking').classList.remove('selected');
+    document.getElementById('driving').classList.remove('selected');
+    document.getElementById('biking').classList.add('selected');
+    travelMode = 'BICYCLING';
+    rS = document.getElementById('start').value;
+    rE = document.getElementById('end').value;
+    cL = document.getElementById('biking').classList;
+    if (rS != "" && rE != "" && sameMode == false) {
+      calculateAndDisplayRoute(directionsService, map);
+    }
+  });
   document.getElementById('open-map-link').addEventListener('click', () => {
     window.open(encodeURI(getRouteLink()), '_blank');
   });
@@ -69,7 +115,7 @@ function addDirectionsListeners() {
 function calculateAndDisplayRoute(directionsService, mapObject) {
   routeStart = document.getElementById('start').value;
   routeEnd = document.getElementById('end').value;
-  travelMode = document.getElementById('travel-mode').value;
+
   directionsService.route(
       {
         origin: {query: routeStart},

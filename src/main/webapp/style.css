@@ -64,8 +64,8 @@ body {
   font-size: 225%;
   padding: 0% 0.5% 0% 0.5%;
   border-radius: 16px;
-  margin-right: 4px;
-  margin-top: 4px;
+  margin-right: 8px;
+  margin-top: 8px;
 }
 
 #covidStats.inactive {
@@ -307,7 +307,6 @@ body {
 }
 
 #heatMapType,
-#travel-mode,
 #route-selector {
   border: none;
   outline: none;
@@ -351,6 +350,32 @@ body {
   float: right;
   position: relative;
   bottom: 40px;
+}
+
+#travelModes {
+  padding: 16px 0px 0px 0px;
+}
+
+.travelbuttons {
+  background: #4285f4;
+  color: #d3d3d3;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding-top: 8px;
+}
+
+#driving {
+  padding-right: 16px;
+}
+
+#walking {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+#biking {
+  padding-left: 16px;
 }
 
 .inputdata {
@@ -423,7 +448,9 @@ body {
 }
 
 .contentToggle:hover,
-.contentToggle.selected {
+.contentToggle.selected,
+.travelbuttons:hover,
+.travelbuttons.selected {
   color: white;
 }
 
