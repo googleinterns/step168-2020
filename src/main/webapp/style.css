@@ -44,10 +44,26 @@ body {
 
 #video-controls {
   position: absolute;
+<<<<<<< HEAD
   z-index: 11;
   display: flex;
   top: 101%;
 }
+=======
+  bottom: 0;
+  padding-bottom: 10px;
+  left: 40%;
+  z-index: 12;
+  display: flex;
+  /* justify-content: center; */
+  width: 20%;
+  height: 10%;
+}
+
+/* #video-controls button {
+  width: 20%;
+} */
+>>>>>>> save current progress, no good chanegs yet tho
 
 .noDisplay {
   display: none;
