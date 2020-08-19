@@ -1,6 +1,7 @@
 body {
   font-family: 'Roboto';
   font-size: 16px;
+  overflow: hidden;
 }
 
 #map {
