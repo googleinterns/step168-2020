@@ -139,7 +139,7 @@ function createMap() {
   bound = new google.maps.Polygon({
     strokeColor: '#0000FF',
     strokeOpacity: 1,
-    strokeWeight: 4,
+    strokeWeight: 2,
     fillColor: '#0000FF',
     fillOpacity: 0.15,
     clickable: false,
@@ -468,6 +468,7 @@ function changeRelativeHeat() {
 
 // Recenter map to location searched and update current coordinates
 function getCoordsFromSearch(geocoder, map) {
+  const address = document.getElementById('search-text').value;
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
       if (status === 'OK') {
