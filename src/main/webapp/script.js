@@ -194,6 +194,10 @@ function createMap() {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
   });
+  document.getElementById('search-clear').addEventListener('click', () => {
+    document.getElementById('search-text').value = '';
+    bound.setPaths([]);
+  });
   map.addListener('click', function(mapsMouseEvent) {
     displayLatitudeLongitude(mapsMouseEvent.latLng.toJSON());
     displayLocationData(mapsMouseEvent.latLng.toJSON());
