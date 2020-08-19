@@ -10,9 +10,11 @@ function searchForVideos(map, searched) {
         .then(
             function() {
               executeSearch(map, searched);
-              console.log('load was successful');
             },
             function(err) {
+              alert(
+                  'Internal Video Retrival Error: ' +
+                  'please try again or a different search');
               console.error('Error loading GAPI client for API', err);
             });
   }
@@ -20,29 +22,29 @@ function searchForVideos(map, searched) {
 // Make sure the client is loaded and sign-in is complete before calling this
 // method.
 function executeSearch(map, searchContent) {
-  console.log(searchContent);
   return gapi.client.youtube.search
       .list({
         'part': ['snippet'],
         'location': document.getElementById('latitude').value + ',' +
             document.getElementById('longitude').value,
-        // the location radius is size of the legend provided in Google Maps
-        // which changes based on the zoom of the map (i.e. at zoom === 5,
-        // the legends shows how far 200 miles is)
-        'locationRadius': 3200 * Math.pow(.5, map.getZoom()) + 'mi',
+        // the location radius is approximately 1.5 times the width the cursor
+        // covers which changes based on zoom as represented by the equation
+        // below YouTube API doesnt support a radius greater than 1000 km
+        'locationRadius':
+            Math.min(2600 * Math.pow(.5, map.getZoom()), 1000) + 'km',
         'q': searchContent,
+        'videoEmbeddable': 'true',
         'maxResults': 50,
         'type': ['video'],
       })
       .then(
           function(response) {
-            console.log('response', response.result);
             // Handle the results here (response.result has the parsed body).
             const videoListToPlay = [];
             const videoItemsFromSearch = response.result.items;
             if (videoItemsFromSearch.length === 0) {
               alert(
-                  'There are no COVID-19 related videos in this area.' +
+                  'There are no COVID-19 related videos in this area. ' +
                   'Please try a new area.');
             } else {
               videoItemsFromSearch.forEach((item) => {
@@ -52,6 +54,9 @@ function executeSearch(map, searchContent) {
             }
           },
           function(err) {
+            alert(
+                'Internal Video Retrival Error:' +
+                'please try again or a different search');
             console.error('Execute error', err);
           });
 }
