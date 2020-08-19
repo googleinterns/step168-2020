@@ -294,7 +294,9 @@ for (i = 0; i < coll.length; i++) {
     } else {
       content.style.maxHeight = content.scrollHeight + 'px';
       if (this.id == 'route' && firstOpen) {
+        /* eslint-disable no-undef */
         setCurrentLocation();
+        /* eslint-enable no-undef */
         firstOpen = false;
       } else if (this.id == 'hmap') {
         displaySlider();
