@@ -49,12 +49,9 @@ function addDirectionsListeners() {
   document.getElementById('open-map-link').addEventListener('click', () => {
     window.open(encodeURI(getRouteLink()), '_blank');
   });
-  document.getElementById('open-map-email')
-      .addEventListener(
-          'click',
-          () => {
-
-          });
+  document.getElementById('open-map-email').addEventListener('click', () => {
+    shortenLinkThenEmail();
+  });
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
   });
