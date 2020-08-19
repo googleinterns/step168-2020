@@ -473,7 +473,7 @@ function getCoordsFromSearch(geocoder, map) {
     geocoder.geocode({address: address}, (results, status) => {
       if (status === 'OK') {
         const foundLocation = results[0].geometry.location;
-        map.setCenter(foundLocation);
+        map.fitBounds(results[0].geometry.viewport);
         displayLatitudeLongitude(foundLocation.toJSON());
         placeMarker(map, foundLocation.toJSON());
         setBoundaries(address, results);
