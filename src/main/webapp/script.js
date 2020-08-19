@@ -134,11 +134,12 @@ function createMap() {
     fullscreenControl: false,
   });
   bound = new google.maps.Polygon({
-    strokeColor: '#FF0000',
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillColor: '#FF0000',
-    fillOpacity: 0.35,
+    strokeColor: '#0000FF',
+    strokeOpacity: 1,
+    strokeWeight: 4,
+    fillColor: '#0000FF',
+    fillOpacity: 0.15,
+    clickable: false,
   });
   initMyLocationControl(map);
   initTopBar(map);
@@ -318,8 +319,10 @@ function updateHeatSize() {
 function toggleHeatMap() {
   if (heatmap.getMap() == null) {
     heatmap.setMap(map);
+    bound.setOptions({'fillOpacity': 0.00});
   } else {
     heatmap.setMap(null);
+    bound.setOptions({'fillOpacity': 0.15});
   }
   document.getElementById('toggle-heat').classList.toggle('selected');
 }
