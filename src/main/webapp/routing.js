@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /* exported calculateAndDisplayRoute addDirectionsListeners hideRouteMarkers
- * showRouteMarkers getRouteLink */
+ * showRouteMarkers getRouteLink shortenLinkThenEmail createEmail */
 /* globals casesData map geocoder */
 
 const NUM_WAYPOINTS = 10;
@@ -49,13 +49,12 @@ function addDirectionsListeners() {
   document.getElementById('open-map-link').addEventListener('click', () => {
     window.open(encodeURI(getRouteLink()), '_blank');
   });
-  document.getElementById('open-map-email').addEventListener('click', () => {
-    const LINE_BREAK = '%0D%0A';
-    let body = 'Click on the link below to open in Google Maps:';
-    body += LINE_BREAK + LINE_BREAK;
-    body += encodeURIComponent(encodeURI(getRouteLink()));
-    window.open('mailto:?subject=Videomap Route&body=' + body);
-  });
+  document.getElementById('open-map-email')
+      .addEventListener(
+          'click',
+          () => {
+
+          });
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
   });
@@ -402,6 +401,24 @@ function getRouteLink() {
   }
   console.log('Link', encodeURI(link));
   return link;
+}
+
+function shortenLinkThenEmail() {
+  const link = encodeURIComponent(getRouteLink());
+  fetch(`/linkshorten?url=${link}`)
+      .then((response) => response.text())
+      .then((reports) => {
+        console.log('lol', reports);
+        console.log('asdas');
+      });
+}
+
+function createEmail() {
+  const LINE_BREAK = '%0D%0A';
+  let body = 'Click on the link below to open in Google Maps:';
+  body += LINE_BREAK + LINE_BREAK;
+  body += encodeURIComponent(encodeURI(getRouteLink()));
+  window.open('mailto:?subject=Videomap Route&body=' + body);
 }
 
 /**
