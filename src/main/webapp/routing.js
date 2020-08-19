@@ -56,7 +56,7 @@ function addDirectionsListeners() {
     rS = document.getElementById('start').value;
     rE = document.getElementById('end').value;
     cL = document.getElementById('driving').classList;
-    if (rS != "" && rE != "" && sameMode == false) {
+    if (rS != '' && rE != '' && sameMode == false) {
       calculateAndDisplayRoute(directionsService, map);
     }
   });
@@ -72,7 +72,7 @@ function addDirectionsListeners() {
     rS = document.getElementById('start').value;
     rE = document.getElementById('end').value;
     cL = document.getElementById('walking').classList;
-    if (rS != "" && rE != "" && sameMode == false) {
+    if (rS != '' && rE != '' && sameMode == false) {
       calculateAndDisplayRoute(directionsService, map);
     }
   });
@@ -88,7 +88,7 @@ function addDirectionsListeners() {
     rS = document.getElementById('start').value;
     rE = document.getElementById('end').value;
     cL = document.getElementById('biking').classList;
-    if (rS != "" && rE != "" && sameMode == false) {
+    if (rS != '' && rE != '' && sameMode == false) {
       calculateAndDisplayRoute(directionsService, map);
     }
   });

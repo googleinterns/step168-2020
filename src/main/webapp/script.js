@@ -49,7 +49,7 @@ function displayLocationData(value) {
     }
   });
 
-    // If there are no nearby reports, dispay global data
+  // If there are no nearby reports, dispay global data
   if (potentialReports.length == 0) {
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
@@ -293,10 +293,10 @@ for (i = 0; i < coll.length; i++) {
       content.style.maxHeight = null;
     } else {
       content.style.maxHeight = content.scrollHeight + 'px';
-      if (this.id == "route" && firstOpen) {
+      if (this.id == 'route' && firstOpen) {
         setCurrentLocation();
         firstOpen = false;
-      } else if (this.id == "hmap") {
+      } else if (this.id == 'hmap') {
         displaySlider();
       }
     }
@@ -309,7 +309,7 @@ function displaySlider() {
       document.getElementById('heatSlider').value;
 }
 
-// Update heat map based on slider    
+// Update heat map based on slider
 function updateHeatSize() {
   document.getElementById('sliderValue').innerHTML =
       document.getElementById('heatSlider').value;
