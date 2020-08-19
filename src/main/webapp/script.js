@@ -25,6 +25,7 @@ let player;
 let casesData;
 let map;
 let geocoder;
+let bound;
 let overlay;
 let curLocationMarker;
 
@@ -135,6 +136,14 @@ function createMap() {
     mapTypeControl: false,
     fullscreenControl: false,
   });
+  bound = new google.maps.Polygon({
+    strokeColor: '#0000FF',
+    strokeOpacity: 1,
+    strokeWeight: 2,
+    fillColor: '#0000FF',
+    fillOpacity: 0.15,
+    clickable: false,
+  });
   initMyLocationControl(map);
   initTopBar(map);
   initStatsDisplay(map);
@@ -187,6 +196,10 @@ function createMap() {
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
+  });
+  document.getElementById('search-clear').addEventListener('click', () => {
+    document.getElementById('search-text').value = '';
+    bound.setPaths([]);
   });
   map.addListener('click', function(mapsMouseEvent) {
     const curLocation = mapsMouseEvent.latLng.toJSON();
@@ -340,8 +353,10 @@ function placeMarker(map, curLocation) {
 function toggleHeatMap() {
   if (heatmap.getMap() == null) {
     heatmap.setMap(map);
+    bound.setOptions({'fillOpacity': 0.00});
   } else {
     heatmap.setMap(null);
+    bound.setOptions({'fillOpacity': 0.15});
   }
   document.getElementById('toggle-heat').classList.toggle('selected');
 }
@@ -461,11 +476,97 @@ function getCoordsFromSearch(geocoder, map) {
         map.setCenter(foundLocation);
         displayLatitudeLongitude(foundLocation.toJSON());
         placeMarker(map, foundLocation.toJSON());
+        setBoundaries(address, results);
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }
     });
   }
+}
+
+/**
+ * Draws Boundaries of searched location on the map if it exists
+ */
+function setBoundaries(query, googleMapsResponse) {
+  let url = 'https://nominatim.openstreetmap.org/search?q=';
+  url += encodeURI(query);
+  url += '&format=json&polygon_geojson=1';
+  bound.setPaths([]);
+  const types = googleMapsResponse[0].types;
+  fetch(url).then((response) => response.json()).then((data) => {
+    let num = 0;
+    while (num < data.length) {
+      const googleMaps = googleMapsResponse[0].geometry;
+      const openStreetMap = data[num].boundingbox;
+      if (data[num].geojson.type === 'Point') {
+        num += 1;
+        continue;
+      }
+      if (boundsSimilar(googleMaps, openStreetMap)) {
+        break;
+      }
+      num += 1;
+    }
+    if (num === data.length) {
+      if (!types.includes('country')) {
+        if (!types.includes('administrative_area_level_1')) {  // state (in US)
+          return;
+        }
+      }
+      num = 0;
+    }
+    if (!('geojson' in data[num])) {
+      return;
+    }
+    const coords = data[num].geojson.coordinates;
+    const latlngs = [];
+    for (let i = 0; i < coords.length; i++) {
+      latlngs.push([]);
+      let path = coords[i];
+      if (data[num].geojson.type === 'MultiPolygon') {
+        path = coords[i][0];
+      }
+      for (let k = 0; k < path.length; k++) {
+        latlngs[i].push({
+          'lat': parseFloat(path[k][1]),
+          'lng': parseFloat(path[k][0]),
+        });
+      }
+    }
+    bound.setPaths(latlngs);
+    bound.setMap(map);
+  });
+}
+
+/**
+ * Compares google maps bounds with openstreetmap bounds
+ */
+function boundsSimilar(googleMapsResponse, openStreetMap) {
+  let googleMapsBounds;
+  if (Object.prototype.hasOwnProperty.call(googleMapsResponse, 'bounds')) {
+    googleMapsBounds = googleMapsResponse.bounds;
+  } else {
+    googleMapsBounds = googleMapsResponse.viewport;
+  }
+  const MAX_DIFFERENCE = 0.25;
+  const googleMaps = [
+    googleMapsBounds.Va.i,
+    googleMapsBounds.Va.j,
+    googleMapsBounds.Za.i,
+    googleMapsBounds.Za.j,
+  ];
+  let matches = 0;
+  for (let i = 0; i < openStreetMap.length; i++) {
+    const value = parseFloat(openStreetMap[i]);
+    for (let j = 0; j < googleMaps.length; j++) {
+      const diff = Math.abs(value - googleMaps[j]);
+      if (diff <= MAX_DIFFERENCE) {
+        matches += 1;
+        break;
+      }
+    }
+  }
+  return matches === openStreetMap.length;
 }
 
 // Update displayed COVID stats based on address
