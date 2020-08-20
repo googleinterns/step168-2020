@@ -37,7 +37,6 @@ import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-/** */
 @RunWith(JUnit4.class)
 public final class LinkServletTest {
   @Mock private HttpServletRequest request;
@@ -68,6 +67,9 @@ public final class LinkServletTest {
     linkServlet.doGet(request, response);
   }
 
+  /**
+   * Creates new String/PrintWriter and sets status, method, and protocol
+   */
   private void reset() throws IOException {
     stringWriter = new StringWriter();
     writer = new PrintWriter(stringWriter);
@@ -77,6 +79,9 @@ public final class LinkServletTest {
     when(response.getWriter()).thenReturn(writer);
   }
 
+  /**
+   * Servlet returns correct contentType, CharacterEncoding, Writer, Headers, and Status
+   */
   @Test
   public void servletBehavesCorrectly() throws IOException {
     verify(response).setContentType("text/html");
@@ -86,6 +91,9 @@ public final class LinkServletTest {
     Assert.assertEquals(200, response.getStatus());
   }
 
+  /**
+   * Id parameter not provided
+   */
   @Test
   public void noId() throws IOException {
     reset();
@@ -93,6 +101,9 @@ public final class LinkServletTest {
     Assert.assertEquals("Invalid Id\n", stringWriter.toString());
   }
 
+  /**
+   * Id does not exist
+   */
   @Test
   public void invalidId() throws IOException {
     reset();
@@ -101,6 +112,9 @@ public final class LinkServletTest {
     Assert.assertEquals("Invalid Id\n", stringWriter.toString());
   }
 
+  /**
+   * Url stored then retrieved
+   */
   @Test
   public void singleRequest() throws IOException {
     reset();
@@ -114,6 +128,9 @@ public final class LinkServletTest {
     Assert.assertEquals(url, stringWriter.toString().replace("\n", ""));
   }
 
+  /**
+   * Different urls stored then retrieved
+   */
   @Test
   public void multipleRequests() throws IOException {
     final int NUM_REQUESTS = 5;

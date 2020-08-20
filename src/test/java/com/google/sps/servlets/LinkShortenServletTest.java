@@ -37,7 +37,6 @@ import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-/** */
 @RunWith(JUnit4.class)
 public final class LinkShortenServletTest {
   @Mock private HttpServletRequest request;
@@ -66,6 +65,9 @@ public final class LinkShortenServletTest {
     servlet.doGet(request, response);
   }
 
+  /**
+   * Creates new String/PrintWriter and sets status, method, and protocol
+   */
   private void reset() throws IOException {
     stringWriter = new StringWriter();
     writer = new PrintWriter(stringWriter);
@@ -75,6 +77,9 @@ public final class LinkShortenServletTest {
     when(response.getWriter()).thenReturn(writer);
   }
 
+  /**
+   * Servlet returns correct contentType, CharacterEncoding, Writer, Headers, and Status
+   */
   @Test
   public void servletBehavesCorrectly() throws IOException {
     verify(response).setContentType("text/html");
@@ -84,6 +89,9 @@ public final class LinkShortenServletTest {
     Assert.assertEquals(200, response.getStatus());
   }
 
+  /**
+   * Url parameter not provided
+   */
   @Test
   public void blankUrl() throws IOException {
     reset();
@@ -91,6 +99,10 @@ public final class LinkShortenServletTest {
     Assert.assertEquals("No url recieved\n", stringWriter.toString());
   }
 
+  /**
+   * Returns key when url paramter provided
+   * For testing, keys start at 1 and increment so this request will have key value of 1
+   */
   @Test
   public void singleRequest() throws IOException {
     reset();
@@ -99,6 +111,9 @@ public final class LinkShortenServletTest {
     Assert.assertEquals("1\n", stringWriter.toString());
   }
 
+  /**
+   * Returns correct key each time for multiple requests
+   */
   @Test
   public void multipleRequests() throws IOException {
     final int NUM_REQUESTS = 5;
