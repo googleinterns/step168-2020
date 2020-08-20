@@ -27,12 +27,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 /** */
 @RunWith(JUnit4.class)
@@ -44,10 +47,21 @@ public final class LinkShortenServletTest {
   private StringWriter stringWriter;
   private PrintWriter writer;
 
+  // Maximum eventual consistency.
+  private final LocalServiceTestHelper helper =
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig()
+          .setDefaultHighRepJobPolicyUnappliedJobPercentage(100));
+
+  @After
+  public void tearDown() {
+    helper.tearDown();
+  }
+
   @Before
   public void setUp() throws IOException {
     MockitoAnnotations.initMocks(this);
     servlet = new LinkShortenServlet();
+    helper.setUp();
     reset();
     servlet.doGet(request, response);
   }
@@ -72,33 +86,27 @@ public final class LinkShortenServletTest {
 
   @Test
   public void blankUrl() throws IOException {
-    //when(request.getParameter("url")).thenReturn("someValue");
     reset();
     servlet.doGet(request, response);
     Assert.assertEquals("No url recieved\n", stringWriter.toString());
   }
 
-  // @Test
-  // public void servletReturnsCorrectFields() {
-  //   String reportsJson = servlet.getReportsJson();
-  //   Assert.assertTrue(reportsJson.contains("\"territory\""));
-  //   Assert.assertTrue(reportsJson.contains("\"lat\""));
-  //   Assert.assertTrue(reportsJson.contains("\"lng\""));
-  //   Assert.assertTrue(reportsJson.contains("\"active\""));
-  //   Assert.assertTrue(reportsJson.contains("\"confirmed\""));
-  //   Assert.assertTrue(reportsJson.contains("\"deaths\""));
-  //   Assert.assertTrue(reportsJson.contains("\"recovered\""));
-  //   Assert.assertTrue(reportsJson.contains("\"perCap\""));
-  // }
+  @Test
+  public void singleRequest() throws IOException {
+    reset();
+    when(request.getParameter("url")).thenReturn("http://exmaple.com");
+    servlet.doGet(request, response);
+    Assert.assertEquals("1\n", stringWriter.toString());
+  }
 
-  // @Test
-  // public void servletReturnsCorrectValues() {
-  //   String reportsJson = servlet.getReportsJson();
-  //   Assert.assertTrue(reportsJson.contains("\"San Diego\""));
-  //   Assert.assertTrue(reportsJson.contains("\"Los Angeles\""));
-  //   Assert.assertTrue(reportsJson.contains("\"lat\":33.034"));
-  //   Assert.assertTrue(reportsJson.contains("\"lng\":-116.736"));
-  //   Assert.assertTrue(reportsJson.contains("\"lat\":41.591"));
-  //   Assert.assertTrue(reportsJson.contains("\"lng\":1.520"));
-  // }
+  @Test
+  public void multipleRequests() throws IOException {
+    when(request.getParameter("url")).thenReturn("http://exmaple.com");
+    final int NUM_REQUESTS = 5;
+    for (int i = 0; i < NUM_REQUESTS; i++) {
+      reset();
+      servlet.doGet(request, response);
+      Assert.assertEquals(Integer.toString(i + 1) + '\n', stringWriter.toString());
+    }
+  }
 }
