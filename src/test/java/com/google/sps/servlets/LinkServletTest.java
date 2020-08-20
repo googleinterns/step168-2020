@@ -63,19 +63,17 @@ public final class LinkServletTest {
     linkShortenServlet = new LinkShortenServlet();
     linkServlet = new LinkServlet();
     helper.setUp();
-    reset();
-    linkServlet.doGet(request, response);
+    when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
+    when(request.getMethod()).thenReturn("get");
+    when(request.getProtocol()).thenReturn("http");
   }
 
   /**
    * Creates new String/PrintWriter and sets status, method, and protocol
    */
-  private void reset() throws IOException {
+  private void resetResponseWriter() throws IOException {
     stringWriter = new StringWriter();
     writer = new PrintWriter(stringWriter);
-    when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
-    when(request.getMethod()).thenReturn("get");
-    when(request.getProtocol()).thenReturn("http");
     when(response.getWriter()).thenReturn(writer);
   }
 
@@ -84,6 +82,8 @@ public final class LinkServletTest {
    */
   @Test
   public void servletBehavesCorrectly() throws IOException {
+    resetResponseWriter();
+    linkServlet.doGet(request, response);
     verify(response).setContentType("text/html");
     verify(response).setCharacterEncoding("UTF-8");
     verify(response).getWriter();
@@ -96,7 +96,7 @@ public final class LinkServletTest {
    */
   @Test
   public void noId() throws IOException {
-    reset();
+    resetResponseWriter();
     linkServlet.doGet(request, response);
     Assert.assertEquals("Invalid Id\n", stringWriter.toString());
   }
@@ -106,7 +106,7 @@ public final class LinkServletTest {
    */
   @Test
   public void invalidId() throws IOException {
-    reset();
+    resetResponseWriter();
     when(request.getParameter("id")).thenReturn("1");
     linkServlet.doGet(request, response);
     Assert.assertEquals("Invalid Id\n", stringWriter.toString());
@@ -117,12 +117,12 @@ public final class LinkServletTest {
    */
   @Test
   public void singleRequest() throws IOException {
-    reset();
+    resetResponseWriter();
     String url = "http://example.com";
     when(request.getParameter("url")).thenReturn(url);
     linkShortenServlet.doGet(request, response);
     String id = stringWriter.toString().replace("\n", "");
-    reset();
+    resetResponseWriter();
     when(request.getParameter("id")).thenReturn(id);
     linkServlet.doGet(request, response);
     Assert.assertEquals(url, stringWriter.toString().replace("\n", ""));
@@ -133,14 +133,13 @@ public final class LinkServletTest {
    */
   @Test
   public void multipleRequests() throws IOException {
-    final int NUM_REQUESTS = 5;
-    for (int i = 0; i < NUM_REQUESTS; i++) {
-      reset();
+    for (int i = 0; i < 5; i++) {
+      resetResponseWriter();
       String url = "http://exmaple" + Integer.toString(i + 1);
       when(request.getParameter("url")).thenReturn(url);
       linkShortenServlet.doGet(request, response);
       String id = stringWriter.toString().replace("\n", "");
-      reset();
+      resetResponseWriter();
       when(request.getParameter("id")).thenReturn(id);
       linkServlet.doGet(request, response);
       Assert.assertEquals(url, stringWriter.toString().replace("\n", ""));

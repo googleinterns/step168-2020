@@ -61,19 +61,17 @@ public final class LinkShortenServletTest {
     MockitoAnnotations.initMocks(this);
     servlet = new LinkShortenServlet();
     helper.setUp();
-    reset();
-    servlet.doGet(request, response);
+    when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
+    when(request.getMethod()).thenReturn("get");
+    when(request.getProtocol()).thenReturn("http");
   }
 
   /**
    * Creates new String/PrintWriter and sets status, method, and protocol
    */
-  private void reset() throws IOException {
+  private void resetResponseWriter() throws IOException {
     stringWriter = new StringWriter();
     writer = new PrintWriter(stringWriter);
-    when(response.getStatus()).thenReturn(HttpURLConnection.HTTP_OK);
-    when(request.getMethod()).thenReturn("get");
-    when(request.getProtocol()).thenReturn("http");
     when(response.getWriter()).thenReturn(writer);
   }
 
@@ -82,6 +80,8 @@ public final class LinkShortenServletTest {
    */
   @Test
   public void servletBehavesCorrectly() throws IOException {
+    resetResponseWriter();
+    servlet.doGet(request, response);
     verify(response).setContentType("text/html");
     verify(response).setCharacterEncoding("UTF-8");
     verify(response).getWriter();
@@ -94,7 +94,7 @@ public final class LinkShortenServletTest {
    */
   @Test
   public void blankUrl() throws IOException {
-    reset();
+    resetResponseWriter();
     servlet.doGet(request, response);
     Assert.assertEquals("No url recieved\n", stringWriter.toString());
   }
@@ -105,7 +105,7 @@ public final class LinkShortenServletTest {
    */
   @Test
   public void singleRequest() throws IOException {
-    reset();
+    resetResponseWriter();
     when(request.getParameter("url")).thenReturn("http://exmaple.com");
     servlet.doGet(request, response);
     Assert.assertEquals("1\n", stringWriter.toString());
@@ -116,9 +116,8 @@ public final class LinkShortenServletTest {
    */
   @Test
   public void multipleRequests() throws IOException {
-    final int NUM_REQUESTS = 5;
-    for (int i = 0; i < NUM_REQUESTS; i++) {
-      reset();
+    for (int i = 0; i < 5; i++) {
+      resetResponseWriter();
       when(request.getParameter("url")).thenReturn("http://exmaple" + Integer.toString(i + 1));
       servlet.doGet(request, response);
       Assert.assertEquals(Integer.toString(i + 1) + '\n', stringWriter.toString());
