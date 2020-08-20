@@ -46,63 +46,61 @@ function displayLocationData(value) {
   const potentialReports = [];
   const RADIUS = 1.5;
   // Look for closest reports
-  fetch('/report').then((response) => response.json()).then((reports) => {
-    reports.forEach((report) => {
-      if (Math.abs(report.lat - value['lat']) < RADIUS &&
-          Math.abs(report.lng - value['lng']) < RADIUS) {
-        potentialReports.push(report);
-      }
-    });
-
-    // If there are no nearby reports, dispay global data
-    if (potentialReports.length == 0) {
-      displayCurrentStats(
-          'Worldwide', globalActive, globalConfirmed, globalDeaths,
-          globalRecovered);
-      return;
+  casesData.forEach((report) => {
+    if (Math.abs(report.lat - value['lat']) < RADIUS &&
+        Math.abs(report.lng - value['lng']) < RADIUS) {
+      potentialReports.push(report);
     }
-    // If there are nearby reports, lookup address using geocoder
-    const lookupURL =
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-        value['lat'] + ',' + value['lng'] + '&key=' +
-        mykey.substring(44, 83);  // Indices represent the actual API key
-    let potentialReport = potentialReports[0];
-    let foundFlag = false;
-    // Compare location names with territory names from potential reports
-    fetch(lookupURL).then((response) => response.json()).then((data) => {
-      data.results[0].address_components.forEach((location) => {
-        potentialReports.forEach((report) => {
-          // If there is a match, display that territory's statistics
-          const lName = location.long_name.trim().valueOf();
-          const rName = report.territory.trim().valueOf();
-          if (lName.includes(rName) || rName.includes(lName)) {
-            potentialReport = report;
-            displayCurrentStats(
-                lName, potentialReport.active, potentialReport.confirmed,
-                potentialReport.deaths, potentialReport.recovered);
-            foundFlag = true;
-            return;
-          }
-        });
+  });
+
+  // If there are no nearby reports, dispay global data
+  if (potentialReports.length == 0) {
+    displayCurrentStats(
+        'Worldwide', globalActive, globalConfirmed, globalDeaths,
+        globalRecovered);
+    return;
+  }
+  // If there are nearby reports, lookup address using geocoder
+  const lookupURL =
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+      value['lat'] + ',' + value['lng'] + '&key=' +
+      mykey.substring(44, 83);  // Indices represent the actual API key
+  let potentialReport = potentialReports[0];
+  let foundFlag = false;
+  // Compare location names with territory names from potential reports
+  fetch(lookupURL).then((response) => response.json()).then((data) => {
+    data.results[0].address_components.forEach((location) => {
+      potentialReports.forEach((report) => {
+        // If there is a match, display that territory's statistics
+        const lName = location.long_name.trim().valueOf();
+        const rName = report.territory.trim().valueOf();
+        if (lName.includes(rName) || rName.includes(lName)) {
+          potentialReport = report;
+          displayCurrentStats(
+              lName, potentialReport.active, potentialReport.confirmed,
+              potentialReport.deaths, potentialReport.recovered);
+          foundFlag = true;
+          return;
+        }
       });
-      // If no match was found, take the report closest to the user request
-      if (foundFlag == false) {
-        const BIGDISTANCE = 1000;
-        let minimumDistance = BIGDISTANCE;
-        potentialReports.forEach((report) => {
-          const reportDistance = Math.abs(report.lat - value['lat']) +
-              Math.abs(report.lng - value['lng']);
-          if (reportDistance < minimumDistance) {
-            minimumDistance = reportDistance;
-            potentialReport = report;
-          }
-        });
-        displayCurrentStats(
-            potentialReport.territory, potentialReport.active,
-            potentialReport.confirmed, potentialReport.deaths,
-            potentialReport.recovered);
-      }
     });
+    // If no match was found, take the report closest to the user request
+    if (foundFlag == false) {
+      const BIGDISTANCE = 1000;
+      let minimumDistance = BIGDISTANCE;
+      potentialReports.forEach((report) => {
+        const reportDistance = Math.abs(report.lat - value['lat']) +
+            Math.abs(report.lng - value['lng']);
+        if (reportDistance < minimumDistance) {
+          minimumDistance = reportDistance;
+          potentialReport = report;
+        }
+      });
+      displayCurrentStats(
+          potentialReport.territory, potentialReport.active,
+          potentialReport.confirmed, potentialReport.deaths,
+          potentialReport.recovered);
+    }
   });
 }
 
@@ -147,6 +145,7 @@ function createMap() {
   initMyLocationControl(map);
   initTopBar(map);
   initStatsDisplay(map);
+  initRelativeHeat();
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
     casesData = reports;
@@ -221,6 +220,7 @@ function createMap() {
   });
   document.getElementById('toggle-heat').addEventListener('click', () => {
     toggleHeatMap();
+    changeHeat();
   });
   document.getElementById('stats').addEventListener('click', () => {
     toggleStats();
@@ -298,6 +298,10 @@ function initStatsDisplay(map) {
       document.querySelector('.covidStats'));
 }
 
+function initRelativeHeat() {
+  document.getElementById('relative-heat').classList.toggle('selected');
+}
+
 // Display menu and dim map
 function openNav() {
   document.getElementById('myNav').style.width = '350px';
@@ -313,6 +317,7 @@ function closeNav() {
 // Init each menu tab, opening up when clicked
 const coll = document.getElementsByClassName('expand');
 let i;
+let firstOpen = true;
 for (i = 0; i < coll.length; i++) {
   coll[i].addEventListener('click', function() {
     this.classList.toggle('active');
@@ -321,13 +326,25 @@ for (i = 0; i < coll.length; i++) {
       content.style.maxHeight = null;
     } else {
       content.style.maxHeight = content.scrollHeight + 'px';
+      if (this.id == 'route' && firstOpen) {
+        /* eslint-disable no-undef */
+        setCurrentLocation();
+        /* eslint-enable no-undef */
+        firstOpen = false;
+      } else if (this.id == 'hmap') {
+        displaySlider();
+      }
     }
   });
 }
 
-// Display slider value and update heat map based on slider
-document.getElementById('sliderValue').innerHTML =
-    document.getElementById('heatSlider').value;
+// Display slider value
+function displaySlider() {
+  document.getElementById('sliderValue').innerHTML =
+      document.getElementById('heatSlider').value;
+}
+
+// Update heat map based on slider
 function updateHeatSize() {
   document.getElementById('sliderValue').innerHTML =
       document.getElementById('heatSlider').value;
@@ -391,6 +408,9 @@ function changeHeat() {
 
 // Display heat relative to locations on screen
 function changeRelativeHeat() {
+  if (typeof heatmap === 'undefined') {
+    return;
+  }
   const userChoice = document.getElementById('heatMapType').value;
   // Get the coordinates that are on the screen
   const bounds = map.getBounds();

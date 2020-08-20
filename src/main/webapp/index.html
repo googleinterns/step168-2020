@@ -118,16 +118,20 @@
           </button>
           <p><i class="material-icons">local_florist</i> Heat Size: <span id="sliderValue"></span></p>
         </div>
+
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content" id="routeContent">
-          <select id="travel-mode">
-            <option value="DRIVING">Driving</option>
-            <option value="WALKING">Walking</option>
-            <option value="BICYCLING">Biking</option> </select
-          ><br />
-          <button type="button" class="contentToggle" id="start-current-location">
-            <i class="material-icons">my_location</i> Start At Current Location
-          </button>
+          <div id="travelModes">
+            <button type="button" id="driving" class="travelbuttons">
+              <i class="material-icons">directions_car</i></button
+            ><!--
+         --><button type="button" id="walking" class="travelbuttons">
+              <i class="material-icons">directions_walk</i></button
+            ><!--
+         --><button type="button" id="biking" class="travelbuttons">
+              <i class="material-icons">directions_bike</i>
+            </button>
+          </div>
           <div class="inputdata">
             <i class="material-icons routing-icons">person_pin</i>
             <input type="text" id="start" placeholder="Choose starting point" />
