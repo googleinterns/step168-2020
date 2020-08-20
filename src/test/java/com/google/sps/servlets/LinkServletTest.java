@@ -39,10 +39,11 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 /** */
 @RunWith(JUnit4.class)
-public final class LinkShortenServletTest {
+public final class LinkServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
-  private LinkShortenServlet servlet;
+  private LinkShortenServlet linkShortenServlet;
+  private LinkServlet linkServlet;
   private String reportsJson;
   private StringWriter stringWriter;
   private PrintWriter writer;
@@ -60,10 +61,11 @@ public final class LinkShortenServletTest {
   @Before
   public void setUp() throws IOException {
     MockitoAnnotations.initMocks(this);
-    servlet = new LinkShortenServlet();
+    linkShortenServlet = new LinkShortenServlet();
+    linkServlet = new LinkServlet();
     helper.setUp();
     reset();
-    servlet.doGet(request, response);
+    linkServlet.doGet(request, response);
   }
 
   private void reset() throws IOException {
@@ -85,18 +87,23 @@ public final class LinkShortenServletTest {
   }
 
   @Test
-  public void blankUrl() throws IOException {
+  public void noId() throws IOException {
     reset();
-    servlet.doGet(request, response);
-    Assert.assertEquals("No url recieved\n", stringWriter.toString());
+    linkServlet.doGet(request, response);
+    Assert.assertEquals("Invalid Id\n", stringWriter.toString());
   }
 
   @Test
   public void singleRequest() throws IOException {
     reset();
-    when(request.getParameter("url")).thenReturn("http://exmaple.com");
-    servlet.doGet(request, response);
-    Assert.assertEquals("1\n", stringWriter.toString());
+    String url = "http://example.com";
+    when(request.getParameter("url")).thenReturn(url);
+    linkShortenServlet.doGet(request, response);
+    String id = stringWriter.toString().replace("\n", "");
+    reset();
+    when(request.getParameter("id")).thenReturn(id);
+    linkServlet.doGet(request, response);
+    Assert.assertEquals(url, stringWriter.toString().replace("\n", ""));
   }
 
   @Test
@@ -104,9 +111,14 @@ public final class LinkShortenServletTest {
     final int NUM_REQUESTS = 5;
     for (int i = 0; i < NUM_REQUESTS; i++) {
       reset();
-      when(request.getParameter("url")).thenReturn("http://exmaple" + Integer.toString(i + 1));
-      servlet.doGet(request, response);
-      Assert.assertEquals(Integer.toString(i + 1) + '\n', stringWriter.toString());
+      String url = "http://exmaple" + Integer.toString(i + 1);
+      when(request.getParameter("url")).thenReturn(url);
+      linkShortenServlet.doGet(request, response);
+      String id = stringWriter.toString().replace("\n", "");
+      reset();
+      when(request.getParameter("id")).thenReturn(id);
+      linkServlet.doGet(request, response);
+      Assert.assertEquals(url, stringWriter.toString().replace("\n", ""));
     }
   }
 }

@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/link")
 public class LinkServlet extends HttpServlet {
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  public static final String CTYPE = "application/json"; // HttpServletResponse content type
+  public static final String CTYPE = "text/html"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
@@ -46,14 +46,16 @@ public class LinkServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String id = getRequestParameterOrDefault(request, "id", "");
+    response.setCharacterEncoding(ENCODING);
+    response.setContentType(CTYPE);
+    String id = getRequestParameterOrDefault(request, "id", "1");
     try {
       Key urlKey = KeyFactory.createKey("url", Long.parseLong(id));
       Entity urlEntity = datastore.get(urlKey);
+      response.getWriter().println(urlEntity.getProperty("url"));
       response.sendRedirect((String) urlEntity.getProperty("url"));
     } catch (EntityNotFoundException e) {
-      response.setContentType("text/html;");
-      response.getWriter().println("Invalid Link");
+      response.getWriter().println("Invalid Id");
     }
   }
 
