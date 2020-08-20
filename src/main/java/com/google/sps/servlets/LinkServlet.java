@@ -35,8 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/link")
 public class LinkServlet extends HttpServlet {
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  public static final String CTYPE = "text/html"; // HttpServletResponse content type
-  public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
+  private static final String CTYPE = "text/html"; // HttpServletResponse content type
+  private static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
    * Sends redirect to url from datastore if it exists
