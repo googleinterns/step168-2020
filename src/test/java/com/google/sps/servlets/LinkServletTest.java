@@ -94,6 +94,14 @@ public final class LinkServletTest {
   }
 
   @Test
+  public void invalidId() throws IOException {
+    reset();
+    when(request.getParameter("id")).thenReturn("1");
+    linkServlet.doGet(request, response);
+    Assert.assertEquals("Invalid Id\n", stringWriter.toString());
+  }
+
+  @Test
   public void singleRequest() throws IOException {
     reset();
     String url = "http://example.com";
