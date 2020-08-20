@@ -196,6 +196,9 @@ function createMap() {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
   });
+  document.getElementById('search-text').addEventListener('input', () => {
+
+  });
   document.getElementById('search-clear').addEventListener('click', () => {
     document.getElementById('search-text').value = '';
     bound.setPaths([]);
