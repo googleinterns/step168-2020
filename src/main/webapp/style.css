@@ -4,6 +4,7 @@ body {
   overflow: hidden;
 }
 
+<<<<<<< HEAD
 .videoButton {
   padding-top: 6px;
   padding-bottom: 4px;
@@ -11,6 +12,13 @@ body {
   padding-right: 10px;
   background-color: black;
   vertical-align: middle;
+=======
+.button {
+  padding-top: 5px;
+  padding-bottom: 5px;  
+  padding-left: 10px;
+  padding-right: 10px;
+>>>>>>> this commit has non-functional code, but I need to save my progress to switch branches
 }
 
 #map {
@@ -45,6 +53,7 @@ body {
 #video-controls {
   position: absolute;
 <<<<<<< HEAD
+<<<<<<< HEAD
   z-index: 11;
   display: flex;
   top: 101%;
@@ -54,10 +63,17 @@ body {
   padding-bottom: 10px;
   left: 40%;
   z-index: 12;
+=======
+  /* bottom: 0; */
+  /* padding-bottom: 13.5px; */
+  /* left: 29%; */
+  z-index: 11;
+  background-color: black;
+>>>>>>> this commit has non-functional code, but I need to save my progress to switch branches
   display: flex;
   /* justify-content: center; */
-  width: 20%;
-  height: 10%;
+  /* width: 15%; */
+  /* height: 5%; */
 }
 
 /* #video-controls button {
