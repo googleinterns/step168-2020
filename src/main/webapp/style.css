@@ -479,3 +479,9 @@ body {
   left: 75px;
   font-size: 13px;
 }
+
+.pac-container {
+  border-radius: 10px;
+  border-top: none;
+  box-shadow: none;
+}
