@@ -159,6 +159,9 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
       });
 }
 
+/**
+ * Clear route from map
+ */
 function resetRoute() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(null);
