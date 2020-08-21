@@ -98,6 +98,8 @@ function addDirectionsListeners() {
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
   });
+  new google.maps.places.Autocomplete(document.getElementById('start'));
+  new google.maps.places.Autocomplete(document.getElementById('end'));
 }
 
 /**
