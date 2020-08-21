@@ -796,3 +796,12 @@ $('.resizable').resizable({
     $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
   },
 });
+
+// $('#video-overlay').hover(
+//   function () {
+//     $('#video-controls').css('display', 'flex');
+//   },
+//   function () {
+//     $('#video-controls').css('display', 'none');
+//   }
+// );

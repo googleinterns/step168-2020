@@ -185,6 +185,10 @@ class VideoPlayer {
   onVidsoStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
       this.nextVideo();
-    }
+    } 
+    // else if (event.data == YT.PlayerState.PAUSED ||
+    //            event.data == YT.PlayerState.UNSTARTED) {
+    //   $('#video-controls').css('display', 'flex');
+    // }
   }
 }
