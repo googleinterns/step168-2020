@@ -643,12 +643,12 @@ $('#video-background').draggable({
   cursor: 'move',
   iframeFix: true,
   scroll: false,
-  containment: 'window',
+  containment:  'window',
 });
 
 // makes videoplayer resizable
 $('.resizable').resizable({
-  autohide: true,
+  autoHide: true,
   start: function(event, ui) {
     ui.element.append($('<div/>', {
       id: 'iframe-overlay',
@@ -669,12 +669,3 @@ $('.resizable').resizable({
     $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
   },
 });
-
-// $('#video-overlay').hover(
-//   function () {
-//     $('#video-controls').css('display', 'flex');
-//   },
-//   function () {
-//     $('#video-controls').css('display', 'none');
-//   }
-// );

@@ -6,7 +6,7 @@ body {
 
 .button {
   padding-top: 5px;
-  padding-bottom: 5px;  
+  padding-bottom: 5px;
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -42,20 +42,10 @@ body {
 
 #video-controls {
   position: absolute;
-  /* bottom: 0; */
-  /* padding-bottom: 13.5px; */
-  /* left: 29%; */
   z-index: 11;
   background-color: black;
   display: flex;
-  /* justify-content: center; */
-  /* width: 15%; */
-  /* height: 5%; */
 }
-
-/* #video-controls button {
-  width: 20%;
-} */
 
 .noDisplay {
   display: none;
