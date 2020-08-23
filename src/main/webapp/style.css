@@ -5,6 +5,7 @@ body {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 .videoButton {
   padding-top: 6px;
   padding-bottom: 4px;
@@ -14,6 +15,9 @@ body {
   vertical-align: middle;
 =======
 .button {
+=======
+.videoButton {
+>>>>>>> clean style
   padding-top: 5px;
   padding-bottom: 5px;
   padding-left: 10px;
