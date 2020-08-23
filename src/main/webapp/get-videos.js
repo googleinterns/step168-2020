@@ -1,4 +1,4 @@
-/* exported searchForVideos */
+/* exported searchForVideos, nextPageSearch */
 /* globals gapi, player */
 function searchForVideos(map, searched) {
   const radius = Math.min(2600 * Math.pow(.5, map.getZoom()), 1000) + 'km';
@@ -20,7 +20,7 @@ function searchForVideos(map, searched) {
             });
   }
 }
-function nextPageSerach(pageToken) {
+function nextPageSearch(pageToken) {
   const forList = {'pageToken': pageToken};
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
@@ -55,7 +55,6 @@ function executeSearch(searchContent, radius) {
     'maxResults': 50,
     'type': ['video'],
   };
-  console.log(forList['location'], forList['locationRadius']);
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
         // Handle the results here (response.result has the parsed body).
@@ -64,8 +63,8 @@ function executeSearch(searchContent, radius) {
         const videoItemsFromSearch = response.result.items;
         if (videoItemsFromSearch.length === 0) {
           if (radius === '1000km') {
-            alert(
-                'No location based videos found, searching for videos related to search');
+            alert('No location based videos found' +
+                  'searching for videos related to search');
             return gapi.client.youtube.search
                 .list({
                   'part': ['snippet'],

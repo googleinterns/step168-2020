@@ -643,7 +643,7 @@ $('#video-background').draggable({
   cursor: 'move',
   iframeFix: true,
   scroll: false,
-  containment:  'window',
+  containment: 'window',
 });
 
 // makes videoplayer resizable
