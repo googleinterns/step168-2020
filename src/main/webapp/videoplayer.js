@@ -187,6 +187,6 @@ class VideoPlayer {
   onVidsoStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
       this.nextVideo();
-    } 
+    }
   }
 }
