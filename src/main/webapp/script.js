@@ -28,6 +28,8 @@ let geocoder;
 let bound;
 let overlay;
 let curLocationMarker;
+let lastSearchClicked = 'none';
+let navOpen = false;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -126,6 +128,8 @@ const globalActiveHeatmapData = [];
 const globalDeathsHeatmapData = [];
 const globalRecoveredHeatmapData = [];
 const globalPopulationHeatmapData = [];
+
+
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -200,11 +204,24 @@ function createMap() {
     document.getElementById('search-text').value = '';
     bound.setPaths([]);
   });
+  document.getElementById('search-text').addEventListener('click', () => {
+    lastSearchClicked = 'location';
+  });
+  document.getElementById('search-content').addEventListener('click', () => {
+    lastSearchClicked = 'video';
+  });
+  document.getElementById('start').addEventListener('click', () => {
+    lastSearchClicked = 'route-start';
+  });
+  document.getElementById('end').addEventListener('click', () => {
+    lastSearchClicked = 'route-end';
+  });
   map.addListener('click', function(mapsMouseEvent) {
     const curLocation = mapsMouseEvent.latLng.toJSON();
     displayLatitudeLongitude(curLocation);
     displayLocationData(curLocation);
     placeMarker(map, curLocation);
+    lastSearchClicked = 'map';
   });
   map.addListener('idle', function() {
     const relHeat = document.getElementById('relative-heat');
@@ -252,9 +269,20 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      getCoordsFromSearch();
-      displayLocationDataFromSearch();
-      findWhatToSearch();
+      if (!navOpen) {
+        if (lastSearchClicked === 'map') {
+          findWhatToSearch();
+        } else if (lastSearchClicked === 'location') {
+          getCoordsFromSearch();
+          displayLocationDataFromSearch();
+          findWhatToSearch();
+        }
+      } else {
+        if (lastSearchClicked === 'route-end' ||
+            lastSearchClicked === 'route-start') {
+          calculateAndDisplayRoute();
+        }
+      }
     }
   };
   initOverlay();
@@ -304,12 +332,14 @@ function initRelativeHeat() {
 
 // Display menu and dim map
 function openNav() {
+  navOpen = true;
   document.getElementById('myNav').style.width = '350px';
   document.getElementById('dim').classList.toggle('fade');
 }
 
 // Close menu and fade out dim
 function closeNav() {
+  navOpen = false;
   document.getElementById('myNav').style.width = '0%';
   document.getElementById('dim').classList.toggle('fade');
 }

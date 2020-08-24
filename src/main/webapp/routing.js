@@ -17,6 +17,7 @@
 /* globals casesData map geocoder */
 
 const NUM_WAYPOINTS = 10;
+let directionsService;
 let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
@@ -28,11 +29,11 @@ let travelMode = '';
  * Set functions that run when directions inputs are changed
  */
 function addDirectionsListeners() {
-  const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsService = new google.maps.DirectionsService();
   directionsRenderer.setMap(map);
   document.getElementById('directions-search').addEventListener('click', () => {
-    calculateAndDisplayRoute(directionsService, map);
+    calculateAndDisplayRoute();
   });
   document.getElementById('show-alternate-routes')
       .addEventListener('click', () => {
@@ -105,7 +106,7 @@ function addDirectionsListeners() {
  * Calulate cases for each route
  * Display route with fewest cases
  */
-function calculateAndDisplayRoute(directionsService, mapObject) {
+function calculateAndDisplayRoute() {
   routeStart = document.getElementById('start').value;
   routeEnd = document.getElementById('end').value;
 
@@ -133,7 +134,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           const distance = [];
           const time = [];
           for (let i = 0; i < response.routes.length; i++) {
-            const values = processRoute(mapObject, response, i);
+            const values = processRoute(map, response, i);
             active.push(values[0]);
             distance.push(values[1]);
             time.push(values[2]);
