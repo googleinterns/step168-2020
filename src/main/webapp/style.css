@@ -57,20 +57,88 @@ body {
   font-size: 160%;
 }
 
-#covidStats {
+.dataModes {
+  background: whitesmoke;
+  color: #4d4d4d;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin: 0px 8px;
+  font-size: 0.1vmax;
+  text-align: center;
+}
+
+.dataModes:hover,
+.dataModes.selected {
+  color: #4285f4;
+}
+
+#databuttons {
+  width: 100%;
+  height: 20%;
+  font-size: 0.1vmax;
+  padding-top: 16px;
+  text-align: center;
+}
+
+.covidStats {
   border-left: 6px solid white;
   border-right: 6px solid white;
   background-color: whitesmoke;
-  font-size: 225%;
-  padding: 0% 0.5% 0% 0.5%;
+  font-size: 1.35vmax;
   border-radius: 16px;
   margin-right: 8px;
   margin-top: 8px;
+  color: #4d4d4d;
+  font-weight: bold;
+  text-align: center;
+  width: 17vw;
+  height: 48vh;
 }
 
-#covidStats.inactive {
-  z-index: -5;
+#covidStats {
+  margin-top: -8vh;
+  padding-left: 1.5%;
+  padding-right: 1.5%;
+}
+
+#pieChart,
+#lineGraph {
+  color: #4d4d4d;
+  font-weight: bold;
+  margin-top: 4vh;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.35vmax;
+  width: 15vw;
+  height: 35vh;
+  text-align: center;
+}
+
+#pieLocation {
+  position: absolute;
+  top: 16%;
+  left: 0;
+  right: 0;
+  margin: auto
+}
+
+#graphLocation {
+  position: absolute;
+  top: 16%;
+  left: 0;
+  right: 0;
+  margin: auto
+}
+
+.covidStats.inactive,
+.data.inactive,
+#allStats.inactive {
+  z-index: -20;
   opacity: 0;
+  visibility: hidden;
 }
 
 #myLocation {
@@ -156,6 +224,15 @@ body {
   color: lightgray;
   background-color: lightgray;
   margin-top: 4em;
+}
+
+.statsHorizontal {
+  height: 2px;
+  width: 100%;
+  border-width: 0;
+  color: black;
+  background-color: lightgray;
+  margin-top: 2em;
 }
 
 .blue {

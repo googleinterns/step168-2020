@@ -10,6 +10,7 @@
       )
     </script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="apikeys.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script id="mapUrl"></script>
@@ -41,12 +42,29 @@
     </div>
 
     <div class="noDisplay">
-      <div class="controls covidStats" id="covidStats">
-        <p id="location"></p>
-        <p id="displayActive"></p>
-        <p id="displayConfirmed"></p>
-        <p id="displayDeaths"></p>
-        <p id="displayRecovered"></p>
+      <div class="controls covidStats" id="allStats">
+        <div id="databuttons">
+          <button type="button" id="statsMode" class="dataModes"><i class="material-icons">assignment</i></button><!--
+       --><button type="button" id="pieChartMode" class="dataModes"><i class="material-icons">pie_chart</i></button><!--
+       --><button type="button" id="graphMode" class="dataModes"><i class="material-icons">show_chart</i></button>
+        </div>
+
+        <div id ="covidStats" class="data">
+          <p id="location"></p>
+          <p id="displayActive"></p>
+          <p id="displayConfirmed"></p>
+          <p id="displayDeaths"></p>
+          <p id="displayRecovered"></p>
+        </div>
+
+        <div id="pieDiv" class="data">
+          <p id="pieLocation"></p>
+          <div id="pieChart"></div>
+        </div>
+        <div id="graphDiv" class="data">
+          <p id="graphLocation"></p>
+          <div id="lineGraph"></div>
+        </div>
       </div>
     </div>
 
@@ -87,7 +105,7 @@
         <hr class="horizontal" />
 
         <button type="button" class="tab" id="stats"><i class="material-icons">rate_review</i> Display Covid-19 Statistics</button>
-        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Cases Heat Map</button>
+        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Covid-19 Heat Map</button>
         <div class="content">
           <select id="heatMapType">
             <option value="confirmed">Show Confirmed Cases </option>
