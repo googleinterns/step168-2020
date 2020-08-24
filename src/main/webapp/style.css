@@ -5,10 +5,12 @@ body {
 }
 
 .videoButton {
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 6px;
+  padding-bottom: 4px;
   padding-left: 10px;
   padding-right: 10px;
+  background-color: black;
+  vertical-align: middle;
 }
 
 #map {
@@ -43,8 +45,8 @@ body {
 #video-controls {
   position: absolute;
   z-index: 11;
-  background-color: black;
   display: flex;
+  top: 101%;
 }
 
 .noDisplay {
