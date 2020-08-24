@@ -193,8 +193,8 @@ function createMap() {
 
   geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
-    getCoordsFromSearch(geocoder, map);
-    displayLocationDataFromSearch(geocoder);
+    getCoordsFromSearch();
+    displayLocationDataFromSearch();
   });
   document.getElementById('search-clear').addEventListener('click', () => {
     document.getElementById('search-text').value = '';
@@ -252,8 +252,8 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      getCoordsFromSearch(geocoder, map);
-      displayLocationDataFromSearch(geocoder);
+      getCoordsFromSearch();
+      displayLocationDataFromSearch();
       findWhatToSearch();
     }
   };
@@ -487,7 +487,7 @@ function changeRelativeHeat() {
 }
 
 // Recenter map to location searched and update current coordinates
-function getCoordsFromSearch(geocoder, map) {
+function getCoordsFromSearch() {
   const address = document.getElementById('search-text').value;
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
@@ -590,7 +590,7 @@ function boundsSimilar(googleMapsResponse, openStreetMap) {
 }
 
 // Update displayed COVID stats based on address
-function displayLocationDataFromSearch(geocoder) {
+function displayLocationDataFromSearch() {
   const address = document.getElementById('search-text').value;
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
