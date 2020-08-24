@@ -179,6 +179,7 @@ function resizeLineGraph() {
   lineChart.draw(lineData, google.charts.Line.convertOptions(lineOptions));
 }
 
+// Create line graph
 let lineChart;
 let lineData;
 let lineOptions;
@@ -186,7 +187,8 @@ function drawGraph(lat, lng) {
   fetch(`/timereport?lat=${lat}&lng=${lng}`)
       .then((response) => response.json())
       .then((timeReport) => {
-        document.getElementById('graphLocation').innerHTML = timeReport.location;
+        document.getElementById('graphLocation').innerHTML =
+            timeReport.location;
         lineData = new google.visualization.DataTable();
         lineData.addColumn('string', 'Date');
         lineData.addColumn('number', 'Confirmed Cases');

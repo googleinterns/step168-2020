@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Builds and returns case data as a JSON array, e.g.
- * [{"lat": 38.4404675, "lng": -122.7144313, "active": 5,
- * "confirmed": 20, "deaths": 0, "recovered": 15}]
+ * Retrieves historical confirmed case data
+ * starting from 1-22-20. Takes coordinates
+ * in request and returns closest report
  */
 @WebServlet("/timereport")
 public class OverTimeCasesServlet extends HttpServlet {
@@ -41,30 +41,34 @@ public class OverTimeCasesServlet extends HttpServlet {
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
-   * Builds Json array using data set
+   * Builds report hashmaps for US counties and international countires
    */
   @Override
   public void init() {
+    // Build US hashmap
     usTimeReports = new HashMap<LocLatLng, ArrayList<Integer>>();
     Scanner usScanner = connectToData("US");
     fillDataMap(usScanner, usTimeReports, 7, 6, 5, 9);
 
+    // Build international hashmap
     globalTimeReports = new HashMap<LocLatLng, ArrayList<Integer>>();
     Scanner globalScanner = connectToData("global");
     fillDataMap(globalScanner, globalTimeReports, 0, 0, 0, 0);
   }
 
   /**
-   * Returns location-based COIVD-19 data
+   * Returns history of confirmed cases for the location specificed by cooridnates
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding(ENCODING);
     response.setContentType(CTYPE);
 
+    // Get coordinates from request
     double lat = Double.parseDouble(getRequestParameterOrDefault(request, "lat", "0.0"));
     double lng = Double.parseDouble(getRequestParameterOrDefault(request, "lng", "0.0"));
 
+    // Coordinates 0 0 are located in the atlantic ocean, will be used to request worldwide cases
     if (lat == 0.0 && lng == 0.0) {
       LocationCases toReturn = new LocationCases("Worldwide", worldCases, dates);
       Gson gson = new Gson();
@@ -73,9 +77,11 @@ public class OverTimeCasesServlet extends HttpServlet {
       return;
     }
 
+    // Find closest report to coordinates in request
     double minimumDistance = 1000.0;
     LocLatLng potentialReport = null;
     boolean usReport = false;
+    // First look through global reports
     for (LocLatLng key : globalTimeReports.keySet()) {
       double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
       if (reportDistance < minimumDistance) {
@@ -83,6 +89,7 @@ public class OverTimeCasesServlet extends HttpServlet {
         potentialReport = key;
       }
     }
+    // Then look thorugh US reports
     for (LocLatLng key : usTimeReports.keySet()) {
       double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
       if (reportDistance <= minimumDistance) {
@@ -92,6 +99,7 @@ public class OverTimeCasesServlet extends HttpServlet {
       }
     }
 
+    // Return location name, cases, and dates
     LocationCases toReturn;
     if (usReport) {
       toReturn =
@@ -131,6 +139,10 @@ public class OverTimeCasesServlet extends HttpServlet {
     return scanner;
   }
 
+  /**
+   * Fill up the hashmap with the name of the location and coordinates as the key
+   * and with an array consisting of the confirmed case numbers as the value
+   */
   private void fillDataMap(Scanner scanner, HashMap<LocLatLng, ArrayList<Integer>> timeReports,
       int datesOffset, int coordOffset, int territoryOffset, int dataOffset) {
     boolean header = true;
@@ -140,6 +152,7 @@ public class OverTimeCasesServlet extends HttpServlet {
     // Parse the data set
     String line = scanner.nextLine();
     while (scanner.hasNextLine()) {
+      // If header line, get the dates that are being tracked
       if (header) {
         header = false;
         String[] cells = line.split(",");
@@ -155,6 +168,7 @@ public class OverTimeCasesServlet extends HttpServlet {
       ArrayList<Integer> cases = new ArrayList<Integer>();
       String territory = "";
 
+      // If the name of the territory contains a ", the offset needs to be bumped
       int tempCoordOffset = coordOffset;
       int tempTerritoryOffset = territoryOffset;
       int tempDataOffset = dataOffset;
@@ -176,18 +190,21 @@ public class OverTimeCasesServlet extends HttpServlet {
       if (!cells[0 + tempTerritoryOffset].equals("")) { // Entry represents territory name
         territory = cells[0 + tempTerritoryOffset];
       } else if (!cells[1 + tempTerritoryOffset].equals(
-                     "")) { // For foreign territories, name will appear in index 2
+                     "")) { // For countires, name will appear in index 1
         territory = cells[1 + tempTerritoryOffset];
       }
+      // Coordinates appear in these indicies
       double lat = Double.parseDouble(cells[2 + tempCoordOffset]);
       double lng = Double.parseDouble(cells[3 + tempCoordOffset]);
 
+      // For building total worldwide history
       if (firstAccess) {
         firstAccess = false;
         for (int i = 4 + tempDataOffset; i < cells.length; ++i) {
           if (!cells[i].equals("")) {
             int numCase = Integer.parseInt(cells[i]);
             cases.add(numCase);
+            // If looking at global cases, create new entry in world array
             if (coordOffset == 0) {
               worldCases.add(numCase);
             }
@@ -199,6 +216,7 @@ public class OverTimeCasesServlet extends HttpServlet {
           if (!cells[i].equals("")) {
             int numCase = Integer.parseInt(cells[i]);
             cases.add(numCase);
+            // If looking at global cases, add to entry in world array
             if (coordOffset == 0) {
               ++globalOffset;
               worldCases.set(globalOffset, worldCases.get(globalOffset) + numCase);
@@ -206,7 +224,6 @@ public class OverTimeCasesServlet extends HttpServlet {
           }
         }
       }
-
       timeReports.put(new LocLatLng(territory, lat, lng), cases);
     }
 
@@ -226,6 +243,9 @@ public class OverTimeCasesServlet extends HttpServlet {
     return value;
   }
 
+  /**
+   * Maintains location name with its coordinates. Used as key
+   */
   class LocLatLng {
     private String location;
     private double lat;
@@ -244,6 +264,9 @@ public class OverTimeCasesServlet extends HttpServlet {
     }
   }
 
+  /**
+   * Maintains location name with its cases and dates. Used to return when get is called
+   */
   class LocationCases {
     private String location;
     private ArrayList<Integer> cases;
