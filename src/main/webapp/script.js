@@ -35,7 +35,7 @@ window.onload = function() {
       drawChart;
       drawGraph;
     },
-    packages: ['corechart', 'line']
+    packages: ['corechart', 'line'],
   });
 };
 window.addEventListener('resize', function() {
@@ -306,8 +306,8 @@ function createMap() {
     }
   });
   document.getElementById('pieChartMode').addEventListener('click', () => {
-    if (!document.getElementById('pieChartMode')
-             .classList.contains('selected')) {
+    const pcm = document.getElementById('pieChartMode').classList;
+    if (!pcm.contains('selected')) {
       document.getElementById('statsMode').classList.remove('selected');
       document.getElementById('graphMode').classList.remove('selected');
       document.getElementById('pieChartMode').classList.add('selected');
@@ -455,7 +455,7 @@ function toggleHeatMap() {
 // Toggle selected status and stats visability when menu button clicked
 function toggleStats() {
   document.getElementById('stats').classList.toggle('unselected');
-  document.getElementById('allStats').classList.toggle('inactive')
+  document.getElementById('allStats').classList.toggle('inactive');
 }
 
 // Display type of data user selects
