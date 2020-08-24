@@ -80,6 +80,10 @@ public final class OverTimeCasesServletTest {
     when(request.getParameter("lng")).thenReturn("-3.74922");
     servlet.doGet(request, response);
     Assert.assertTrue(stringWriter.toString().contains("Spain"));
+    Assert.assertTrue(stringWriter.toString().contains("5/17/20"));
+    Assert.assertTrue(stringWriter.toString().contains("[0,"));
+    Assert.assertTrue(stringWriter.toString().contains("cases"));
+    Assert.assertTrue(stringWriter.toString().contains("dates"));
   }
 
   @Test
@@ -89,6 +93,10 @@ public final class OverTimeCasesServletTest {
     when(request.getParameter("lng")).thenReturn("-116.7365326");
     servlet.doGet(request, response);
     Assert.assertTrue(stringWriter.toString().contains("San Diego"));
+    Assert.assertTrue(stringWriter.toString().contains("8/23/20"));
+    Assert.assertTrue(stringWriter.toString().contains("[0,"));
+    Assert.assertTrue(stringWriter.toString().contains("cases"));
+    Assert.assertTrue(stringWriter.toString().contains("dates"));
   }
 
   @Test
@@ -98,5 +106,9 @@ public final class OverTimeCasesServletTest {
     when(request.getParameter("lng")).thenReturn("0.0");
     servlet.doGet(request, response);
     Assert.assertTrue(stringWriter.toString().contains("Worldwide"));
+    Assert.assertTrue(stringWriter.toString().contains("1/22/20"));
+    Assert.assertTrue(stringWriter.toString().contains("cases"));
+    Assert.assertTrue(stringWriter.toString().contains("dates"));
+
   }
 }
