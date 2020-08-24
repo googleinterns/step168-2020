@@ -6,13 +6,12 @@
     <link rel="stylesheet" href="style.css" />
     <script>
       document.write(
-        "<style> #heatSlider {-webkit-appearance: none;-webkit-transition: 0.2s;} #heatSlider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 25px;height: 25px;border-radius: 50%;background: white;cursor: pointer;} </style>"
-      );
+        "<style> #heatSlider {-webkit-appearance: none;-webkit-transition: 0.2s;}" +
+          "#heatSlider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;" +
+          "width: 25px;height: 25px;border-radius: 50%;background: white;cursor: pointer;} </style>"
+      )
     </script>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="apikeys.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
@@ -94,12 +93,7 @@
             <button type="button" id="search-submit">
               <i class="material-icons">place</i>
             </button>
-            <input
-              type="text"
-              placeholder="Covid-19 Videos"
-              value=""
-              id="search-content"
-            />
+            <input type="text" placeholder="Covid-19 Videos" value="" id="search-content" />
             <button type="button" id="videos">
               <i class="material-icons">local_movies</i>
             </button>
@@ -127,9 +121,7 @@
         <button type="button" class="tab" id="stats">
           <i class="material-icons">rate_review</i> Display Covid-19 Statistics
         </button>
-        <button type="button" class="tab expand" id="hmap">
-          <i class="material-icons">map</i> Covid-19 Heat Map
-        </button>
+        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Covid-19 Heat Map</button>
         <div class="content">
           <select id="heatMapType">
             <option value="confirmed">Show Confirmed Cases</option>
@@ -141,14 +133,7 @@
           <button type="button" class="contentToggle" id="toggle-heat">
             <i class="material-icons">layers</i> Heat Map
           </button>
-          <input
-            type="range"
-            id="heatSlider"
-            min="0"
-            max="1000"
-            value="2.5"
-            step="0.5"
-          />
+          <input type="range" id="heatSlider" min="0" max="1000" value="2.5" step="0.5" />
           <button type="button" class="contentToggle" id="relative-heat">
             <i class="material-icons">local_activity</i> Relative Heat
           </button>
@@ -158,9 +143,7 @@
           </p>
         </div>
 
-        <button type="button" class="tab expand" id="route">
-          <i class="material-icons">directions</i> Directions
-        </button>
+        <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
         <div class="content" id="routeContent">
           <div id="travelModes">
             <button type="button" id="driving" class="travelbuttons">
@@ -184,28 +167,17 @@
           <button type="button" id="directions-search">
             <i class="material-icons">beenhere</i>
           </button>
-          <button
-            type="button"
-            class="contentToggle"
-            id="show-alternate-routes"
-          >
+          <button type="button" class="contentToggle" id="show-alternate-routes">
             <i class="material-icons">navigation</i> Alternate Routes
           </button>
           <button type="button" class="contentToggle" id="show-expanded-routes">
             <i class="material-icons">edit_location</i> More Information
           </button>
           <div id="directionsInfo">
-            <p>
-              There are <span id="route-active-count">0</span> active cases in
-              counties along the chosen route
-            </p>
+            <p>There are <span id="route-active-count">0</span> active cases in counties along the chosen route</p>
           </div>
-          <button type="button" class="contentToggle" id="open-map-link">
-            Open Google Maps
-          </button>
-          <button type="button" class="contentToggle" id="open-map-email">
-            Share By Email
-          </button>
+          <button type="button" class="contentToggle" id="open-map-link">Open Google Maps</button>
+          <button type="button" class="contentToggle" id="open-map-email">Share By Email</button>
           <div id="test"></div>
           <div id="test2"></div>
           <div id="expanded-routing">
