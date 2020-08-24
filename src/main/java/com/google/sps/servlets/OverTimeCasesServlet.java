@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.servlet.annotation.WebServlet;
@@ -76,7 +76,7 @@ public class OverTimeCasesServlet extends HttpServlet {
       Gson gson = new Gson();
       String timeReportJson = gson.toJson(toReturn);
       response.getWriter().println(timeReportJson);
-    // Find closest report to coordinates in request
+      // Find closest report to coordinates in request
     } else {
       double minimumDistance = 1000.0;
       LocLatLng potentialReport = null;
