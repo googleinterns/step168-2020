@@ -109,6 +109,5 @@ public final class OverTimeCasesServletTest {
     Assert.assertTrue(stringWriter.toString().contains("1/22/20"));
     Assert.assertTrue(stringWriter.toString().contains("cases"));
     Assert.assertTrue(stringWriter.toString().contains("dates"));
-
   }
 }

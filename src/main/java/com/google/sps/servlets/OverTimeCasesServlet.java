@@ -15,6 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
+import com.google.sps.servlets.Constants;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -39,8 +40,6 @@ public class OverTimeCasesServlet extends HttpServlet {
   private Map<LocLatLng, List<Integer>> globalTimeReports;
   private List<Integer> worldCases;
   private List<String> dates;
-  public static final String CTYPE = "application/json"; // HttpServletResponse content type
-  public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
    * Builds report hashmaps for US counties and international countires
@@ -63,8 +62,8 @@ public class OverTimeCasesServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setCharacterEncoding(ENCODING);
-    response.setContentType(CTYPE);
+    response.setCharacterEncoding(Constants.ENCODING);
+    response.setContentType(Constants.CASESCTYPE);
 
     // Get coordinates from request
     double lat = Double.parseDouble(getRequestParameterOrDefault(request, "lat", "0.0"));
