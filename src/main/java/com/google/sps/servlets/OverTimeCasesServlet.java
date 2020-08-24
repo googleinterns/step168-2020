@@ -65,7 +65,7 @@ public class OverTimeCasesServlet extends HttpServlet {
     double lat = Double.parseDouble(getRequestParameterOrDefault(request, "lat", "0.0"));
     double lng = Double.parseDouble(getRequestParameterOrDefault(request, "lng", "0.0"));
 
-    if(lat == 0.0 && lng == 0.0) {
+    if (lat == 0.0 && lng == 0.0) {
       LocationCases toReturn = new LocationCases("WorldWide", worldCases, dates);
       Gson gson = new Gson();
       String timeReportJson = gson.toJson(toReturn);
@@ -77,16 +77,14 @@ public class OverTimeCasesServlet extends HttpServlet {
     LocLatLng potentialReport = null;
     boolean usReport = false;
     for (LocLatLng key : globalTimeReports.keySet()) {
-      double reportDistance = Math.abs(key.lat - lat) +
-          Math.abs(key.lng - lng);
+      double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
       if (reportDistance < minimumDistance) {
         minimumDistance = reportDistance;
         potentialReport = key;
       }
     }
     for (LocLatLng key : usTimeReports.keySet()) {
-      double reportDistance = Math.abs(key.lat - lat) +
-          Math.abs(key.lng - lng);
+      double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
       if (reportDistance <= minimumDistance) {
         usReport = true;
         minimumDistance = reportDistance;
@@ -96,10 +94,11 @@ public class OverTimeCasesServlet extends HttpServlet {
 
     LocationCases toReturn;
     if (usReport) {
-      toReturn = new LocationCases(potentialReport.location, usTimeReports.get(potentialReport), dates);
-    }
-    else {
-      toReturn = new LocationCases(potentialReport.location, globalTimeReports.get(potentialReport), dates);
+      toReturn =
+          new LocationCases(potentialReport.location, usTimeReports.get(potentialReport), dates);
+    } else {
+      toReturn = new LocationCases(
+          potentialReport.location, globalTimeReports.get(potentialReport), dates);
     }
     Gson gson = new Gson();
     String timeReportJson = gson.toJson(toReturn);
@@ -132,7 +131,8 @@ public class OverTimeCasesServlet extends HttpServlet {
     return scanner;
   }
 
-  private void fillDataMap(Scanner scanner, HashMap<LocLatLng, ArrayList<Integer>> timeReports, int datesOffset, int coordOffset, int territoryOffset, int dataOffset) {
+  private void fillDataMap(Scanner scanner, HashMap<LocLatLng, ArrayList<Integer>> timeReports,
+      int datesOffset, int coordOffset, int territoryOffset, int dataOffset) {
     boolean header = true;
     boolean firstAccess = true;
     worldCases = new ArrayList<Integer>();
@@ -144,7 +144,7 @@ public class OverTimeCasesServlet extends HttpServlet {
         header = false;
         String[] cells = line.split(",");
         dates = new ArrayList<String>();
-        for (int j = 4+datesOffset; j<cells.length; ++j) {
+        for (int j = 4 + datesOffset; j < cells.length; ++j) {
           if (!cells[j].equals("")) {
             dates.add(cells[j]);
           }
@@ -158,45 +158,48 @@ public class OverTimeCasesServlet extends HttpServlet {
       int tempCoordOffset = coordOffset;
       int tempTerritoryOffset = territoryOffset;
       int tempDataOffset = dataOffset;
-      if (cells[0+tempCoordOffset].contains("\"") || cells[1+tempCoordOffset].contains("\"")) {
+      if (cells[0 + tempCoordOffset].contains("\"") || cells[1 + tempCoordOffset].contains("\"")) {
         ++tempCoordOffset;
         ++tempDataOffset;
         ++tempTerritoryOffset;
       }
       // Ignore unassigned entires
-      if (cells[2+tempCoordOffset].equals("") || cells[3+tempCoordOffset].equals("")) { // Entries represent coordinates
+      if (cells[2 + tempCoordOffset].equals("")
+          || cells[3 + tempCoordOffset].equals("")) { // Entries represent coordinates
         continue;
       }
-      if(cells[2+tempCoordOffset].equals("0.0") || cells[3+tempCoordOffset].equals("0.0")) { // No coodrinates
+      if (cells[2 + tempCoordOffset].equals("0.0")
+          || cells[3 + tempCoordOffset].equals("0.0")) { // No coodrinates
         continue;
       }
 
-      if (!cells[0+tempTerritoryOffset].equals("")) { // Entry represents territory name
-        territory = cells[0+tempTerritoryOffset];
-      } else if (!cells[1+tempTerritoryOffset].equals("")) { // For foreign territories, name will appear in index 2
-        territory = cells[1+tempTerritoryOffset];
+      if (!cells[0 + tempTerritoryOffset].equals("")) { // Entry represents territory name
+        territory = cells[0 + tempTerritoryOffset];
+      } else if (!cells[1 + tempTerritoryOffset].equals(
+                     "")) { // For foreign territories, name will appear in index 2
+        territory = cells[1 + tempTerritoryOffset];
       }
       double lat = Double.parseDouble(cells[2 + tempCoordOffset]);
       double lng = Double.parseDouble(cells[3 + tempCoordOffset]);
 
       if (firstAccess) {
         firstAccess = false;
-        for (int i = 4+tempDataOffset; i<cells.length; ++i) {
+        for (int i = 4 + tempDataOffset; i < cells.length; ++i) {
           if (!cells[i].equals("")) {
             int numCase = Integer.parseInt(cells[i]);
             cases.add(numCase);
-            if(coordOffset == 0) {
+            if (coordOffset == 0) {
               worldCases.add(numCase);
             }
           }
         }
       } else {
         int globalOffset = -1;
-        for (int i = 4+tempDataOffset; i<cells.length; ++i) {
+        for (int i = 4 + tempDataOffset; i < cells.length; ++i) {
           if (!cells[i].equals("")) {
             int numCase = Integer.parseInt(cells[i]);
             cases.add(numCase);
-            if(coordOffset == 0) {
+            if (coordOffset == 0) {
               ++globalOffset;
               worldCases.set(globalOffset, worldCases.get(globalOffset) + numCase);
             }
@@ -235,7 +238,9 @@ public class OverTimeCasesServlet extends HttpServlet {
     }
 
     public String toString() {
-      return "Location: " + location + "; " + "Lat: " + lat + "; " + "Lng: " + lng;
+      return "Location: " + location + "; "
+          + "Lat: " + lat + "; "
+          + "Lng: " + lng;
     }
   }
 
@@ -249,9 +254,10 @@ public class OverTimeCasesServlet extends HttpServlet {
       this.cases = cases;
       this.dates = dates;
     }
-    
+
     public String toString() {
-      return "Location: " + location + "; Cases: " + cases.toString() + "; Dates: " + dates.toString();
+      return "Location: " + location + "; Cases: " + cases.toString()
+          + "; Dates: " + dates.toString();
     }
   }
 }

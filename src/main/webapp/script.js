@@ -31,13 +31,12 @@ window.onload = function() {
   addDirectionsListeners();
 
   google.charts.load('current', {
-  callback: function() {
-    drawChart;
-    drawGraph;
-  },
-  packages: ['corechart', 'line']
+    callback: function() {
+      drawChart;
+      drawGraph;
+    },
+    packages: ['corechart', 'line']
   });
-
 };
 window.addEventListener('resize', function() {
   resizePieChart();
@@ -80,15 +79,17 @@ function displayLocationData(value) {
   fetch(lookupURL).then((response) => response.json()).then((data) => {
     data.results[0].address_components.forEach((location) => {
       potentialReports.forEach((report) => {
-//        console.log(report);
+        //        console.log(report);
         // If there is a match, display that territory's statistics
         const lName = location.long_name.trim().valueOf();
         const rName = report.territory.trim().valueOf();
-        if ((lName.includes(rName) || rName.includes(lName)) && foundFlag == false) {
+        if ((lName.includes(rName) || rName.includes(lName)) &&
+            foundFlag == false) {
           potentialReport = report;
           displayCurrentStats(
               lName, potentialReport.active, potentialReport.confirmed,
-              potentialReport.deaths, potentialReport.recovered, potentialReport.lat, potentialReport.lng);
+              potentialReport.deaths, potentialReport.recovered,
+              potentialReport.lat, potentialReport.lng);
           foundFlag = true;
           return;
         }
@@ -122,7 +123,8 @@ let globalRecovered = 0;
 
 let initialDisplay = true;
 // Display COVID data in html
-function displayCurrentStats(location, active, confirmed, deaths, recovered, lat, lng) {
+function displayCurrentStats(
+    location, active, confirmed, deaths, recovered, lat, lng) {
   document.getElementById('location').innerHTML = location;
   document.getElementById('displayActive').innerHTML = `Active: ${active}`;
   document.getElementById('displayConfirmed').innerHTML =
@@ -161,15 +163,16 @@ function drawChart(active, deaths, recovered) {
     'chartArea': {'width': '100%', 'height': '80%'},
     'legend': {'position': 'bottom'},
   };
-  pieChart = new google.visualization.PieChart(document.getElementById('pieChart'));
+  pieChart =
+      new google.visualization.PieChart(document.getElementById('pieChart'));
   pieChart.draw(pieData, pieOptions);
 }
 
-function resizePieChart () {
+function resizePieChart() {
   pieChart.draw(pieData, pieOptions);
 }
 
-function resizeLineGraph () {
+function resizeLineGraph() {
   lineChart.draw(lineData, google.charts.Line.convertOptions(lineOptions));
 }
 
@@ -177,23 +180,29 @@ let lineChart;
 let lineData;
 let lineOptions;
 function drawGraph(lat, lng) {
-  fetch(`/timereport?lat=${lat}&lng=${lng}`).then((response) => response.json()).then((timeReport) => {
-    lineData = new google.visualization.DataTable();
-    lineData.addColumn('string', 'Date');
-    lineData.addColumn('number', 'Confirmed Cases');
-    for (let i = 0; i < timeReport.cases.length; ++i) {
-      lineData.addRow([timeReport.dates[i], timeReport.cases[i]]);
-    }
-    lineOptions = {
-      'backgroundColor': 'transparent',
-      'chartArea': {'backgroundColor': 'transparent',},
-      'legend': {position: 'none'},
-      'titlePosition': 'none',
-      'vAxis': {'title': 'Confirmed Cases'},
-    };
-    lineChart = new google.charts.Line(document.getElementById('lineGraph'));
-    lineChart.draw(lineData, google.charts.Line.convertOptions(lineOptions));
-  });
+  fetch(`/timereport?lat=${lat}&lng=${lng}`)
+      .then((response) => response.json())
+      .then((timeReport) => {
+        lineData = new google.visualization.DataTable();
+        lineData.addColumn('string', 'Date');
+        lineData.addColumn('number', 'Confirmed Cases');
+        for (let i = 0; i < timeReport.cases.length; ++i) {
+          lineData.addRow([timeReport.dates[i], timeReport.cases[i]]);
+        }
+        lineOptions = {
+          'backgroundColor': 'transparent',
+          'chartArea': {
+            'backgroundColor': 'transparent',
+          },
+          'legend': {position: 'none'},
+          'titlePosition': 'none',
+          'vAxis': {'title': 'Confirmed Cases'},
+        };
+        lineChart =
+            new google.charts.Line(document.getElementById('lineGraph'));
+        lineChart.draw(
+            lineData, google.charts.Line.convertOptions(lineOptions));
+      });
 }
 
 // Initialize global heat maps
@@ -297,7 +306,8 @@ function createMap() {
     }
   });
   document.getElementById('pieChartMode').addEventListener('click', () => {
-    if (!document.getElementById('pieChartMode').classList.contains('selected')) {
+    if (!document.getElementById('pieChartMode')
+             .classList.contains('selected')) {
       document.getElementById('statsMode').classList.remove('selected');
       document.getElementById('graphMode').classList.remove('selected');
       document.getElementById('pieChartMode').classList.add('selected');
