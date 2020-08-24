@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,10 +35,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/timereport")
 public class OverTimeCasesServlet extends HttpServlet {
-  private HashMap<LocLatLng, ArrayList<Integer>> usTimeReports;
-  private HashMap<LocLatLng, ArrayList<Integer>> globalTimeReports;
-  private ArrayList<Integer> worldCases;
-  private ArrayList<String> dates;
+  private Map<LocLatLng, List<Integer>> usTimeReports;
+  private Map<LocLatLng, List<Integer>> globalTimeReports;
+  private List<Integer> worldCases;
+  private List<String> dates;
   public static final String CTYPE = "application/json"; // HttpServletResponse content type
   public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
@@ -46,12 +48,12 @@ public class OverTimeCasesServlet extends HttpServlet {
   @Override
   public void init() {
     // Build US hashmap
-    usTimeReports = new HashMap<LocLatLng, ArrayList<Integer>>();
+    usTimeReports = new HashMap<LocLatLng, List<Integer>>();
     Scanner usScanner = connectToData("US");
     fillDataMap(usScanner, usTimeReports, 7, 6, 5, 9);
 
     // Build international hashmap
-    globalTimeReports = new HashMap<LocLatLng, ArrayList<Integer>>();
+    globalTimeReports = new HashMap<LocLatLng, List<Integer>>();
     Scanner globalScanner = connectToData("global");
     fillDataMap(globalScanner, globalTimeReports, 0, 0, 0, 0);
   }
@@ -74,43 +76,42 @@ public class OverTimeCasesServlet extends HttpServlet {
       Gson gson = new Gson();
       String timeReportJson = gson.toJson(toReturn);
       response.getWriter().println(timeReportJson);
-      return;
-    }
-
     // Find closest report to coordinates in request
-    double minimumDistance = 1000.0;
-    LocLatLng potentialReport = null;
-    boolean usReport = false;
-    // First look through global reports
-    for (LocLatLng key : globalTimeReports.keySet()) {
-      double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
-      if (reportDistance < minimumDistance) {
-        minimumDistance = reportDistance;
-        potentialReport = key;
-      }
-    }
-    // Then look thorugh US reports
-    for (LocLatLng key : usTimeReports.keySet()) {
-      double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
-      if (reportDistance <= minimumDistance) {
-        usReport = true;
-        minimumDistance = reportDistance;
-        potentialReport = key;
-      }
-    }
-
-    // Return location name, cases, and dates
-    LocationCases toReturn;
-    if (usReport) {
-      toReturn =
-          new LocationCases(potentialReport.location, usTimeReports.get(potentialReport), dates);
     } else {
-      toReturn = new LocationCases(
-          potentialReport.location, globalTimeReports.get(potentialReport), dates);
+      double minimumDistance = 1000.0;
+      LocLatLng potentialReport = null;
+      boolean usReport = false;
+      // First look through global reports
+      for (LocLatLng key : globalTimeReports.keySet()) {
+        double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
+        if (reportDistance < minimumDistance) {
+          minimumDistance = reportDistance;
+          potentialReport = key;
+        }
+      }
+      // Then look thorugh US reports
+      for (LocLatLng key : usTimeReports.keySet()) {
+        double reportDistance = Math.abs(key.lat - lat) + Math.abs(key.lng - lng);
+        if (reportDistance <= minimumDistance) {
+          usReport = true;
+          minimumDistance = reportDistance;
+          potentialReport = key;
+        }
+      }
+
+      // Return location name, cases, and dates
+      LocationCases toReturn;
+      if (usReport) {
+        toReturn =
+            new LocationCases(potentialReport.location, usTimeReports.get(potentialReport), dates);
+      } else {
+        toReturn = new LocationCases(
+            potentialReport.location, globalTimeReports.get(potentialReport), dates);
+      }
+      Gson gson = new Gson();
+      String timeReportJson = gson.toJson(toReturn);
+      response.getWriter().println(timeReportJson);
     }
-    Gson gson = new Gson();
-    String timeReportJson = gson.toJson(toReturn);
-    response.getWriter().println(timeReportJson);
   }
 
   /**
@@ -143,7 +144,7 @@ public class OverTimeCasesServlet extends HttpServlet {
    * Fill up the hashmap with the name of the location and coordinates as the key
    * and with an array consisting of the confirmed case numbers as the value
    */
-  private void fillDataMap(Scanner scanner, HashMap<LocLatLng, ArrayList<Integer>> timeReports,
+  private void fillDataMap(Scanner scanner, Map<LocLatLng, List<Integer>> timeReports,
       int datesOffset, int coordOffset, int territoryOffset, int dataOffset) {
     boolean header = true;
     boolean firstAccess = true;
@@ -165,7 +166,7 @@ public class OverTimeCasesServlet extends HttpServlet {
       }
       line = scanner.nextLine();
       String[] cells = line.split(",");
-      ArrayList<Integer> cases = new ArrayList<Integer>();
+      List<Integer> cases = new ArrayList<Integer>();
       String territory = "";
 
       // If the name of the territory contains a ", the offset needs to be bumped
@@ -269,10 +270,10 @@ public class OverTimeCasesServlet extends HttpServlet {
    */
   class LocationCases {
     private String location;
-    private ArrayList<Integer> cases;
-    private ArrayList<String> dates;
+    private List<Integer> cases;
+    private List<String> dates;
 
-    public LocationCases(String location, ArrayList<Integer> cases, ArrayList<String> dates) {
+    public LocationCases(String location, List<Integer> cases, List<String> dates) {
       this.location = location;
       this.cases = cases;
       this.dates = dates;
