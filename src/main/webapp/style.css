@@ -9,6 +9,7 @@ body {
 .videoButton {
   padding-top: 6px;
   padding-bottom: 4px;
+<<<<<<< HEAD
   padding-left: 10px;
   padding-right: 10px;
   background-color: black;
@@ -23,6 +24,12 @@ body {
   padding-left: 10px;
   padding-right: 10px;
 >>>>>>> this commit has non-functional code, but I need to save my progress to switch branches
+=======
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: black;
+  vertical-align: middle;
+>>>>>>> turn inputs to buttons
 }
 
 #map {
@@ -75,9 +82,13 @@ body {
 =======
 >>>>>>> make search always return a video and fix bugs, include better UI for video player buttons
   z-index: 11;
+<<<<<<< HEAD
   background-color: black;
 >>>>>>> this commit has non-functional code, but I need to save my progress to switch branches
+=======
+>>>>>>> turn inputs to buttons
   display: flex;
+  top: 101%;
 }
 
 <<<<<<< HEAD
