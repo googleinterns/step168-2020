@@ -63,8 +63,9 @@ function executeSearch(searchContent, radius) {
         const videoItemsFromSearch = response.result.items;
         if (videoItemsFromSearch.length === 0) {
           if (radius === '1000km') {
-            alert('No location based videos found' +
-                  'searching for videos related to search');
+            alert(
+                'No location based videos found' +
+                'searching for videos related to search');
             return gapi.client.youtube.search
                 .list({
                   'part': ['snippet'],
