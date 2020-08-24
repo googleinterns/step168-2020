@@ -13,21 +13,27 @@
     </script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"
+    />
     <script src="apikeys.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script id="mapUrl"></script>
     <script defer src="get-videos.js"></script>
-    <script defer src="videoplayer.js"></script>
     <script defer src="routing.js"></script>
     <script defer src="script.js"></script>
+    <script defer src="videoplayer.js"></script>
     <script defer src="https://www.youtube.com/iframe_api"></script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   </head>
 
   <body>
     <div id="map"></div>
 
-    <div id="video-background">
+    <div class="resizable" id="video-background">
       <div id="video-overlay">
         <div id="video"></div>
         <div id="video-controls">
@@ -36,6 +42,12 @@
           <button type="button" id="next-video">Next Video</button>
         </div>
       </div>
+    </div>
+
+    <div id="osm-copyright">
+      ©
+      <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
+      Contributors
     </div>
 
     <div class="noDisplay">
@@ -93,6 +105,7 @@
             <button type="button" id="search-submit">
               <i class="material-icons">place</i>
             </button>
+            <button type="button" id="search-clear"><i class="material-icons">close</i></button>
             <input type="text" placeholder="Covid-19 Videos" value="" id="search-content" />
             <button type="button" id="videos">
               <i class="material-icons">local_movies</i>
