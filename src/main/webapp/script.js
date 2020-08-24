@@ -146,7 +146,6 @@ function displayCurrentStats(
   }
 
   document.getElementById('pieLocation').innerHTML = location;
-  document.getElementById('graphLocation').innerHTML = location;
   drawChart(active, deaths, recovered);
   drawGraph(lat, lng);
 }
@@ -187,6 +186,7 @@ function drawGraph(lat, lng) {
   fetch(`/timereport?lat=${lat}&lng=${lng}`)
       .then((response) => response.json())
       .then((timeReport) => {
+        document.getElementById('graphLocation').innerHTML = timeReport.location;
         lineData = new google.visualization.DataTable();
         lineData.addColumn('string', 'Date');
         lineData.addColumn('number', 'Confirmed Cases');

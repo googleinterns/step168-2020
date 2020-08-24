@@ -97,6 +97,6 @@ public final class OverTimeCasesServletTest {
     when(request.getParameter("lat")).thenReturn("0.0");
     when(request.getParameter("lng")).thenReturn("0.0");
     servlet.doGet(request, response);
-    Assert.assertTrue(stringWriter.toString().contains("WorldWide"));
+    Assert.assertTrue(stringWriter.toString().contains("Worldwide"));
   }
 }

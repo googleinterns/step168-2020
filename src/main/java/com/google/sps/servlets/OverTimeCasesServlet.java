@@ -66,7 +66,7 @@ public class OverTimeCasesServlet extends HttpServlet {
     double lng = Double.parseDouble(getRequestParameterOrDefault(request, "lng", "0.0"));
 
     if (lat == 0.0 && lng == 0.0) {
-      LocationCases toReturn = new LocationCases("WorldWide", worldCases, dates);
+      LocationCases toReturn = new LocationCases("Worldwide", worldCases, dates);
       Gson gson = new Gson();
       String timeReportJson = gson.toJson(toReturn);
       response.getWriter().println(timeReportJson);
