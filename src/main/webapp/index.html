@@ -6,10 +6,13 @@
     <link rel="stylesheet" href="style.css" />
     <script>
       document.write(
-        "<style> #heatSlider {-webkit-appearance: none;-webkit-transition: 0.2s;} #heatSlider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 25px;height: 25px;border-radius: 50%;background: white;cursor: pointer;} </style>"
+        "<style> #heatSlider {-webkit-appearance: none;-webkit-transition: 0.2s;}" +
+          "#heatSlider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;" +
+          "width: 25px;height: 25px;border-radius: 50%;background: white;cursor: pointer;} </style>"
       )
     </script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <link
       rel="stylesheet"
       href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"
@@ -53,18 +56,43 @@
     </div>
 
     <div class="noDisplay">
-      <div class="controls covidStats" id="covidStats">
-        <p id="location"></p>
-        <p id="displayActive"></p>
-        <p id="displayConfirmed"></p>
-        <p id="displayDeaths"></p>
-        <p id="displayRecovered"></p>
+      <div class="controls covidStats" id="allStats">
+        <div id="databuttons">
+          <button type="button" id="statsMode" class="dataModes">
+            <i class="material-icons">assignment</i></button
+          ><!--
+       --><button type="button" id="pieChartMode" class="dataModes">
+            <i class="material-icons">pie_chart</i></button
+          ><!--
+       --><button type="button" id="graphMode" class="dataModes">
+            <i class="material-icons">show_chart</i>
+          </button>
+        </div>
+
+        <div id="covidStats" class="data">
+          <p id="location"></p>
+          <p id="displayActive"></p>
+          <p id="displayConfirmed"></p>
+          <p id="displayDeaths"></p>
+          <p id="displayRecovered"></p>
+        </div>
+
+        <div id="pieDiv" class="data">
+          <p id="pieLocation"></p>
+          <div id="pieChart"></div>
+        </div>
+        <div id="graphDiv" class="data">
+          <p id="graphLocation"></p>
+          <div id="lineGraph"></div>
+        </div>
       </div>
     </div>
 
     <div class="noDisplay">
       <div class="controls my-location">
-        <button type="button" id="myLocation"><i class="material-icons">my_location</i></button>
+        <button type="button" id="myLocation">
+          <i class="material-icons">my_location</i>
+        </button>
       </div>
     </div>
 
@@ -74,10 +102,14 @@
           <span id="openOverlay">&#9776;</span>
           <div class="search-container">
             <input type="text" placeholder="Search Location" id="search-text" />
-            <button type="button" id="search-submit"><i class="material-icons">place</i></button>
+            <button type="button" id="search-submit">
+              <i class="material-icons">place</i>
+            </button>
             <button type="button" id="search-clear"><i class="material-icons">close</i></button>
             <input type="text" placeholder="Covid-19 Videos" value="" id="search-content" />
-            <button type="button" id="videos"><i class="material-icons">local_movies</i></button>
+            <button type="button" id="videos">
+              <i class="material-icons">local_movies</i>
+            </button>
           </div>
         </div>
       </div>
@@ -99,24 +131,29 @@
         <a id="closebtn" href="javascript:void(0)" class="closebtn">&times;</a>
         <hr class="horizontal" />
 
-        <button type="button" class="tab" id="stats"><i class="material-icons">rate_review</i> Statistics</button>
-        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Heat Map</button>
+        <button type="button" class="tab" id="stats">
+          <i class="material-icons">rate_review</i> Display Covid-19 Statistics
+        </button>
+        <button type="button" class="tab expand" id="hmap"><i class="material-icons">map</i> Covid-19 Heat Map</button>
         <div class="content">
           <select id="heatMapType">
-            <option value="confirmed">Show Confirmed Cases </option>
-            <option value="active">Show Active Cases </option>
-            <option value="deaths">Show Number of Deaths </option>
-            <option value="recovered">Show Recovered Cases </option>
-            <option value="population">Show Per-Capita Cases </option>
+            <option value="confirmed">Show Confirmed Cases</option>
+            <option value="active">Show Active Cases</option>
+            <option value="deaths">Show Number of Deaths</option>
+            <option value="recovered">Show Recovered Cases</option>
+            <option value="population">Show Per-Capita Cases</option>
           </select>
           <button type="button" class="contentToggle" id="toggle-heat">
             <i class="material-icons">layers</i> Heat Map
           </button>
-          <input type="range" id="heatSlider" min="0" max="10" value="2.5" step="0.5" />
+          <input type="range" id="heatSlider" min="0" max="1000" value="2.5" step="0.5" />
           <button type="button" class="contentToggle" id="relative-heat">
             <i class="material-icons">local_activity</i> Relative Heat
           </button>
-          <p><i class="material-icons">local_florist</i> Heat Size: <span id="sliderValue"></span></p>
+          <p>
+            <i class="material-icons">local_florist</i> Heat Size:
+            <span id="sliderValue"></span>
+          </p>
         </div>
 
         <button type="button" class="tab expand" id="route"><i class="material-icons">directions</i> Directions</button>
@@ -140,7 +177,9 @@
             <input type="text" id="end" placeholder="Choose destination" />
             <hr class="rountingHorizontal" />
           </div>
-          <button type="button" id="directions-search"><i class="material-icons">beenhere</i></button>
+          <button type="button" id="directions-search">
+            <i class="material-icons">beenhere</i>
+          </button>
           <button type="button" class="contentToggle" id="show-alternate-routes">
             <i class="material-icons">navigation</i> Alternate Routes
           </button>
@@ -160,7 +199,7 @@
           <div id="expanded-routing">
             <p>Route Information</p>
             Selected:
-            <select id="route-selector"> </select>
+            <select id="route-selector"></select>
             <table id="route-info">
               <thead>
                 <tr>

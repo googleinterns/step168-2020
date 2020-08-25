@@ -15,6 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
+import com.google.sps.servlets.Constants;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,8 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/report")
 public class CasesDataServlet extends HttpServlet {
   private String reportsJson;
-  public static final String CTYPE = "application/json"; // HttpServletResponse content type
-  public static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
    * Builds Json array using data set
@@ -76,8 +75,8 @@ public class CasesDataServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setCharacterEncoding(ENCODING);
-    response.setContentType(CTYPE);
+    response.setCharacterEncoding(Constants.ENCODING);
+    response.setContentType(Constants.CASESCTYPE);
     response.getWriter().println(reportsJson);
   }
 
