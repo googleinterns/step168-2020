@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.sps.servlets.Constants;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -35,16 +36,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/link")
 public class LinkServlet extends HttpServlet {
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  private static final String CTYPE = "text/html"; // HttpServletResponse content type
-  private static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
    * Sends redirect to url from datastore if it exists
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setCharacterEncoding(ENCODING);
-    response.setContentType(CTYPE);
+    response.setCharacterEncoding(Constants.ENCODING);
+    response.setContentType(Constants.LINKCTYPE);
     String id = getRequestParameterOrDefault(request, "id", "1");
     try {
       Key urlKey = KeyFactory.createKey("url", Long.parseLong(id));

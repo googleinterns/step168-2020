@@ -30,12 +30,25 @@ let overlay;
 let curLocationMarker;
 let lastSearchClicked = 'none';
 let navOpen = false;
+let placesAutoComplete;
 
 // When the page loads, call createMap
 window.onload = function() {
   createMap();
   addDirectionsListeners();
+
+  google.charts.load('current', {
+    callback: function() {
+      drawChart;
+      drawGraph;
+    },
+    packages: ['corechart', 'line'],
+  });
 };
+window.addEventListener('resize', function() {
+  resizePieChart();
+  resizeLineGraph();
+});
 
 // Update currently displayed coordinates
 function displayLatitudeLongitude(value) {
@@ -46,7 +59,7 @@ function displayLatitudeLongitude(value) {
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
   const potentialReports = [];
-  const RADIUS = 1.5;
+  const RADIUS = 5;
   // Look for closest reports
   casesData.forEach((report) => {
     if (Math.abs(report.lat - value['lat']) < RADIUS &&
@@ -59,7 +72,7 @@ function displayLocationData(value) {
   if (potentialReports.length == 0) {
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
-        globalRecovered);
+        globalRecovered, 0.0, 0.0);
     return;
   }
   // If there are nearby reports, lookup address using geocoder
@@ -73,14 +86,17 @@ function displayLocationData(value) {
   fetch(lookupURL).then((response) => response.json()).then((data) => {
     data.results[0].address_components.forEach((location) => {
       potentialReports.forEach((report) => {
+        //        console.log(report);
         // If there is a match, display that territory's statistics
         const lName = location.long_name.trim().valueOf();
         const rName = report.territory.trim().valueOf();
-        if (lName.includes(rName) || rName.includes(lName)) {
+        if ((lName.includes(rName) || rName.includes(lName)) &&
+            foundFlag == false) {
           potentialReport = report;
           displayCurrentStats(
               lName, potentialReport.active, potentialReport.confirmed,
-              potentialReport.deaths, potentialReport.recovered);
+              potentialReport.deaths, potentialReport.recovered,
+              potentialReport.lat, potentialReport.lng);
           foundFlag = true;
           return;
         }
@@ -101,7 +117,7 @@ function displayLocationData(value) {
       displayCurrentStats(
           potentialReport.territory, potentialReport.active,
           potentialReport.confirmed, potentialReport.deaths,
-          potentialReport.recovered);
+          potentialReport.recovered, potentialReport.lat, potentialReport.lng);
     }
   });
 }
@@ -111,8 +127,11 @@ let globalActive = 0;
 let globalConfirmed = 0;
 let globalDeaths = 0;
 let globalRecovered = 0;
+
+let initialDisplay = true;
 // Display COVID data in html
-function displayCurrentStats(location, active, confirmed, deaths, recovered) {
+function displayCurrentStats(
+    location, active, confirmed, deaths, recovered, lat, lng) {
   document.getElementById('location').innerHTML = location;
   document.getElementById('displayActive').innerHTML = `Active: ${active}`;
   document.getElementById('displayConfirmed').innerHTML =
@@ -120,6 +139,79 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
   document.getElementById('displayDeaths').innerHTML = `Deaths: ${deaths}`;
   document.getElementById('displayRecovered').innerHTML =
       `Recovered: ${recovered}`;
+
+  if (initialDisplay) {
+    initStatsDisplay(map);
+    document.getElementById('statsMode').classList.toggle('selected');
+    document.getElementById('pieDiv').classList.add('inactive');
+    document.getElementById('graphDiv').classList.add('inactive');
+    initialDisplay = false;
+  }
+
+  document.getElementById('pieLocation').innerHTML = location;
+  drawChart(active, deaths, recovered);
+  drawGraph(lat, lng);
+}
+
+// Create pie chart
+let pieChart;
+let pieData;
+let pieOptions;
+function drawChart(active, deaths, recovered) {
+  pieData = google.visualization.arrayToDataTable([
+    ['Data Type', 'Cases'],
+    ['Active', active],
+    ['Deaths', deaths],
+    ['Recovered', recovered],
+  ]);
+  pieOptions = {
+    'backgroundColor': 'transparent',
+    'chartArea': {'width': '100%', 'height': '80%'},
+    'legend': {'position': 'bottom'},
+  };
+  pieChart =
+      new google.visualization.PieChart(document.getElementById('pieChart'));
+  pieChart.draw(pieData, pieOptions);
+}
+
+function resizePieChart() {
+  pieChart.draw(pieData, pieOptions);
+}
+
+function resizeLineGraph() {
+  lineChart.draw(lineData, google.charts.Line.convertOptions(lineOptions));
+}
+
+// Create line graph
+let lineChart;
+let lineData;
+let lineOptions;
+function drawGraph(lat, lng) {
+  fetch(`/timereport?lat=${lat}&lng=${lng}`)
+      .then((response) => response.json())
+      .then((timeReport) => {
+        document.getElementById('graphLocation').innerHTML =
+            timeReport.location;
+        lineData = new google.visualization.DataTable();
+        lineData.addColumn('string', 'Date');
+        lineData.addColumn('number', 'Confirmed Cases');
+        for (let i = 0; i < timeReport.cases.length; ++i) {
+          lineData.addRow([timeReport.dates[i], timeReport.cases[i]]);
+        }
+        lineOptions = {
+          'backgroundColor': 'transparent',
+          'chartArea': {
+            'backgroundColor': 'transparent',
+          },
+          'legend': {position: 'none'},
+          'titlePosition': 'none',
+          'vAxis': {'title': 'Confirmed Cases'},
+        };
+        lineChart =
+            new google.charts.Line(document.getElementById('lineGraph'));
+        lineChart.draw(
+            lineData, google.charts.Line.convertOptions(lineOptions));
+      });
 }
 
 // Initialize global heat maps
@@ -148,7 +240,6 @@ function createMap() {
   });
   initMyLocationControl(map);
   initTopBar(map);
-  initStatsDisplay(map);
   initRelativeHeat();
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
@@ -192,13 +283,18 @@ function createMap() {
     // Display worldwide data initially
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
-        globalRecovered);
+        globalRecovered, 0.0, 0.0);
   });
 
   geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch();
     displayLocationDataFromSearch();
+  });
+  placesAutoComplete = new google.maps.places.Autocomplete(
+      document.getElementById('search-text'));
+  placesAutoComplete.addListener('place_changed', () => {
+    getCoordsFromSearch(geocoder, map);
   });
   document.getElementById('search-clear').addEventListener('click', () => {
     document.getElementById('search-text').value = '';
@@ -241,6 +337,37 @@ function createMap() {
   });
   document.getElementById('stats').addEventListener('click', () => {
     toggleStats();
+  });
+  document.getElementById('statsMode').addEventListener('click', () => {
+    if (!document.getElementById('statsMode').classList.contains('selected')) {
+      document.getElementById('pieChartMode').classList.remove('selected');
+      document.getElementById('graphMode').classList.remove('selected');
+      document.getElementById('statsMode').classList.add('selected');
+      document.getElementById('pieDiv').classList.add('inactive');
+      document.getElementById('graphDiv').classList.add('inactive');
+      document.getElementById('covidStats').classList.remove('inactive');
+    }
+  });
+  document.getElementById('pieChartMode').addEventListener('click', () => {
+    const pcm = document.getElementById('pieChartMode').classList;
+    if (!pcm.contains('selected')) {
+      document.getElementById('statsMode').classList.remove('selected');
+      document.getElementById('graphMode').classList.remove('selected');
+      document.getElementById('pieChartMode').classList.add('selected');
+      document.getElementById('covidStats').classList.add('inactive');
+      document.getElementById('graphDiv').classList.add('inactive');
+      document.getElementById('pieDiv').classList.remove('inactive');
+    }
+  });
+  document.getElementById('graphMode').addEventListener('click', () => {
+    if (!document.getElementById('graphMode').classList.contains('selected')) {
+      document.getElementById('pieChartMode').classList.remove('selected');
+      document.getElementById('statsMode').classList.remove('selected');
+      document.getElementById('graphMode').classList.add('selected');
+      document.getElementById('pieDiv').classList.add('inactive');
+      document.getElementById('covidStats').classList.add('inactive');
+      document.getElementById('graphDiv').classList.remove('inactive');
+    }
   });
   document.getElementById('openOverlay').addEventListener('click', () => {
     openNav();
@@ -411,7 +538,7 @@ function toggleHeatMap() {
 // Toggle selected status and stats visability when menu button clicked
 function toggleStats() {
   document.getElementById('stats').classList.toggle('unselected');
-  document.getElementById('covidStats').classList.toggle('inactive');
+  document.getElementById('allStats').classList.toggle('inactive');
 }
 
 // Display type of data user selects
