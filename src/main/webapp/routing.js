@@ -98,6 +98,13 @@ function addDirectionsListeners() {
   document.getElementById('route-selector').addEventListener('input', () => {
     changeSelectedRoute(document.getElementById('route-selector').value);
   });
+  document.getElementById('clear-route').addEventListener('click', () => {
+    document.getElementById('start').value = '';
+    document.getElementById('end').value = '';
+    resetRoute();
+  });
+  new google.maps.places.Autocomplete(document.getElementById('start'));
+  new google.maps.places.Autocomplete(document.getElementById('end'));
 }
 
 /**
@@ -118,16 +125,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
       },
       (response, status) => {
         console.debug(response);
-        for (let i = 0; i < routeLines.length; i++) {
-          routeLines[i].route.setMap(null);
-        }
-        routeLines = [];
-        for (let i = 0; i < routeMarkers.length; i++) {
-          routeMarkers[i].setMap(null);
-        }
-        routeMarkers = [];
-        resetRouteTable();
-
+        resetRoute();
         if (status === 'OK') {
           const active = [];
           const distance = [];
@@ -159,6 +157,21 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           window.alert('Directions request failed due to ' + status);
         }
       });
+}
+
+/**
+ * Clear route from map
+ */
+function resetRoute() {
+  for (let i = 0; i < routeLines.length; i++) {
+    routeLines[i].route.setMap(null);
+  }
+  routeLines = [];
+  for (let i = 0; i < routeMarkers.length; i++) {
+    routeMarkers[i].setMap(null);
+  }
+  routeMarkers = [];
+  resetRouteTable();
 }
 
 /**
