@@ -396,13 +396,15 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
+      if (document.activeElement.tagName === 'BUTTON') {
+        return;
+      }
       if (!navOpen) {
         if (lastSearchClicked === 'map') {
           findWhatToSearch();
         } else if (lastSearchClicked === 'location') {
           getCoordsFromSearch();
           displayLocationDataFromSearch();
-          findWhatToSearch();
         }
       } else {
         if (lastSearchClicked === 'route-end' ||
@@ -466,9 +468,11 @@ function openNav() {
 
 // Close menu and fade out dim
 function closeNav() {
-  navOpen = false;
-  document.getElementById('myNav').style.width = '0%';
-  document.getElementById('dim').classList.toggle('fade');
+  if (navOpen) {
+    navOpen = false;
+    document.getElementById('myNav').style.width = '0%';
+    document.getElementById('dim').classList.toggle('fade');
+  }
 }
 
 // Init each menu tab, opening up when clicked
@@ -654,6 +658,7 @@ function getCoordsFromSearch() {
         displayLatitudeLongitude(foundLocation.toJSON());
         placeMarker(map, foundLocation.toJSON());
         setBoundaries(address, results);
+        findWhatToSearch();
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }
