@@ -4,32 +4,13 @@ body {
   overflow: hidden;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 .videoButton {
   padding-top: 6px;
   padding-bottom: 4px;
-<<<<<<< HEAD
   padding-left: 10px;
   padding-right: 10px;
   background-color: black;
   vertical-align: middle;
-=======
-.button {
-=======
-.videoButton {
->>>>>>> clean style
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
->>>>>>> this commit has non-functional code, but I need to save my progress to switch branches
-=======
-  padding-left: 10px;
-  padding-right: 10px;
-  background-color: black;
-  vertical-align: middle;
->>>>>>> turn inputs to buttons
 }
 
 #map {
@@ -63,42 +44,11 @@ body {
 
 #video-controls {
   position: absolute;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   z-index: 11;
   display: flex;
   top: 101%;
 }
-=======
-  bottom: 0;
-  padding-bottom: 10px;
-  left: 40%;
-  z-index: 12;
-=======
-  /* bottom: 0; */
-  /* padding-bottom: 13.5px; */
-  /* left: 29%; */
-=======
->>>>>>> make search always return a video and fix bugs, include better UI for video player buttons
-  z-index: 11;
-<<<<<<< HEAD
-  background-color: black;
->>>>>>> this commit has non-functional code, but I need to save my progress to switch branches
-=======
->>>>>>> turn inputs to buttons
-  display: flex;
-  top: 101%;
-}
 
-<<<<<<< HEAD
-/* #video-controls button {
-  width: 20%;
-} */
->>>>>>> save current progress, no good chanegs yet tho
-
-=======
->>>>>>> make search always return a video and fix bugs, include better UI for video player buttons
 .noDisplay {
   display: none;
 }
