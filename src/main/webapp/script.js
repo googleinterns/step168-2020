@@ -352,6 +352,9 @@ function createMap() {
   document.getElementById('closebtn').addEventListener('click', () => {
     closeNav();
   });
+  document.getElementById('dim').addEventListener('click', () => {
+    closeNav();
+  });
   document.getElementById('relative-heat').addEventListener('click', () => {
     document.getElementById('relative-heat').classList.toggle('selected');
     changeHeat();
