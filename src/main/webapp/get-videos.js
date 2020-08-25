@@ -25,7 +25,6 @@ function nextPageSearch(pageToken) {
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
         const results = response.result;
-        console.log(results);
         parseResults(results);
       },
       function(err) {
@@ -51,11 +50,9 @@ function executeSearch(searchContent, radius) {
     'maxResults': 50,
     'type': ['video'],
   };
-  console.log(forList);
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
         const results = response.result;
-        console.log(results);
         // Handle the results here (response.result has the parsed body).
         const pageInfo = results.pageInfo;
         if (pageInfo.totalResults < pageInfo.resultsPerPage) {
@@ -81,11 +78,9 @@ function executeSearch(searchContent, radius) {
 }
 
 function parseResults(results) {
-  console.log(results);
   const videoListToPlay = [];
   const nextPage = results.nextPageToken;
   const videoItemsFromSearch = results.items;
-  // const pageInfo = results.pageInfo;
   videoItemsFromSearch.forEach((item) => {
     videoListToPlay.push(item.id.videoId);
   });
@@ -100,11 +95,9 @@ function noLocationSearch(searchContent) {
     'maxResults': 50,
     'type': ['video'],
   };
-  console.log(forList);
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
         const results = response.result;
-        console.log(results);
         parseResults(results);
       },
       function(err) {
