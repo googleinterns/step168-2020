@@ -13,8 +13,7 @@ class VideoPlayer {
     this.videoLeft = '50%';
     this.videoWidth = '40%';
     this.videoHeight = '60%';
-    this.nextPage;
-    '';
+    this.nextPage = '';
     this.TEST_LIST = ['9RTaIpVuTqE', 'QC8iQqtG0hg', 'QohH89Eu5iM'];
     this.videoIds = [];
     this.currentVideo = 0;
@@ -49,7 +48,7 @@ class VideoPlayer {
       alert('There are no previous videos');
     } else if (this.currentVideo >= this.videoIds.length) {
       alert('Finding you more videos...');
-      nextPageSearch();
+      nextPageSearch(this.nextPage);
     } else {
       this.player.loadVideoById(this.videoIds[this.currentVideo]);
       if (changedVideoStyle) {
