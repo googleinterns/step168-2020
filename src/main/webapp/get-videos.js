@@ -24,13 +24,9 @@ function nextPageSearch(pageToken) {
   const forList = {'pageToken': pageToken};
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
-        const videoListToPlay = [];
-        const nextPage = response.result.nextPageToken;
-        const videoItemsFromSearch = response.result.items;
-        videoItemsFromSearch.forEach((item) => {
-          videoListToPlay.push(item.id.videoId);
-        });
-        player.playVideos(videoListToPlay, nextPage);
+        const results = response.result;
+        console.log(results);
+        parseResults(results);
       },
       function(err) {
         alert(
@@ -55,48 +51,61 @@ function executeSearch(searchContent, radius) {
     'maxResults': 50,
     'type': ['video'],
   };
+  console.log(forList);
   return gapi.client.youtube.search.list(forList).then(
       function(response) {
+        const results = response.result;
+        console.log(results);
         // Handle the results here (response.result has the parsed body).
-        const videoListToPlay = [];
-        const nextPage = response.result.nextPageToken;
-        const videoItemsFromSearch = response.result.items;
-        if (videoItemsFromSearch.length === 0) {
+        const pageInfo = results.pageInfo;
+        if (pageInfo.totalResults < pageInfo.resultsPerPage) {
           if (radius === '1000km') {
             alert(
-                'No location based videos found' +
-                'searching for videos related to search');
-            return gapi.client.youtube.search
-                .list({
-                  'part': ['snippet'],
-                  'q': searchContent,
-                  'videoEmbeddable': 'true',
-                  'maxResults': 50,
-                  'type': ['video'],
-                })
-                .then(
-                    function(response) {
-                      videoItemsFromSearch.forEach((item) => {
-                        videoListToPlay.push(item.id.videoId);
-                      });
-                      player.playVideos(videoListToPlay, nextPage);
-                    },
-                    function(err) {
-                      alert(
-                          'Internal Video Retrival Error:' +
-                          'please try again or a different search');
-                      console.error('Execute error', err);
-                    });
+                'No location based videos found, ' +
+                'searching for videos related to just search');
+            noLocationSearch(searchContent);
           } else {
-            radius = Math.min(parseInt(radius) * 10, 1000) + 'km';
+            radius = Math.min(parseInt(radius) * 4, 1000) + 'km';
             executeSearch(searchContent, radius);
           }
         } else {
-          videoItemsFromSearch.forEach((item) => {
-            videoListToPlay.push(item.id.videoId);
-          });
-          player.playVideos(videoListToPlay, nextPage);
+          parseResults(results);
         }
+      },
+      function(err) {
+        alert(
+            'Internal Video Retrival Error:' +
+            'please try again or a different search');
+        console.error('Execute error', err);
+      });
+}
+
+function parseResults(results) {
+  console.log(results);
+  const videoListToPlay = [];
+  const nextPage = results.nextPageToken;
+  const videoItemsFromSearch = results.items;
+  // const pageInfo = results.pageInfo;
+  videoItemsFromSearch.forEach((item) => {
+    videoListToPlay.push(item.id.videoId);
+  });
+  player.playVideos(videoListToPlay, nextPage);
+}
+
+function noLocationSearch(searchContent) {
+  const forList = {
+    'part': ['snippet'],
+    'q': searchContent,
+    'videoEmbeddable': 'true',
+    'maxResults': 50,
+    'type': ['video'],
+  };
+  console.log(forList);
+  return gapi.client.youtube.search.list(forList).then(
+      function(response) {
+        const results = response.result;
+        console.log(results);
+        parseResults(results);
       },
       function(err) {
         alert(
