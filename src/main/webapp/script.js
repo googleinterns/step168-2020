@@ -28,6 +28,7 @@ let geocoder;
 let bound;
 let overlay;
 let curLocationMarker;
+let placesAutoComplete;
 
 // When the page loads, call createMap
 window.onload = function() {
@@ -195,6 +196,11 @@ function createMap() {
   document.getElementById('search-submit').addEventListener('click', () => {
     getCoordsFromSearch(geocoder, map);
     displayLocationDataFromSearch(geocoder);
+  });
+  placesAutoComplete = new google.maps.places.Autocomplete(
+      document.getElementById('search-text'));
+  placesAutoComplete.addListener('place_changed', () => {
+    getCoordsFromSearch(geocoder, map);
   });
   document.getElementById('search-clear').addEventListener('click', () => {
     document.getElementById('search-text').value = '';
