@@ -121,6 +121,7 @@ function calculateAndDisplayRoute() {
         console.debug(response);
         for (let i = 0; i < routeLines.length; i++) {
           routeLines[i].route.setMap(null);
+          routeLines[i].polyline.setMap(null);
         }
         routeLines = [];
         for (let i = 0; i < routeMarkers.length; i++) {
@@ -185,17 +186,28 @@ function processRoute(mapObject, response, i) {
           strokeColor: 'grey',
           strokeOpacity: 1,
           strokeWeight: 3,
+          zIndex: 1,
         },
         infoWindow: new google.maps.InfoWindow(),
         suppressInfoWindows: false,
       },
     }),
+    polyline: new google.maps.Polyline({
+      strokeOpacity: 0,
+      strokeWeight: 20,
+      path: points,
+      zIndex: 5,
+    }),
     active: 0,
     waypoints: [],
     infoWindow: new google.maps.InfoWindow(),
   });
+  google.maps.event.addListener(routeLines[i].polyline, 'click', () => {
+    if (i != chosenRoute) {
+      changeSelectedRoute(i);
+    }
+  });
   const waypointInterval = Math.floor(points.length / NUM_WAYPOINTS) - 1;
-  console.log(waypointInterval);
   for (let j = 0; j < points.length; j += 1) {
     const lat = points[j].lat();
     const lng = points[j].lng();
@@ -347,6 +359,7 @@ function hideAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       routeLines[i].route.setMap(null);
+      routeLines[i].polyline.setMap(null);
     }
   }
 }
@@ -357,6 +370,7 @@ function hideAlternateRoutes() {
 function showAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(map);
+    routeLines[i].polyline.setMap(map);
   }
 }
 
@@ -369,8 +383,10 @@ function toggleAlternateRoutes() {
     if (i != chosenRoute) {
       if (routeLines[i].route.getMap() == null) {
         routeLines[i].route.setMap(map);
+        routeLines[i].polyline.setMap(map);
       } else {
         routeLines[i].route.setMap(null);
+        routeLines[i].polyline.setMap(null);
       }
     }
   }
