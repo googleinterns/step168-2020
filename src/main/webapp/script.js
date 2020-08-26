@@ -405,6 +405,8 @@ function createMap() {
         } else if (lastSearchClicked === 'location') {
           getCoordsFromSearch();
           displayLocationDataFromSearch();
+        } else if (lastSearchClicked === 'video') {
+          findWhatToSearch();
         }
       } else {
         if (lastSearchClicked === 'route-end' ||
