@@ -796,3 +796,24 @@ $('.resizable').resizable({
     $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
   },
 });
+
+$(function () {
+  const ele = document.getElementById('search-content');
+
+  $('#search-content').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        type: 'GET',
+        url: 'https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=' + request.term,
+        success: function(data) {
+          const searchSuggestions = [];
+          data.split('[').forEach((ele, index) => {
+          if (!ele.split('"')[1] || index === 1) return;
+            return searchSuggestions.push(ele.split('"')[1]);
+          });
+          response(searchSuggestions);
+        }
+      });
+    }
+  });
+});
