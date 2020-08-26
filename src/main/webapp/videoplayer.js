@@ -1,4 +1,4 @@
-/* globals overlay, curLocationMarker */
+/* globals overlay, curLocationMarker, nextPageSearch */
 /* exported VideoPlayer */
 /* eslint-env jquery */
 
@@ -13,6 +13,7 @@ class VideoPlayer {
     this.videoLeft = '50%';
     this.videoWidth = '40%';
     this.videoHeight = '60%';
+    this.nextPage = '';
     this.TEST_LIST = ['9RTaIpVuTqE', 'QC8iQqtG0hg', 'QohH89Eu5iM'];
     this.videoIds = [];
     this.currentVideo = 0;
@@ -43,19 +44,22 @@ class VideoPlayer {
    * Bring video to front and start playing
    */
   playVideo(changedVideoStyle) {
-    if (this.currentVideo >= this.videoIds.length || this.currentVideo < 0) {
-      this.hideVideo();
+    if (this.currentVideo < 0) {
+      alert('There are no previous videos');
+    } else if (this.currentVideo >= this.videoIds.length) {
+      alert('Finding you more videos...');
+      nextPageSearch(this.nextPage);
     } else {
       this.player.loadVideoById(this.videoIds[this.currentVideo]);
       if (changedVideoStyle) {
         this.setUpForMaximizeAnimation();
+        $('#video-background').animate({
+          top: this.videoTop,
+          left: this.videoLeft,
+          width: this.videoWidth,
+          height: this.videoHeight,
+        });
       }
-      $('#video-background').animate({
-        top: this.videoTop,
-        left: this.videoLeft,
-        width: this.videoWidth,
-        height: this.videoHeight,
-      });
       document.getElementById('video-overlay').style.display = 'block';
       document.getElementById('video-background').style.display = 'block';
     }
@@ -108,8 +112,9 @@ class VideoPlayer {
    * Saves an array of video ids and starts playing the first one
    * @param {array} videoIds
    */
-  playVideos(videoIds) {  // eslint-disable-line no-unused-vars
+  playVideos(videoIds, nextPage) {  // eslint-disable-line no-unused-vars
     this.currentVideo = 0;
+    this.nextPage = nextPage;
     this.videoIds = videoIds;
     const changedVideoStyle = true;
     // i.e. the video player needs to change visual attributes of video player
@@ -124,9 +129,6 @@ class VideoPlayer {
     this.player.stopVideo();
 
     this.saveCurVideo();
-    // const overlay = new google.maps.OverlayView();
-    // overlay.draw = function() {};
-    // overlay.setMap(map);
 
     const proj = overlay.getProjection();
     const pos = curLocationMarker.getPosition();
