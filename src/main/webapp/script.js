@@ -223,6 +223,7 @@ function createMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.496, lng: -99.031},
     zoom: 5,
+    minZoom: 3,
     mapTypeControl: false,
     fullscreenControl: false,
   });
@@ -799,21 +800,24 @@ $('.resizable').resizable({
 
 $(function () {
   const ele = document.getElementById('search-content');
-
   $('#search-content').autocomplete({
+    minLength: 0,
     source: function(request, response) {
       $.ajax({
         type: 'GET',
         url: 'https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=' + request.term,
+        dataType: 'jsonp',
+        crossDomain: true,
         success: function(data) {
           const searchSuggestions = [];
-          data.split('[').forEach((ele, index) => {
-          if (!ele.split('"')[1] || index === 1) return;
-            return searchSuggestions.push(ele.split('"')[1]);
+          data[1].forEach((ele, index) => {
+            return searchSuggestions.push(ele[0]);
           });
-          response(searchSuggestions);
+          response(searchSuggestions.splice(0, 5));
         }
       });
     }
-  });
+  }).focus(function () {
+        $(this).autocomplete('search', $(this).val())
+    });;
 });

@@ -26,12 +26,12 @@ body {
   left: 50%;
   width: 40%;
   height: 60%;
-  background-color: whitesmoke;
+  background-color: #4d4d4d;
   border-radius: 1%;
   z-index: 9;
   position: absolute;
   display: none;
-  padding: 0.5%;
+  padding: 2% 0.5% 0.5% 0.5%;
 }
 
 #video-overlay {
