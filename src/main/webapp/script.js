@@ -798,26 +798,29 @@ $('.resizable').resizable({
   },
 });
 
-$(function () {
-  const ele = document.getElementById('search-content');
-  $('#search-content').autocomplete({
-    minLength: 0,
-    source: function(request, response) {
-      $.ajax({
-        type: 'GET',
-        url: 'https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=' + request.term,
-        dataType: 'jsonp',
-        crossDomain: true,
-        success: function(data) {
-          const searchSuggestions = [];
-          data[1].forEach((ele, index) => {
-            return searchSuggestions.push(ele[0]);
+$(function() {
+  $('#search-content')
+      .autocomplete({
+        minLength: 0,
+        source: function(request, response) {
+          $.ajax({
+            type: 'GET',
+            url:
+                'https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=' +
+                request.term,
+            dataType: 'jsonp',
+            crossDomain: true,
+            success: function(data) {
+              const searchSuggestions = [];
+              data[1].forEach((ele, index) => {
+                return searchSuggestions.push(ele[0]);
+              });
+              response(searchSuggestions.splice(0, 5));
+            },
           });
-          response(searchSuggestions.splice(0, 5));
-        }
+        },
+      })
+      .focus(function() {
+        $(this).autocomplete('search', $(this).val());
       });
-    }
-  }).focus(function () {
-        $(this).autocomplete('search', $(this).val())
-    });;
 });
