@@ -283,14 +283,17 @@ function createMap() {
         globalRecovered, 0.0, 0.0);
   });
   // Populate recent heatmap data
-  fetch(`/timereport?lat=1000.0&lng=1000.0`).then((response) => response.json()).then((recentReports) => {
-    recentReports.forEach((recentReport) => {
-      globalRecentHeatmapData.push({
-        location: new google.maps.LatLng(recentReport.lat, recentReport.lng),
-        weight: recentReport.confirmed,
+  fetch(`/timereport?lat=1000.0&lng=1000.0`)
+      .then((response) => response.json())
+      .then((recentReports) => {
+        recentReports.forEach((recentReport) => {
+          globalRecentHeatmapData.push({
+            location:
+                new google.maps.LatLng(recentReport.lat, recentReport.lng),
+            weight: recentReport.confirmed,
+          });
+        });
       });
-    });
-  });
 
   geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {

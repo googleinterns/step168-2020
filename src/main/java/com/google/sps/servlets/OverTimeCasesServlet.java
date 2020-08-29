@@ -84,8 +84,8 @@ public class OverTimeCasesServlet extends HttpServlet {
         }
         int casesSum = 0;
         int arrSize = globalTimeReports.get(gkey).size();
-        for (int i = arrSize-7; i<arrSize; ++i) {
-          casesSum += (globalTimeReports.get(gkey).get(i) - globalTimeReports.get(gkey).get(i-1));
+        for (int i = arrSize - 7; i < arrSize; ++i) {
+          casesSum += (globalTimeReports.get(gkey).get(i) - globalTimeReports.get(gkey).get(i - 1));
         }
         if (casesSum < 0) {
           casesSum = 0;
@@ -95,8 +95,8 @@ public class OverTimeCasesServlet extends HttpServlet {
       for (LocLatLng uskey : usTimeReports.keySet()) {
         int casesSum = 0;
         int arrSize = usTimeReports.get(uskey).size();
-        for (int i = arrSize-7; i<arrSize; ++i) {
-          casesSum += (usTimeReports.get(uskey).get(i) - usTimeReports.get(uskey).get(i-1));
+        for (int i = arrSize - 7; i < arrSize; ++i) {
+          casesSum += (usTimeReports.get(uskey).get(i) - usTimeReports.get(uskey).get(i - 1));
         }
         if (casesSum < 0) {
           casesSum = 0;
