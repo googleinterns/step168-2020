@@ -328,7 +328,8 @@ public class OverTimeCasesServlet extends HttpServlet {
 
     public String toString() {
       return "Lat: " + lat + "; "
-          + "Lng: " + lng + "; " + "Confirmed: " + confirmed;
+          + "Lng: " + lng + "; "
+          + "Confirmed: " + confirmed;
     }
   }
 }
