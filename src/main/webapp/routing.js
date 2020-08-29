@@ -17,6 +17,7 @@
 /* globals casesData map geocoder */
 
 const NUM_WAYPOINTS = 10;
+let directionsService;
 let chosenRoute = 0;
 let routeLines = [];
 let routeMarkers = [];
@@ -28,11 +29,11 @@ let travelMode = '';
  * Set functions that run when directions inputs are changed
  */
 function addDirectionsListeners() {
-  const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsService = new google.maps.DirectionsService();
   directionsRenderer.setMap(map);
   document.getElementById('directions-search').addEventListener('click', () => {
-    calculateAndDisplayRoute(directionsService, map);
+    calculateAndDisplayRoute();
   });
   document.getElementById('show-alternate-routes')
       .addEventListener('click', () => {
@@ -112,7 +113,7 @@ function addDirectionsListeners() {
  * Calulate cases for each route
  * Display route with fewest cases
  */
-function calculateAndDisplayRoute(directionsService, mapObject) {
+function calculateAndDisplayRoute() {
   routeStart = document.getElementById('start').value;
   routeEnd = document.getElementById('end').value;
 
@@ -131,7 +132,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
           const distance = [];
           const time = [];
           for (let i = 0; i < response.routes.length; i++) {
-            const values = processRoute(mapObject, response, i);
+            const values = processRoute(map, response, i);
             active.push(values[0]);
             distance.push(values[1]);
             time.push(values[2]);
@@ -165,6 +166,7 @@ function calculateAndDisplayRoute(directionsService, mapObject) {
 function resetRoute() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(null);
+    routeLines[i].polyline.setMap(null);
   }
   routeLines = [];
   for (let i = 0; i < routeMarkers.length; i++) {
@@ -197,17 +199,28 @@ function processRoute(mapObject, response, i) {
           strokeColor: 'grey',
           strokeOpacity: 1,
           strokeWeight: 3,
+          zIndex: 1,
         },
         infoWindow: new google.maps.InfoWindow(),
         suppressInfoWindows: false,
       },
     }),
+    polyline: new google.maps.Polyline({
+      strokeOpacity: 0,
+      strokeWeight: 20,
+      path: points,
+      zIndex: 5,
+    }),
     active: 0,
     waypoints: [],
     infoWindow: new google.maps.InfoWindow(),
   });
+  google.maps.event.addListener(routeLines[i].polyline, 'click', () => {
+    if (i != chosenRoute) {
+      changeSelectedRoute(i);
+    }
+  });
   const waypointInterval = Math.floor(points.length / NUM_WAYPOINTS) - 1;
-  console.log(waypointInterval);
   for (let j = 0; j < points.length; j += 1) {
     const lat = points[j].lat();
     const lng = points[j].lng();
@@ -300,11 +313,13 @@ function changeSelectedRoute(route) {
     const options = {
       strokeColor: 'grey',
       strokeWeight: 3,
+      zIndex: 1,
     };
     if (i == chosenRoute) {
       options.strokeColor = 'blue';
       options.strokeOpacity = 1;
       options.strokeWeight = 7;
+      options.zIndex = 3;
     }
     routeLines[i].route.setOptions({
       polylineOptions: options,
@@ -359,6 +374,7 @@ function hideAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     if (i != chosenRoute) {
       routeLines[i].route.setMap(null);
+      routeLines[i].polyline.setMap(null);
     }
   }
 }
@@ -369,6 +385,7 @@ function hideAlternateRoutes() {
 function showAlternateRoutes() {
   for (let i = 0; i < routeLines.length; i++) {
     routeLines[i].route.setMap(map);
+    routeLines[i].polyline.setMap(map);
   }
 }
 
@@ -381,8 +398,10 @@ function toggleAlternateRoutes() {
     if (i != chosenRoute) {
       if (routeLines[i].route.getMap() == null) {
         routeLines[i].route.setMap(map);
+        routeLines[i].polyline.setMap(map);
       } else {
         routeLines[i].route.setMap(null);
+        routeLines[i].polyline.setMap(null);
       }
     }
   }

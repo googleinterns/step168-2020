@@ -37,9 +37,15 @@
       <div id="video-overlay">
         <div id="video"></div>
         <div id="video-controls">
-          <button type="button" id="prev-video">Previous Video</button>
-          <button type="button" id="exit-video">Exit Video</button>
-          <button type="button" id="next-video">Next Video</button>
+          <button class="videoButton" id="exit-video" type="button">
+            <img src="images/close.png" alt="exit video" />
+          </button>
+          <button class="videoButton" id="next-video" type="button">
+            <img src="images/next.png" alt="next video" />
+          </button>
+          <button class="videoButton" id="prev-video" type="button">
+            <img src="images/prev.png" alt="previous video" />
+          </button>
         </div>
       </div>
     </div>
@@ -161,12 +167,12 @@
         <div class="content" id="routeContent">
           <div id="travelModes">
             <button type="button" id="driving" class="travelbuttons">
-              <i class="material-icons">directions_car</i></button
-            ><!--
-         --><button type="button" id="walking" class="travelbuttons">
-              <i class="material-icons">directions_walk</i></button
-            ><!--
-         --><button type="button" id="biking" class="travelbuttons">
+              <i class="material-icons">directions_car</i>
+            </button>
+            <button type="button" id="walking" class="travelbuttons">
+              <i class="material-icons">directions_walk</i>
+            </button>
+            <button type="button" id="biking" class="travelbuttons">
               <i class="material-icons">directions_bike</i>
             </button>
           </div>
