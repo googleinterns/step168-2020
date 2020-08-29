@@ -110,4 +110,18 @@ public final class OverTimeCasesServletTest {
     Assert.assertTrue(stringWriter.toString().contains("cases"));
     Assert.assertTrue(stringWriter.toString().contains("dates"));
   }
+
+  @Test
+  public void servletReturnsCorrectRecentHeatMapData() throws IOException {
+    resetResponseWriter();
+    when(request.getParameter("lat")).thenReturn("1000.0");
+    when(request.getParameter("lng")).thenReturn("1000.0");
+    servlet.doGet(request, response);
+    Assert.assertTrue(stringWriter.toString().contains("lat"));
+    Assert.assertTrue(stringWriter.toString().contains("lng"));
+    Assert.assertTrue(stringWriter.toString().contains("34.30828379"));
+    Assert.assertTrue(stringWriter.toString().contains("-118.228241"));
+    Assert.assertTrue(stringWriter.toString().contains("confirmed"));
+    Assert.assertFalse(stringWriter.toString().contains("US"));
+  }
 }
