@@ -75,6 +75,37 @@ public class OverTimeCasesServlet extends HttpServlet {
       Gson gson = new Gson();
       String timeReportJson = gson.toJson(toReturn);
       response.getWriter().println(timeReportJson);
+      // Cases in last 7 days for heatmap
+    } else if (lat == 1000.0 && lng == 1000.0) {
+      List<recentReport> recentReports = new ArrayList<recentReport>();
+      for (LocLatLng gkey : globalTimeReports.keySet()) {
+        if (gkey.location.contains("US")) {
+          continue;
+        }
+        int casesSum = 0;
+        int arrSize = globalTimeReports.get(gkey).size();
+        for (int i = arrSize-7; i<arrSize; ++i) {
+          casesSum += (globalTimeReports.get(gkey).get(i) - globalTimeReports.get(gkey).get(i-1));
+        }
+        if (casesSum < 0) {
+          casesSum = 0;
+        }
+        recentReports.add(new recentReport(gkey.lat, gkey.lng, casesSum));
+      }
+      for (LocLatLng uskey : usTimeReports.keySet()) {
+        int casesSum = 0;
+        int arrSize = usTimeReports.get(uskey).size();
+        for (int i = arrSize-7; i<arrSize; ++i) {
+          casesSum += (usTimeReports.get(uskey).get(i) - usTimeReports.get(uskey).get(i-1));
+        }
+        if (casesSum < 0) {
+          casesSum = 0;
+        }
+        recentReports.add(new recentReport(uskey.lat, uskey.lng, casesSum));
+      }
+      Gson gson = new Gson();
+      String recentReportsJson = gson.toJson(recentReports);
+      response.getWriter().println(recentReportsJson);
       // Find closest report to coordinates in request
     } else {
       double minimumDistance = 1000.0;
@@ -281,6 +312,18 @@ public class OverTimeCasesServlet extends HttpServlet {
     public String toString() {
       return "Location: " + location + "; Cases: " + cases.toString()
           + "; Dates: " + dates.toString();
+    }
+  }
+
+  class recentReport {
+    private double lat;
+    private double lng;
+    private int confirmed;
+
+    public recentReport(double lat, double lng, int confirmed) {
+      this.lat = lat;
+      this.lng = lng;
+      this.confirmed = confirmed;
     }
   }
 }
