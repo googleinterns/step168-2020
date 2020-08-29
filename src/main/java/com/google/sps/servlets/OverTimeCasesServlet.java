@@ -78,7 +78,8 @@ public class OverTimeCasesServlet extends HttpServlet {
       String timeReportJson = gson.toJson(toReturn);
       response.getWriter().println(timeReportJson);
       // Cases in last 7 days (week) for heatmap
-    } else if (lat == UNREACHABLE && lng == UNREACHABLE) { // Unreachable coordinates used to request heatmap data
+    } else if (lat == UNREACHABLE
+        && lng == UNREACHABLE) { // Unreachable coordinates used to request heatmap data
       List<recentReport> recentReports = new ArrayList<recentReport>();
       // Go through all global reports
       for (LocLatLng gkey : globalTimeReports.keySet()) {
