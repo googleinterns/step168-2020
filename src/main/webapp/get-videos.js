@@ -46,6 +46,7 @@ function executeSearch(searchContent, radius) {
     // below YouTube API doesnt support a radius greater than 1000 km
     'locationRadius': radius,
     'q': searchContent,
+    'order': 'date',
     'videoEmbeddable': 'true',
     'maxResults': 50,
     'type': ['video'],

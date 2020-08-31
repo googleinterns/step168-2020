@@ -227,6 +227,7 @@ function createMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.496, lng: -99.031},
     zoom: 5,
+    minZoom: 3,
     mapTypeControl: false,
     fullscreenControl: false,
   });
@@ -862,4 +863,31 @@ $('.resizable').resizable({
   resize: function(event, ui) {
     $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
   },
+});
+
+$(function() {
+  $('#search-content')
+      .autocomplete({
+        minLength: 0,
+        source: function(request, response) {
+          $.ajax({
+            type: 'GET',
+            url:
+                'https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=' +
+                request.term,
+            dataType: 'jsonp',
+            crossDomain: true,
+            success: function(data) {
+              const searchSuggestions = [];
+              data[1].forEach((ele, index) => {
+                return searchSuggestions.push(ele[0]);
+              });
+              response(searchSuggestions.splice(0, 5));
+            },
+          });
+        },
+      })
+      .focus(function() {
+        $(this).autocomplete('search', $(this).val());
+      });
 });
