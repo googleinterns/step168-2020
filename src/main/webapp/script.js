@@ -220,7 +220,7 @@ const globalActiveHeatmapData = [];
 const globalDeathsHeatmapData = [];
 const globalRecoveredHeatmapData = [];
 const globalPopulationHeatmapData = [];
-
+const globalRecentHeatmapData = [];
 
 // Create a map zoomed in on Googleplex
 function createMap() {
@@ -285,6 +285,18 @@ function createMap() {
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
         globalRecovered, 0.0, 0.0);
   });
+  // Populate recent heatmap data
+  fetch(`/timereport?lat=1000.0&lng=1000.0`)
+      .then((response) => response.json())
+      .then((recentReports) => {
+        recentReports.forEach((recentReport) => {
+          globalRecentHeatmapData.push({
+            location:
+                new google.maps.LatLng(recentReport.lat, recentReport.lng),
+            weight: recentReport.confirmed,
+          });
+        });
+      });
 
   geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
@@ -373,6 +385,9 @@ function createMap() {
     openNav();
   });
   document.getElementById('closebtn').addEventListener('click', () => {
+    closeNav();
+  });
+  document.getElementById('dim').addEventListener('click', () => {
     closeNav();
   });
   document.getElementById('relative-heat').addEventListener('click', () => {
@@ -566,6 +581,8 @@ function changeHeat() {
     heatmap.setData(globalRecoveredHeatmapData);
   } else if (userChoice == 'population') {
     heatmap.setData(globalPopulationHeatmapData);
+  } else if (userChoice == 'recent') {
+    heatmap.setData(globalRecentHeatmapData);
   }
 }
 
@@ -646,6 +663,19 @@ function changeRelativeHeat() {
       }
     });
     heatmap.setData(relativePerCapCases);
+  } else if (userChoice == 'recent') {
+    const relativeRecentCases = [];
+    globalRecentHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativeRecentCases.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativeRecentCases);
   }
 }
 

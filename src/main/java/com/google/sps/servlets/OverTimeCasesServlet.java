@@ -40,6 +40,8 @@ public class OverTimeCasesServlet extends HttpServlet {
   private Map<LocLatLng, List<Integer>> globalTimeReports;
   private List<Integer> worldCases;
   private List<String> dates;
+  private Integer DAYSINWEEK = 7;
+  private Double UNREACHABLE = 1000.0;
 
   /**
    * Builds report hashmaps for US counties and international countires
@@ -75,6 +77,47 @@ public class OverTimeCasesServlet extends HttpServlet {
       Gson gson = new Gson();
       String timeReportJson = gson.toJson(toReturn);
       response.getWriter().println(timeReportJson);
+      // Cases in last 7 days (week) for heatmap
+    } else if (lat == UNREACHABLE
+        && lng == UNREACHABLE) { // Unreachable coordinates used to request heatmap data
+      List<recentReport> recentReports = new ArrayList<recentReport>();
+      // Go through all global reports
+      for (LocLatLng gkey : globalTimeReports.keySet()) {
+        // Do not include US report becuase that will be represented by county
+        if (gkey.location.contains("US")) {
+          continue;
+        }
+        int casesSum = 0;
+        int arrSize = globalTimeReports.get(gkey).size();
+        // Go through case numbers from the last 7 days (week)
+        for (int i = arrSize - DAYSINWEEK; i < arrSize; ++i) {
+          // New cases added will be the current day minus previous day
+          casesSum += (globalTimeReports.get(gkey).get(i) - globalTimeReports.get(gkey).get(i - 1));
+        }
+        // Negative cases can happen when governments remove false positive tests
+        if (casesSum < 0) {
+          casesSum = 0;
+        }
+        recentReports.add(new recentReport(gkey.lat, gkey.lng, casesSum));
+      }
+      // Go through all US reports
+      for (LocLatLng uskey : usTimeReports.keySet()) {
+        int casesSum = 0;
+        int arrSize = usTimeReports.get(uskey).size();
+        // Go through case numbers from the last 7 days (week)
+        for (int i = arrSize - DAYSINWEEK; i < arrSize; ++i) {
+          // New cases added will be the current day minus previous day
+          casesSum += (usTimeReports.get(uskey).get(i) - usTimeReports.get(uskey).get(i - 1));
+        }
+        // Negative cases can happen when governments remove false positive tests
+        if (casesSum < 0) {
+          casesSum = 0;
+        }
+        recentReports.add(new recentReport(uskey.lat, uskey.lng, casesSum));
+      }
+      Gson gson = new Gson();
+      String recentReportsJson = gson.toJson(recentReports);
+      response.getWriter().println(recentReportsJson);
       // Find closest report to coordinates in request
     } else {
       double minimumDistance = 1000.0;
@@ -281,6 +324,24 @@ public class OverTimeCasesServlet extends HttpServlet {
     public String toString() {
       return "Location: " + location + "; Cases: " + cases.toString()
           + "; Dates: " + dates.toString();
+    }
+  }
+
+  class recentReport {
+    private double lat;
+    private double lng;
+    private int confirmed;
+
+    public recentReport(double lat, double lng, int confirmed) {
+      this.lat = lat;
+      this.lng = lng;
+      this.confirmed = confirmed;
+    }
+
+    public String toString() {
+      return "Lat: " + lat + "; "
+          + "Lng: " + lng + "; "
+          + "Confirmed: " + confirmed;
     }
   }
 }
