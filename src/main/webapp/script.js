@@ -697,14 +697,13 @@ function showTestCenters() {
   const bounds = map.getBounds();
   const southWest = bounds.getSouthWest();
   const northEast = bounds.getNorthEast();
-  const swlat = southWest.lat();
-  const swlng = southWest.lng();
-  const nelat = northEast.lat();
-  const nelng = northEast.lng();
+  const st = southWest.lat();
+  const sg = southWest.lng();
+  const nt = northEast.lat();
+  const ng = northEast.lng();
 
   // Get all centers within screen view
-  fetch(`/testcenters?swlat=${swlat}&swlng=${swlng}&nelat=${nelat}&nelng=${
-            nelng}`)
+  fetch(`/testcenters?swlat=${st}&swlng=${sg}&nelat=${nt}&nelng=${ng}`)
       .then((response) => response.json())
       .then((centers) => {
         centers.forEach((center) => {
@@ -713,9 +712,10 @@ function showTestCenters() {
               `<p>Hours: ${center.hours}</p>` +
               `<p>Phone: ${center.phone}</p>` +
               `<button type="button" class="markerRoute"` +
-              `onClick="routeToCenter(\'${center.addr}\')">` +
+              `onClick="routeToCenter(\'${center.addr}\')">` + // eslint-disable-line no-useless-escape
               `Directions</button>` +
-              `<style>.markerRoute{background:#4285f4;color:white;border:none;outline:none;cursor:pointer;border-radius:4px;}` +
+              `<style>.markerRoute{background:#4285f4;color:white;` +
+              `border:none;outline:none;cursor:pointer;border-radius:4px;}` +
               `.markerRoute:hover{background:#0F9D58;}</style>`;
           const infowindow =
               new google.maps.InfoWindow({content: contentString});
@@ -723,7 +723,7 @@ function showTestCenters() {
             position: new google.maps.LatLng(center.lat, center.lng),
             map: map,
             icon:
-                'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+                'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
           });
           // Close previously open info and open new one
           marker.addListener('click', function() {
@@ -747,7 +747,7 @@ function hideTestCenters() {
 }
 
 // Open routing and input center address
-function routeToCenter(addr) {
+function routeToCenter(addr) { // eslint-disable-line no-unused-vars
   document.getElementById('openOverlay').click();
   if (!document.getElementById('route').classList.contains('active')) {
     document.getElementById('route').click();
