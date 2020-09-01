@@ -46,4 +46,4 @@ Run
 - [JHU CSSE COVID-19 Data](https://github.com/CSSEGISandData/COVID-19)
 
 ## Application Architecture
-[Diagram](https://user-images.githubusercontent.com/34525787/91915167-ae1e4b00-ec6e-11ea-8fc9-40f08f69dabd.jpg)
+![Diagram](https://user-images.githubusercontent.com/34525787/91915167-ae1e4b00-ec6e-11ea-8fc9-40f08f69dabd.jpg)
