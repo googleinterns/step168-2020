@@ -712,8 +712,9 @@ function showTestCenters() {
               `<p>Address: ${center.addr}</p>` +
               `<p>Hours: ${center.hours}</p>` +
               `<p>Phone: ${center.phone}</p>` +
-              `<button type="button" class="markerRoute" onClick="routeToCenter(\'${
-                                    center.addr}\')">Directions</button>` +
+              `<button type="button" class="markerRoute"` +
+              `onClick="routeToCenter(\'${center.addr}\')">` +
+              `Directions</button>` +
               `<style>.markerRoute{background:#4285f4;color:white;border:none;outline:none;cursor:pointer;border-radius:4px;}` +
               `.markerRoute:hover{background:#0F9D58;}</style>`;
           const infowindow =
@@ -748,7 +749,9 @@ function hideTestCenters() {
 // Open routing and input center address
 function routeToCenter(addr) {
   document.getElementById('openOverlay').click();
-  document.getElementById('route').click();
+  if (!document.getElementById('route').classList.contains('active')) {
+    document.getElementById('route').click();
+  }
   document.getElementById('end').value = addr;
 }
 
