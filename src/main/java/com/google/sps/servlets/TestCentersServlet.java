@@ -48,19 +48,16 @@ public class TestCentersServlet extends HttpServlet {
   public void init() {
     // Build US hashmap
     centers = new HashSet<Center>();
-    System.out.println("DONE with new centers");
     InputStream stream = connectToData();
-    System.out.println("DONE WITH CONNECT");
     try {
       fillCenterSet(stream, centers);
     } catch (IOException e) {
       System.out.println("Unable to fill set");
     }
-    System.out.println("DONE WITH FILL SET");
   }
 
   /**
-   * Returns history of confirmed cases for the location specificed by cooridnates
+   * Returns testing centers within given coordinates
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -68,12 +65,24 @@ public class TestCentersServlet extends HttpServlet {
     response.setContentType(Constants.CASESCTYPE);
 
     // Get coordinates from request
-    double lat = Double.parseDouble(getRequestParameterOrDefault(request, "lat", "0.0"));
-    double lng = Double.parseDouble(getRequestParameterOrDefault(request, "lng", "0.0"));
+    double swlat = Double.parseDouble(getRequestParameterOrDefault(request, "swlat", "0.0"));
+    double swlng = Double.parseDouble(getRequestParameterOrDefault(request, "swlng", "0.0"));
+    double nelat = Double.parseDouble(getRequestParameterOrDefault(request, "nelat", "0.0"));
+    double nelng = Double.parseDouble(getRequestParameterOrDefault(request, "nelng", "0.0"));
+
+    Set<Center> returnCenters = new HashSet<Center>();
+    for (Center center : centers) {
+      if (center.lat > swlat && center.lat < nelat && center.lng > swlng && center.lng < nelng) {
+        returnCenters.add(center);
+      }
+    }
+    Gson gson = new Gson();
+    String returnCentersJson = gson.toJson(returnCenters);
+    response.getWriter().println(returnCentersJson);
   }
 
   /**
-   * Establish connection to live Coivd-19 data set
+   * Establish connection to live Coivd-19 testing centers data set
    */
   private InputStream connectToData() {
     URL centersUrl = null;
@@ -83,7 +92,7 @@ public class TestCentersServlet extends HttpServlet {
 
     try {
       String url =
-          "https://services.arcgis.com/8ZpVMShClf8U8dae/arcgis/rest/services/TestingLocations_public/FeatureServer/0/query?where=1%3D1&outFields=fulladdr,phone,operhours&outSR=4326&f=json";
+          "https://services.arcgis.com/8ZpVMShClf8U8dae/arcgis/rest/services/TestingLocations_public/FeatureServer/0/query?where=1%3D1&outFields=fulladdr,phone,operhours,name&outSR=4326&f=json";
       centersUrl = new URL(url);
       connection = (HttpURLConnection) centersUrl.openConnection();
       connection.setRequestMethod("GET");
@@ -98,8 +107,8 @@ public class TestCentersServlet extends HttpServlet {
   }
 
   /**
-   * Fill up the hashmap with the name of the location and coordinates as the key
-   * and with an array consisting of the confirmed case numbers as the value
+   * Parse through data, one character at a time,
+   * filling up centers set
    */
   private void fillCenterSet(InputStream stream, Set<Center> centers) throws IOException {
     BufferedInputStream bufStream = new BufferedInputStream(stream);
@@ -111,49 +120,116 @@ public class TestCentersServlet extends HttpServlet {
     int counter = 0;
     while ((c = reader.read()) >= 0) {
       if (c == 'f' && reader.read() == 'u' && reader.read() == 'l' && reader.read() == 'l' && reader.read() == 'a' && reader.read() == 'd' && reader.read() == 'd' && reader.read() == 'r' && reader.read() == '"' && reader.read() == ':') {
-        // Read 1 time to skip quotation
-        reader.read();
-        // Construct address, which ends with quotation mark
-        StringBuilder addrSB = new StringBuilder();
-        while((c = reader.read()) != '"') {
-          addrSB.append((char)c);
-        }
-        String addr = addrSB.toString();
-        System.out.println(addr);
-        // Will get shifted because there is no quotation mark
-        if (addr == "ull,") {
-          addr = "null";
+        String addr = "null";
+        // Check if null
+        if (reader.read() == '"') {
+          // Construct address, which ends with quotation mark
+          StringBuilder addrSB = new StringBuilder();
+          while((c = reader.read()) != '"') {
+            addrSB.append((char)c);
+          }
+          addr = addrSB.toString();
         }
         else {
-          // Read 2 times to skip quotation and comma
-          for (int i = 0; i < 2; ++i) {
+          // Read 3 times to skip null
+          for (int i = 0; i < 3; ++i) {
             reader.read();
           }
         }
+        // Read 9 times to skip ,"phone":
+        for (int i = 0; i < 9; ++i) {
+          reader.read();
+        }
+        
+        String phone = "null";
+        // Check if null
+        if(reader.read() == '"') {
+          // Construct phone number, which ends with quotation mark
+          StringBuilder phoneSB = new StringBuilder();
+          while((c = reader.read()) != '"') {
+            phoneSB.append((char)c);
+          }
+          phone = phoneSB.toString();
+        }
+        else {
+          // Read 3 times to skip null
+          for (int i = 0; i < 3; ++i) {
+            reader.read();
+          }
+        }
+        // Read 13 times to skip ,"operhours":
+        for (int i = 0; i < 13; ++i) {
+          reader.read();
+        }
 
-        // Read 8 times to skip phone":"
+        String hours = "null";
+        // Check if null
+        if(reader.read() == '"') {
+           // Construct hours, which ends with quotation mark
+          StringBuilder hoursSB = new StringBuilder();
+          while((c = reader.read()) != '"') {
+            hoursSB.append((char)c);
+          }
+          hours = hoursSB.toString();
+        }
+        else {
+          // Read 3 times to skip null
+          for (int i = 0; i < 3; ++i) {
+            reader.read();
+          }
+        }
+        // Read 8 times to skip ,"name":
         for (int i = 0; i < 8; ++i) {
           reader.read();
         }
-        // Construct phone number, which ends with quotation mark
-        StringBuilder phoneSB = new StringBuilder();
-        while((c = reader.read()) != '"') {
-          phoneSB.append((char)c);
-        }
-        String phone = phoneSB.toString();
-        System.out.println(phone);
-        // Will get shifted because there is no quotation mark
-        if (addr == "ull,") {
-          addr = "null";
+
+        String name = "null";
+        // Check if null
+        if(reader.read() == '"') {
+          // Construct name, which ends with quotation mark
+          StringBuilder nameSB = new StringBuilder();
+          while((c = reader.read()) != '"') {
+            nameSB.append((char)c);
+          }
+          name = nameSB.toString();
         }
         else {
-          // Read 2 times to skip quotation and comma
-          for (int i = 0; i < 2; ++i) {
+          // Read 3 times to skip null
+          for (int i = 0; i < 3; ++i) {
             reader.read();
           }
         }
+        // Read 3 times to skip },"
+        for (int i = 0; i < 3; ++i) {
+          reader.read();
+        }
 
-        // Read 
+        // Ensure that there is a geometry
+        if (!(reader.read() == 'g' && reader.read() == 'e' && reader.read() == 'o' && reader.read() == 'm' && reader.read() == 'e' && reader.read() == 't' && reader.read() == 'r' && reader.read() == 'y')) {
+          continue;
+        }
+        // Read 7 times to skip ":{"x":
+        for (int i = 0; i < 7; ++i) {
+          reader.read();
+        }
+        // Construct longitude, which ends with comma
+        StringBuilder lngSB = new StringBuilder();
+        while((c = reader.read()) != ',') {
+          lngSB.append((char)c);
+        }
+        double lng = Double.parseDouble(lngSB.toString());
+        // Read 4 times to skip "y":
+        for (int i = 0; i < 4; ++i) {
+          reader.read();
+        }
+        // Construct latitude, which ends with brace
+        StringBuilder latSB = new StringBuilder();
+        while((c = reader.read()) != '}') {
+          latSB.append((char)c);
+        }
+        double lat = Double.parseDouble(latSB.toString());
+        
+        centers.add(new Center(lat, lng, name, addr, phone, hours));
       }
     }
   }
@@ -172,23 +248,27 @@ public class TestCentersServlet extends HttpServlet {
   }
 
   /**
-   * Maintains location name with its coordinates. Used as key
+   * Maintains Center with coordinates, name, address, phone number, and open hours
    */
   class Center {
-    private Attributes attributes;
-    private Geometry geometry;
-  }
-
-  class Attributes {
+    private double lat;
+    private double lng;
     private String name;
     private String fulladdr;
     private String phone;
-    private String agencyurl;
     private String operhours;
-  }
 
-  class Geometry {
-    private double x;
-    private double y;
+    public Center(double lat, double lng, String name, String fulladdr, String phone, String operhours) {
+      this.lat = lat;
+      this.lng = lng;
+      this.name = name;
+      this.fulladdr = fulladdr;
+      this.phone = phone;
+      this.operhours = operhours;
+    }
+
+    public String toString() {
+      return "Lat: " + lat + "; Lng: " + lng + "; Name: " + name + "; Address: " + fulladdr + "; Phone: " + phone + "; Hours: " + operhours;
+    }
   }
 }

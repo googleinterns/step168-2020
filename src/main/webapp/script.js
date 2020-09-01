@@ -336,6 +336,14 @@ function createMap() {
     if (relHeat.classList.contains('selected')) {
       changeRelativeHeat();
     }
+    if (map.getZoom() >= 11) {
+      showTestCenters();
+    }
+  });
+  map.addListener('zoom_changed', function() {
+    if (map.getZoom() < 11) {
+      hideTestCenters();
+    }
   });
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -677,6 +685,49 @@ function changeRelativeHeat() {
     });
     heatmap.setData(relativeRecentCases);
   }
+}
+
+let markers = [];
+let activeWindow = null;
+// Show test centers visable on the map
+function showTestCenters() {
+  hideTestCenters();
+  const bounds = map.getBounds();
+  const southWest = bounds.getSouthWest();
+  const northEast = bounds.getNorthEast();
+  const swlat = southWest.lat();
+  const swlng = southWest.lng();
+  const nelat = northEast.lat();
+  const nelng = northEast.lng();
+  
+  fetch(`/testcenters?swlat=${swlat}&swlng=${swlng}&nelat=${nelat}&nelng=${nelng}`).then((response) => response.json()).then((centers) => {
+    centers.forEach((center) => {
+      const contentString = `<h1>${center.name}</h1>`;
+      const infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+      const marker = new google.maps.Marker({
+        position: new google.maps.LatLng(center.lat, center.lng),
+        map: map,
+      });
+      marker.addListener('click', function() {
+        if (activeWindow != null) {
+          activeWindow.close();
+        }
+        infowindow.open(map, marker);
+        activeWindow = infowindow;
+      });
+      markers.push(marker);
+    });
+  });
+}
+
+// Hide all test centers from the map
+function hideTestCenters() {
+  for (let i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
+  markers = [];
 }
 
 // Recenter map to location searched and update current coordinates

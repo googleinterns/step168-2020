@@ -39,8 +39,6 @@ public final class TestCentersServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   private TestCentersServlet servlet;
-  private String globalTimeReportsJson;
-  private String usTimeReportsJson;
   private StringWriter stringWriter;
   private PrintWriter writer;
 
@@ -65,11 +63,11 @@ public final class TestCentersServletTest {
 
   @Test
   public void servletBehavesCorrectly() throws IOException {
-    //servlet.doGet(request, response);
-    //verify(response).setContentType("application/json");
-    //verify(response).setCharacterEncoding("UTF-8");
-    //verify(response).getWriter();
-    //Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
-    //Assert.assertEquals(200, response.getStatus());
+    servlet.doGet(request, response);
+    verify(response).setContentType("application/json");
+    verify(response).setCharacterEncoding("UTF-8");
+    verify(response).getWriter();
+    Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
+    Assert.assertEquals(200, response.getStatus());
   }
 }
