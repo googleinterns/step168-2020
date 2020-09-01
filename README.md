@@ -10,6 +10,26 @@ Videomap is an interactive map that comnbines Google Maps and Youtube to provide
 - routing with COVID-19 information
 - heat map functionality based on various COVID-19 data points (confirmed, active, deaths, recovered, per capita)
 
+## Run and Deploy
+Videomap uses maven to build and deploy. The project id and version along with dependencies and other settings can be found in [pom.xml](pom.xml).
+The easiest way to test Videomap is to use Cloud Shell as it has gcloud and dependencies preinstalled.
+### Testing Servlets
+Run
+
+`mvn test`
+
+### Testing Servlets + Webpage
+Run
+
+`mvn package appengine:run`
+
+Then if on Cloud Shell, click on the webpreview button in the upper right corner.
+
+### Deploy to App Engine
+Run
+
+`mvn package appengine:deploy`
+
 ## Technologies and APIs used
 ### Front End:
 - [Javascript](https://en.wikipedia.org/wiki/JavaScript)
@@ -25,17 +45,5 @@ Videomap is an interactive map that comnbines Google Maps and Youtube to provide
 - [Servlets](https://docs.oracle.com/cd/E17802_01/products/products/servlet/2.5/docs/servlet-2_5-mr2/javax/servlet/package-summary.html)
 - [JHU CSSE COVID-19 Data](https://github.com/CSSEGISandData/COVID-19)
 
-## Run and Deploy
-Videomap uses maven to build and deploy. The project id and version along with dependencies and other settings can be found in [pom.xml](pom.xml).
-The easiest way to test Videomap is to use Cloud Shell as it has gcloud and dependencies preinstalled.
-### Testing Servlets
-Run
-`mvn test`
-### Testing Servlets + Webpage
-Run
-`mvn package appengine:run`
-Then if on Cloud Shell, click on the webpreview button in the upper right corner.
-
-### Deploy to App Engine
-Run
-`mvn package appengine:deploy`
+## Application Architecture
+[Diagram](https://user-images.githubusercontent.com/34525787/91915167-ae1e4b00-ec6e-11ea-8fc9-40f08f69dabd.jpg)
