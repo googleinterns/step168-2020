@@ -18,6 +18,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.sps.servlets.Constants;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -33,16 +34,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/linkshorten")
 public class LinkShortenServlet extends HttpServlet {
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  private static final String CTYPE = "text/html"; // HttpServletResponse content type
-  private static final String ENCODING = "UTF-8"; // HttpServletResponse character encoding
 
   /**
    * Saves url in datastore and returns key
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setCharacterEncoding(ENCODING);
-    response.setContentType(CTYPE);
+    response.setCharacterEncoding(Constants.ENCODING);
+    response.setContentType(Constants.LINKCTYPE);
     String url = getRequestParameterOrDefault(request, "url", "");
     if (url.length() < 1) {
       response.getWriter().println("No url recieved");

@@ -28,12 +28,27 @@ let geocoder;
 let bound;
 let overlay;
 let curLocationMarker;
+let lastSearchClicked = 'none';
+let navOpen = false;
+let placesAutoComplete;
 
 // When the page loads, call createMap
 window.onload = function() {
   createMap();
   addDirectionsListeners();
+
+  google.charts.load('current', {
+    callback: function() {
+      drawChart;
+      drawGraph;
+    },
+    packages: ['corechart', 'line'],
+  });
 };
+window.addEventListener('resize', function() {
+  resizePieChart();
+  resizeLineGraph();
+});
 
 // Update currently displayed coordinates
 function displayLatitudeLongitude(value) {
@@ -44,7 +59,7 @@ function displayLatitudeLongitude(value) {
 // Update displayed COVID stats based on coordinates
 function displayLocationData(value) {
   const potentialReports = [];
-  const RADIUS = 1.5;
+  const RADIUS = 5;
   // Look for closest reports
   casesData.forEach((report) => {
     if (Math.abs(report.lat - value['lat']) < RADIUS &&
@@ -57,7 +72,7 @@ function displayLocationData(value) {
   if (potentialReports.length == 0) {
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
-        globalRecovered);
+        globalRecovered, 0.0, 0.0);
     return;
   }
   // If there are nearby reports, lookup address using geocoder
@@ -71,14 +86,17 @@ function displayLocationData(value) {
   fetch(lookupURL).then((response) => response.json()).then((data) => {
     data.results[0].address_components.forEach((location) => {
       potentialReports.forEach((report) => {
+        //        console.log(report);
         // If there is a match, display that territory's statistics
         const lName = location.long_name.trim().valueOf();
         const rName = report.territory.trim().valueOf();
-        if (lName.includes(rName) || rName.includes(lName)) {
+        if ((lName.includes(rName) || rName.includes(lName)) &&
+            foundFlag == false) {
           potentialReport = report;
           displayCurrentStats(
               lName, potentialReport.active, potentialReport.confirmed,
-              potentialReport.deaths, potentialReport.recovered);
+              potentialReport.deaths, potentialReport.recovered,
+              potentialReport.lat, potentialReport.lng);
           foundFlag = true;
           return;
         }
@@ -99,7 +117,7 @@ function displayLocationData(value) {
       displayCurrentStats(
           potentialReport.territory, potentialReport.active,
           potentialReport.confirmed, potentialReport.deaths,
-          potentialReport.recovered);
+          potentialReport.recovered, potentialReport.lat, potentialReport.lng);
     }
   });
 }
@@ -109,8 +127,11 @@ let globalActive = 0;
 let globalConfirmed = 0;
 let globalDeaths = 0;
 let globalRecovered = 0;
+
+let initialDisplay = true;
 // Display COVID data in html
-function displayCurrentStats(location, active, confirmed, deaths, recovered) {
+function displayCurrentStats(
+    location, active, confirmed, deaths, recovered, lat, lng) {
   document.getElementById('location').innerHTML = location;
   document.getElementById('displayActive').innerHTML = `Active: ${active}`;
   document.getElementById('displayConfirmed').innerHTML =
@@ -118,6 +139,79 @@ function displayCurrentStats(location, active, confirmed, deaths, recovered) {
   document.getElementById('displayDeaths').innerHTML = `Deaths: ${deaths}`;
   document.getElementById('displayRecovered').innerHTML =
       `Recovered: ${recovered}`;
+
+  if (initialDisplay) {
+    initStatsDisplay(map);
+    document.getElementById('statsMode').classList.toggle('selected');
+    document.getElementById('pieDiv').classList.add('inactive');
+    document.getElementById('graphDiv').classList.add('inactive');
+    initialDisplay = false;
+  }
+
+  document.getElementById('pieLocation').innerHTML = location;
+  drawChart(active, deaths, recovered);
+  drawGraph(lat, lng);
+}
+
+// Create pie chart
+let pieChart;
+let pieData;
+let pieOptions;
+function drawChart(active, deaths, recovered) {
+  pieData = google.visualization.arrayToDataTable([
+    ['Data Type', 'Cases'],
+    ['Active', active],
+    ['Deaths', deaths],
+    ['Recovered', recovered],
+  ]);
+  pieOptions = {
+    'backgroundColor': 'transparent',
+    'chartArea': {'width': '100%', 'height': '80%'},
+    'legend': {'position': 'bottom'},
+  };
+  pieChart =
+      new google.visualization.PieChart(document.getElementById('pieChart'));
+  pieChart.draw(pieData, pieOptions);
+}
+
+function resizePieChart() {
+  pieChart.draw(pieData, pieOptions);
+}
+
+function resizeLineGraph() {
+  lineChart.draw(lineData, google.charts.Line.convertOptions(lineOptions));
+}
+
+// Create line graph
+let lineChart;
+let lineData;
+let lineOptions;
+function drawGraph(lat, lng) {
+  fetch(`/timereport?lat=${lat}&lng=${lng}`)
+      .then((response) => response.json())
+      .then((timeReport) => {
+        document.getElementById('graphLocation').innerHTML =
+            timeReport.location;
+        lineData = new google.visualization.DataTable();
+        lineData.addColumn('string', 'Date');
+        lineData.addColumn('number', 'Confirmed Cases');
+        for (let i = 0; i < timeReport.cases.length; ++i) {
+          lineData.addRow([timeReport.dates[i], timeReport.cases[i]]);
+        }
+        lineOptions = {
+          'backgroundColor': 'transparent',
+          'chartArea': {
+            'backgroundColor': 'transparent',
+          },
+          'legend': {position: 'none'},
+          'titlePosition': 'none',
+          'vAxis': {'title': 'Confirmed Cases'},
+        };
+        lineChart =
+            new google.charts.Line(document.getElementById('lineGraph'));
+        lineChart.draw(
+            lineData, google.charts.Line.convertOptions(lineOptions));
+      });
 }
 
 // Initialize global heat maps
@@ -126,11 +220,14 @@ const globalActiveHeatmapData = [];
 const globalDeathsHeatmapData = [];
 const globalRecoveredHeatmapData = [];
 const globalPopulationHeatmapData = [];
+const globalRecentHeatmapData = [];
+
 // Create a map zoomed in on Googleplex
 function createMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.496, lng: -99.031},
     zoom: 5,
+    minZoom: 3,
     mapTypeControl: false,
     fullscreenControl: false,
   });
@@ -144,7 +241,6 @@ function createMap() {
   });
   initMyLocationControl(map);
   initTopBar(map);
-  initStatsDisplay(map);
   initRelativeHeat();
   // Gets case data and creates heat maps
   fetch('/report').then((response) => response.json()).then((reports) => {
@@ -188,23 +284,53 @@ function createMap() {
     // Display worldwide data initially
     displayCurrentStats(
         'Worldwide', globalActive, globalConfirmed, globalDeaths,
-        globalRecovered);
+        globalRecovered, 0.0, 0.0);
   });
+  // Populate recent heatmap data
+  fetch(`/timereport?lat=1000.0&lng=1000.0`)
+      .then((response) => response.json())
+      .then((recentReports) => {
+        recentReports.forEach((recentReport) => {
+          globalRecentHeatmapData.push({
+            location:
+                new google.maps.LatLng(recentReport.lat, recentReport.lng),
+            weight: recentReport.confirmed,
+          });
+        });
+      });
 
   geocoder = new google.maps.Geocoder();
   document.getElementById('search-submit').addEventListener('click', () => {
+    getCoordsFromSearch();
+    displayLocationDataFromSearch();
+  });
+  placesAutoComplete = new google.maps.places.Autocomplete(
+      document.getElementById('search-text'));
+  placesAutoComplete.addListener('place_changed', () => {
     getCoordsFromSearch(geocoder, map);
-    displayLocationDataFromSearch(geocoder);
   });
   document.getElementById('search-clear').addEventListener('click', () => {
     document.getElementById('search-text').value = '';
     bound.setPaths([]);
+  });
+  document.getElementById('search-text').addEventListener('click', () => {
+    lastSearchClicked = 'location';
+  });
+  document.getElementById('search-content').addEventListener('click', () => {
+    lastSearchClicked = 'video';
+  });
+  document.getElementById('start').addEventListener('click', () => {
+    lastSearchClicked = 'route-start';
+  });
+  document.getElementById('end').addEventListener('click', () => {
+    lastSearchClicked = 'route-end';
   });
   map.addListener('click', function(mapsMouseEvent) {
     const curLocation = mapsMouseEvent.latLng.toJSON();
     displayLatitudeLongitude(curLocation);
     displayLocationData(curLocation);
     placeMarker(map, curLocation);
+    lastSearchClicked = 'map';
   });
   map.addListener('idle', function() {
     const relHeat = document.getElementById('relative-heat');
@@ -225,10 +351,44 @@ function createMap() {
   document.getElementById('stats').addEventListener('click', () => {
     toggleStats();
   });
+  document.getElementById('statsMode').addEventListener('click', () => {
+    if (!document.getElementById('statsMode').classList.contains('selected')) {
+      document.getElementById('pieChartMode').classList.remove('selected');
+      document.getElementById('graphMode').classList.remove('selected');
+      document.getElementById('statsMode').classList.add('selected');
+      document.getElementById('pieDiv').classList.add('inactive');
+      document.getElementById('graphDiv').classList.add('inactive');
+      document.getElementById('covidStats').classList.remove('inactive');
+    }
+  });
+  document.getElementById('pieChartMode').addEventListener('click', () => {
+    const pcm = document.getElementById('pieChartMode').classList;
+    if (!pcm.contains('selected')) {
+      document.getElementById('statsMode').classList.remove('selected');
+      document.getElementById('graphMode').classList.remove('selected');
+      document.getElementById('pieChartMode').classList.add('selected');
+      document.getElementById('covidStats').classList.add('inactive');
+      document.getElementById('graphDiv').classList.add('inactive');
+      document.getElementById('pieDiv').classList.remove('inactive');
+    }
+  });
+  document.getElementById('graphMode').addEventListener('click', () => {
+    if (!document.getElementById('graphMode').classList.contains('selected')) {
+      document.getElementById('pieChartMode').classList.remove('selected');
+      document.getElementById('statsMode').classList.remove('selected');
+      document.getElementById('graphMode').classList.add('selected');
+      document.getElementById('pieDiv').classList.add('inactive');
+      document.getElementById('covidStats').classList.add('inactive');
+      document.getElementById('graphDiv').classList.remove('inactive');
+    }
+  });
   document.getElementById('openOverlay').addEventListener('click', () => {
     openNav();
   });
   document.getElementById('closebtn').addEventListener('click', () => {
+    closeNav();
+  });
+  document.getElementById('dim').addEventListener('click', () => {
     closeNav();
   });
   document.getElementById('relative-heat').addEventListener('click', () => {
@@ -252,9 +412,24 @@ function createMap() {
   document.onkeypress = function(keyPressed) {
     const keyCodeForEnter = 13;
     if (keyPressed.keyCode === keyCodeForEnter) {
-      getCoordsFromSearch(geocoder, map);
-      displayLocationDataFromSearch(geocoder);
-      findWhatToSearch();
+      if (document.activeElement.tagName === 'BUTTON') {
+        return;
+      }
+      if (!navOpen) {
+        if (lastSearchClicked === 'map') {
+          findWhatToSearch();
+        } else if (lastSearchClicked === 'location') {
+          getCoordsFromSearch();
+          displayLocationDataFromSearch();
+        } else if (lastSearchClicked === 'video') {
+          findWhatToSearch();
+        }
+      } else {
+        if (lastSearchClicked === 'route-end' ||
+            lastSearchClicked === 'route-start') {
+          calculateAndDisplayRoute();
+        }
+      }
     }
   };
   initOverlay();
@@ -304,14 +479,18 @@ function initRelativeHeat() {
 
 // Display menu and dim map
 function openNav() {
+  navOpen = true;
   document.getElementById('myNav').style.width = '350px';
   document.getElementById('dim').classList.toggle('fade');
 }
 
 // Close menu and fade out dim
 function closeNav() {
-  document.getElementById('myNav').style.width = '0%';
-  document.getElementById('dim').classList.toggle('fade');
+  if (navOpen) {
+    navOpen = false;
+    document.getElementById('myNav').style.width = '0%';
+    document.getElementById('dim').classList.toggle('fade');
+  }
 }
 
 // Init each menu tab, opening up when clicked
@@ -381,7 +560,7 @@ function toggleHeatMap() {
 // Toggle selected status and stats visability when menu button clicked
 function toggleStats() {
   document.getElementById('stats').classList.toggle('unselected');
-  document.getElementById('covidStats').classList.toggle('inactive');
+  document.getElementById('allStats').classList.toggle('inactive');
 }
 
 // Display type of data user selects
@@ -403,6 +582,8 @@ function changeHeat() {
     heatmap.setData(globalRecoveredHeatmapData);
   } else if (userChoice == 'population') {
     heatmap.setData(globalPopulationHeatmapData);
+  } else if (userChoice == 'recent') {
+    heatmap.setData(globalRecentHeatmapData);
   }
 }
 
@@ -483,11 +664,24 @@ function changeRelativeHeat() {
       }
     });
     heatmap.setData(relativePerCapCases);
+  } else if (userChoice == 'recent') {
+    const relativeRecentCases = [];
+    globalRecentHeatmapData.forEach((report) => {
+      const loc = report.location;
+      if (loc.lat() > southWest.lat() && loc.lat() < northEast.lat() &&
+          loc.lng() > southWest.lng() && loc.lng() < northEast.lng()) {
+        relativeRecentCases.push({
+          location: new google.maps.LatLng(loc.lat(), loc.lng()),
+          weight: report.weight,
+        });
+      }
+    });
+    heatmap.setData(relativeRecentCases);
   }
 }
 
 // Recenter map to location searched and update current coordinates
-function getCoordsFromSearch(geocoder, map) {
+function getCoordsFromSearch() {
   const address = document.getElementById('search-text').value;
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
@@ -497,6 +691,7 @@ function getCoordsFromSearch(geocoder, map) {
         displayLatitudeLongitude(foundLocation.toJSON());
         placeMarker(map, foundLocation.toJSON());
         setBoundaries(address, results);
+        findWhatToSearch();
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }
@@ -590,7 +785,7 @@ function boundsSimilar(googleMapsResponse, openStreetMap) {
 }
 
 // Update displayed COVID stats based on address
-function displayLocationDataFromSearch(geocoder) {
+function displayLocationDataFromSearch() {
   const address = document.getElementById('search-text').value;
   if (address !== '') {
     geocoder.geocode({address: address}, (results, status) => {
@@ -648,6 +843,7 @@ $('#video-background').draggable({
 
 // makes videoplayer resizable
 $('.resizable').resizable({
+  autoHide: true,
   start: function(event, ui) {
     ui.element.append($('<div/>', {
       id: 'iframe-overlay',
@@ -667,4 +863,31 @@ $('.resizable').resizable({
   resize: function(event, ui) {
     $('iframe', ui.element).width(ui.size.width).height(ui.size.height);
   },
+});
+
+$(function() {
+  $('#search-content')
+      .autocomplete({
+        minLength: 0,
+        source: function(request, response) {
+          $.ajax({
+            type: 'GET',
+            url:
+                'https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=' +
+                request.term,
+            dataType: 'jsonp',
+            crossDomain: true,
+            success: function(data) {
+              const searchSuggestions = [];
+              data[1].forEach((ele, index) => {
+                return searchSuggestions.push(ele[0]);
+              });
+              response(searchSuggestions.splice(0, 5));
+            },
+          });
+        },
+      })
+      .focus(function() {
+        $(this).autocomplete('search', $(this).val());
+      });
 });
