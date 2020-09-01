@@ -72,18 +72,48 @@ public final class TestCentersServletTest {
   }
 
   @Test
-  public void servletReturnsCorrectFields() throws IOException {
+  public void servletDoesNotReturnFieldsWhenCoordsOutOfBounds() throws IOException {
     resetResponseWriter();
-    when(request.getParameter("swlat")).thenReturn("40.0");
-    when(request.getParameter("swlng")).thenReturn("-4.0");
-    when(request.getParameter("nelat")).thenReturn("41.0");
-    when(request.getParameter("nelng")).thenReturn("-3.0");
+    when(request.getParameter("swlat")).thenReturn("0.0");
+    when(request.getParameter("swlng")).thenReturn("0.0");
+    when(request.getParameter("nelat")).thenReturn("0.0");
+    when(request.getParameter("nelng")).thenReturn("0.0");
     servlet.doGet(request, response);
-    Assert.assertTrue(stringWriter.toString().contains("Lat:"));
-    Assert.assertTrue(stringWriter.toString().contains("Lng:"));
-    Assert.assertTrue(stringWriter.toString().contains("Name:"));
-    Assert.assertTrue(stringWriter.toString().contains("Address:"));
-    Assert.assertTrue(stringWriter.toString().contains("Hours"));
-    Assert.assertTrue(stringWriter.toString().contains("Phone"));
+    Assert.assertFalse(stringWriter.toString().contains("Lat:"));
+    Assert.assertFalse(stringWriter.toString().contains("Lng:"));
+    Assert.assertFalse(stringWriter.toString().contains("Name:"));
+    Assert.assertFalse(stringWriter.toString().contains("Address:"));
+    Assert.assertFalse(stringWriter.toString().contains("Hours"));
+    Assert.assertFalse(stringWriter.toString().contains("Phone"));
+  }
+
+  @Test
+  public void servletReturnsCorrectFieldsWhenCoordsInBounds() throws IOException {
+    resetResponseWriter();
+    when(request.getParameter("swlat")).thenReturn("32.0");
+    when(request.getParameter("swlng")).thenReturn("-117.0");
+    when(request.getParameter("nelat")).thenReturn("34.0");
+    when(request.getParameter("nelng")).thenReturn("-115.0");
+    servlet.doGet(request, response);
+    Assert.assertTrue(stringWriter.toString().contains("lat"));
+    Assert.assertTrue(stringWriter.toString().contains("lng"));
+    Assert.assertTrue(stringWriter.toString().contains("name"));
+    Assert.assertTrue(stringWriter.toString().contains("addr"));
+    Assert.assertTrue(stringWriter.toString().contains("hours"));
+    Assert.assertTrue(stringWriter.toString().contains("phone"));
+  }
+
+  @Test
+  public void servletReturnsCorrectValues() throws IOException {
+    resetResponseWriter();
+    when(request.getParameter("swlat")).thenReturn("30.0");
+    when(request.getParameter("swlng")).thenReturn("-119.0");
+    when(request.getParameter("nelat")).thenReturn("36.0");
+    when(request.getParameter("nelng")).thenReturn("-113.0");
+    servlet.doGet(request, response);
+    Assert.assertTrue(stringWriter.toString().contains("Perlman"));
+    Assert.assertTrue(stringWriter.toString().contains("La Jolla"));
+    Assert.assertTrue(stringWriter.toString().contains("CVS Health"));
+    Assert.assertTrue(stringWriter.toString().contains("Pure Care Pharmacy")); 
   }
 }
