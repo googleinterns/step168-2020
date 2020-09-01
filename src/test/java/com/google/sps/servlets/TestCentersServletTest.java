@@ -70,4 +70,20 @@ public final class TestCentersServletTest {
     Assert.assertEquals(Collections.<String>emptyList(), response.getHeaderNames());
     Assert.assertEquals(200, response.getStatus());
   }
+
+  @Test
+  public void servletReturnsCorrectFields() throws IOException {
+    resetResponseWriter();
+    when(request.getParameter("swlat")).thenReturn("40.0");
+    when(request.getParameter("swlng")).thenReturn("-4.0");
+    when(request.getParameter("nelat")).thenReturn("41.0");
+    when(request.getParameter("nelng")).thenReturn("-3.0");
+    servlet.doGet(request, response);
+    Assert.assertTrue(stringWriter.toString().contains("Lat:"));
+    Assert.assertTrue(stringWriter.toString().contains("Lng:"));
+    Assert.assertTrue(stringWriter.toString().contains("Name:"));
+    Assert.assertTrue(stringWriter.toString().contains("Address:"));
+    Assert.assertTrue(stringWriter.toString().contains("Hours"));
+    Assert.assertTrue(stringWriter.toString().contains("Phone"));
+  }
 }

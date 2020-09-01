@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Retrieves historical confirmed case data
- * starting from 1-22-20. Takes coordinates
- * in request and returns closest report
+ * Retrieves live testing center information
+ * Takes coordinates in request and returns
+ * all testing centers within coordinates
  */
 @WebServlet("/testcenters")
 public class TestCentersServlet extends HttpServlet {
@@ -42,7 +42,7 @@ public class TestCentersServlet extends HttpServlet {
   private String centersJson;
 
   /**
-   * Builds report hashmaps for US counties and international countires
+   * Builds testing center set
    */
   @Override
   public void init() {
@@ -70,6 +70,7 @@ public class TestCentersServlet extends HttpServlet {
     double nelat = Double.parseDouble(getRequestParameterOrDefault(request, "nelat", "0.0"));
     double nelng = Double.parseDouble(getRequestParameterOrDefault(request, "nelng", "0.0"));
 
+    // Return centers within given coordinates
     Set<Center> returnCenters = new HashSet<Center>();
     for (Center center : centers) {
       if (center.lat > swlat && center.lat < nelat && center.lng > swlng && center.lng < nelng) {
@@ -120,7 +121,7 @@ public class TestCentersServlet extends HttpServlet {
     int counter = 0;
     while ((c = reader.read()) >= 0) {
       if (c == 'f' && reader.read() == 'u' && reader.read() == 'l' && reader.read() == 'l' && reader.read() == 'a' && reader.read() == 'd' && reader.read() == 'd' && reader.read() == 'r' && reader.read() == '"' && reader.read() == ':') {
-        String addr = "null";
+        String addr = "Unknown";
         // Check if null
         if (reader.read() == '"') {
           // Construct address, which ends with quotation mark
@@ -141,7 +142,7 @@ public class TestCentersServlet extends HttpServlet {
           reader.read();
         }
         
-        String phone = "null";
+        String phone = "Unknown";
         // Check if null
         if(reader.read() == '"') {
           // Construct phone number, which ends with quotation mark
@@ -162,7 +163,7 @@ public class TestCentersServlet extends HttpServlet {
           reader.read();
         }
 
-        String hours = "null";
+        String hours = "Unknown";
         // Check if null
         if(reader.read() == '"') {
            // Construct hours, which ends with quotation mark
@@ -183,7 +184,7 @@ public class TestCentersServlet extends HttpServlet {
           reader.read();
         }
 
-        String name = "null";
+        String name = "Unknown";
         // Check if null
         if(reader.read() == '"') {
           // Construct name, which ends with quotation mark
@@ -254,21 +255,21 @@ public class TestCentersServlet extends HttpServlet {
     private double lat;
     private double lng;
     private String name;
-    private String fulladdr;
+    private String addr;
     private String phone;
-    private String operhours;
+    private String hours;
 
-    public Center(double lat, double lng, String name, String fulladdr, String phone, String operhours) {
+    public Center(double lat, double lng, String name, String addr, String phone, String hours) {
       this.lat = lat;
       this.lng = lng;
       this.name = name;
-      this.fulladdr = fulladdr;
+      this.addr = addr;
       this.phone = phone;
-      this.operhours = operhours;
+      this.hours = hours;
     }
 
     public String toString() {
-      return "Lat: " + lat + "; Lng: " + lng + "; Name: " + name + "; Address: " + fulladdr + "; Phone: " + phone + "; Hours: " + operhours;
+      return "Lat: " + lat + "; Lng: " + lng + "; Name: " + name + "; Address: " + addr + "; Phone: " + phone + "; Hours: " + hours;
     }
   }
 }
