@@ -712,7 +712,9 @@ function showTestCenters() {
               `<p>Hours: ${center.hours}</p>` +
               `<p>Phone: ${center.phone}</p>` +
               `<button type="button" class="markerRoute"` +
-              `onClick="routeToCenter(\'${center.addr}\')">` + // eslint-disable-line no-useless-escape
+              `onClick="routeToCenter` +
+              `(\'${center.addr}\'` +  // eslint-disable-line no-useless-escape
+              `)">` +
               `Directions</button>` +
               `<style>.markerRoute{background:#4285f4;color:white;` +
               `border:none;outline:none;cursor:pointer;border-radius:4px;}` +
@@ -747,7 +749,7 @@ function hideTestCenters() {
 }
 
 // Open routing and input center address
-function routeToCenter(addr) { // eslint-disable-line no-unused-vars
+function routeToCenter(addr) {  // eslint-disable-line no-unused-vars
   document.getElementById('openOverlay').click();
   if (!document.getElementById('route').classList.contains('active')) {
     document.getElementById('route').click();
