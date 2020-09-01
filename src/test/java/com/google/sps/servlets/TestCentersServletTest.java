@@ -114,6 +114,6 @@ public final class TestCentersServletTest {
     Assert.assertTrue(stringWriter.toString().contains("Perlman"));
     Assert.assertTrue(stringWriter.toString().contains("La Jolla"));
     Assert.assertTrue(stringWriter.toString().contains("CVS Health"));
-    Assert.assertTrue(stringWriter.toString().contains("Pure Care Pharmacy")); 
+    Assert.assertTrue(stringWriter.toString().contains("Pure Care Pharmacy"));
   }
 }

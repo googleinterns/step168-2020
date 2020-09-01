@@ -701,36 +701,40 @@ function showTestCenters() {
   const swlng = southWest.lng();
   const nelat = northEast.lat();
   const nelng = northEast.lng();
-  
+
   // Get all centers within screen view
-  fetch(`/testcenters?swlat=${swlat}&swlng=${swlng}&nelat=${nelat}&nelng=${nelng}`).then((response) => response.json()).then((centers) => {
-    centers.forEach((center) => {
-      const contentString = `<h2>${center.name}</h2>`+
-        `<p>Address: ${center.addr}</p>`+
-        `<p>Hours: ${center.hours}</p>`+
-        `<p>Phone: ${center.phone}</p>`+
-        `<button type="button" class="markerRoute" onClick="routeToCenter(\'${center.addr}\')">Directions</button>`+
-        `<style>.markerRoute{background:#4285f4;color:white;border:none;outline:none;cursor:pointer;border-radius:4px;}`+
-        `.markerRoute:hover{background:#0F9D58;}</style>`;
-      const infowindow = new google.maps.InfoWindow({
-        content: contentString
+  fetch(`/testcenters?swlat=${swlat}&swlng=${swlng}&nelat=${nelat}&nelng=${
+            nelng}`)
+      .then((response) => response.json())
+      .then((centers) => {
+        centers.forEach((center) => {
+          const contentString = `<h2>${center.name}</h2>` +
+              `<p>Address: ${center.addr}</p>` +
+              `<p>Hours: ${center.hours}</p>` +
+              `<p>Phone: ${center.phone}</p>` +
+              `<button type="button" class="markerRoute" onClick="routeToCenter(\'${
+                                    center.addr}\')">Directions</button>` +
+              `<style>.markerRoute{background:#4285f4;color:white;border:none;outline:none;cursor:pointer;border-radius:4px;}` +
+              `.markerRoute:hover{background:#0F9D58;}</style>`;
+          const infowindow =
+              new google.maps.InfoWindow({content: contentString});
+          const marker = new google.maps.Marker({
+            position: new google.maps.LatLng(center.lat, center.lng),
+            map: map,
+            icon:
+                'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+          });
+          // Close previously open info and open new one
+          marker.addListener('click', function() {
+            if (activeWindow != null) {
+              activeWindow.close();
+            }
+            infowindow.open(map, marker);
+            activeWindow = infowindow;
+          });
+          markers.push(marker);
+        });
       });
-      const marker = new google.maps.Marker({
-        position: new google.maps.LatLng(center.lat, center.lng),
-        map: map,
-        icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-      });
-      // Close previously open info and open new one
-      marker.addListener('click', function() {
-        if (activeWindow != null) {
-          activeWindow.close();
-        }
-        infowindow.open(map, marker);
-        activeWindow = infowindow;
-      });
-      markers.push(marker);
-    });
-  });
 }
 
 // Hide all test centers from the map

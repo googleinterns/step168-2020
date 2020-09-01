@@ -17,15 +17,15 @@ package com.google.sps.servlets;
 import com.google.gson.Gson;
 import com.google.sps.servlets.Constants;
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Scanner;
+import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -120,18 +120,19 @@ public class TestCentersServlet extends HttpServlet {
     boolean firstBracketSeen = false;
     int counter = 0;
     while ((c = reader.read()) >= 0) {
-      if (c == 'f' && reader.read() == 'u' && reader.read() == 'l' && reader.read() == 'l' && reader.read() == 'a' && reader.read() == 'd' && reader.read() == 'd' && reader.read() == 'r' && reader.read() == '"' && reader.read() == ':') {
+      if (c == 'f' && reader.read() == 'u' && reader.read() == 'l' && reader.read() == 'l'
+          && reader.read() == 'a' && reader.read() == 'd' && reader.read() == 'd'
+          && reader.read() == 'r' && reader.read() == '"' && reader.read() == ':') {
         String addr = "Unknown";
         // Check if null
         if (reader.read() == '"') {
           // Construct address, which ends with quotation mark
           StringBuilder addrSB = new StringBuilder();
-          while((c = reader.read()) != '"') {
-            addrSB.append((char)c);
+          while ((c = reader.read()) != '"') {
+            addrSB.append((char) c);
           }
           addr = addrSB.toString();
-        }
-        else {
+        } else {
           // Read 3 times to skip null
           for (int i = 0; i < 3; ++i) {
             reader.read();
@@ -141,18 +142,17 @@ public class TestCentersServlet extends HttpServlet {
         for (int i = 0; i < 9; ++i) {
           reader.read();
         }
-        
+
         String phone = "Unknown";
         // Check if null
-        if(reader.read() == '"') {
+        if (reader.read() == '"') {
           // Construct phone number, which ends with quotation mark
           StringBuilder phoneSB = new StringBuilder();
-          while((c = reader.read()) != '"') {
-            phoneSB.append((char)c);
+          while ((c = reader.read()) != '"') {
+            phoneSB.append((char) c);
           }
           phone = phoneSB.toString();
-        }
-        else {
+        } else {
           // Read 3 times to skip null
           for (int i = 0; i < 3; ++i) {
             reader.read();
@@ -165,15 +165,14 @@ public class TestCentersServlet extends HttpServlet {
 
         String hours = "Unknown";
         // Check if null
-        if(reader.read() == '"') {
-           // Construct hours, which ends with quotation mark
+        if (reader.read() == '"') {
+          // Construct hours, which ends with quotation mark
           StringBuilder hoursSB = new StringBuilder();
-          while((c = reader.read()) != '"') {
-            hoursSB.append((char)c);
+          while ((c = reader.read()) != '"') {
+            hoursSB.append((char) c);
           }
           hours = hoursSB.toString();
-        }
-        else {
+        } else {
           // Read 3 times to skip null
           for (int i = 0; i < 3; ++i) {
             reader.read();
@@ -186,15 +185,14 @@ public class TestCentersServlet extends HttpServlet {
 
         String name = "Unknown";
         // Check if null
-        if(reader.read() == '"') {
+        if (reader.read() == '"') {
           // Construct name, which ends with quotation mark
           StringBuilder nameSB = new StringBuilder();
-          while((c = reader.read()) != '"') {
-            nameSB.append((char)c);
+          while ((c = reader.read()) != '"') {
+            nameSB.append((char) c);
           }
           name = nameSB.toString();
-        }
-        else {
+        } else {
           // Read 3 times to skip null
           for (int i = 0; i < 3; ++i) {
             reader.read();
@@ -206,7 +204,9 @@ public class TestCentersServlet extends HttpServlet {
         }
 
         // Ensure that there is a geometry
-        if (!(reader.read() == 'g' && reader.read() == 'e' && reader.read() == 'o' && reader.read() == 'm' && reader.read() == 'e' && reader.read() == 't' && reader.read() == 'r' && reader.read() == 'y')) {
+        if (!(reader.read() == 'g' && reader.read() == 'e' && reader.read() == 'o'
+                && reader.read() == 'm' && reader.read() == 'e' && reader.read() == 't'
+                && reader.read() == 'r' && reader.read() == 'y')) {
           continue;
         }
         // Read 7 times to skip ":{"x":
@@ -215,8 +215,8 @@ public class TestCentersServlet extends HttpServlet {
         }
         // Construct longitude, which ends with comma
         StringBuilder lngSB = new StringBuilder();
-        while((c = reader.read()) != ',') {
-          lngSB.append((char)c);
+        while ((c = reader.read()) != ',') {
+          lngSB.append((char) c);
         }
         double lng = Double.parseDouble(lngSB.toString());
         // Read 4 times to skip "y":
@@ -225,11 +225,11 @@ public class TestCentersServlet extends HttpServlet {
         }
         // Construct latitude, which ends with brace
         StringBuilder latSB = new StringBuilder();
-        while((c = reader.read()) != '}') {
-          latSB.append((char)c);
+        while ((c = reader.read()) != '}') {
+          latSB.append((char) c);
         }
         double lat = Double.parseDouble(latSB.toString());
-        
+
         centers.add(new Center(lat, lng, name, addr, phone, hours));
       }
     }
@@ -269,7 +269,8 @@ public class TestCentersServlet extends HttpServlet {
     }
 
     public String toString() {
-      return "Lat: " + lat + "; Lng: " + lng + "; Name: " + name + "; Address: " + addr + "; Phone: " + phone + "; Hours: " + hours;
+      return "Lat: " + lat + "; Lng: " + lng + "; Name: " + name + "; Address: " + addr
+          + "; Phone: " + phone + "; Hours: " + hours;
     }
   }
 }
