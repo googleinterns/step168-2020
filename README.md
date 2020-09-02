@@ -1,12 +1,12 @@
 # Videomap
 [http://videomap-step-2020.appspot.com/](http://videomap-step-2020.appspot.com/)
 
-<img src="https://user-images.githubusercontent.com/36008213/91629325-ee36b280-e97c-11ea-9ec8-994a088b64a7.png" width=500>
+<img src="https://user-images.githubusercontent.com/34525787/92045219-dc665e00-ed34-11ea-8cca-da998c8be418.gif" width=500>
 <img src="https://user-images.githubusercontent.com/55601789/91622207-dfcfa300-e94a-11ea-83a6-dd8b2095e58e.gif" width=500>
-<img src="https://user-images.githubusercontent.com/36008213/90663960-33314b00-e1ff-11ea-9790-fa5883098d59.png" width=500>
+<img src="https://user-images.githubusercontent.com/34525787/92044847-f6ec0780-ed33-11ea-85f6-dce392876b0a.gif" width=500>
 
 ## About
-Videomap is an interactive map that combines Google Maps and Youtube to provide a simple way for users to find videos related to location. Videomap includes additional features related to COVID-19 including:
+Videomap is an interactive map that combines Google Maps and Youtube to provide a simple way for users to find videos related to location. Videomap includes additional features related to related to the corona coronavirus pandemic including:
 - statistical and graphical data related to the virus
 - routing with COVID-19 information
 - heat map functionality based on various COVID-19 data points (confirmed, active, deaths, recovered, per capita)
