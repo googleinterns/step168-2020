@@ -37,10 +37,16 @@ function nextPageSearch(pageToken) {
 // Make sure the client is loaded and sign-in is complete before calling this
 // method.
 function executeSearch(searchContent, radius) {
+  const roundingConst = 1000000;
+  const lat =
+      Math.round(document.getElementById('latitude').value * roundingConst) /
+      roundingConst;
+  const long =
+      Math.round(document.getElementById('longitude').value * roundingConst) /
+      roundingConst;
   const forList = {
     'part': ['snippet'],
-    'location': document.getElementById('latitude').value + ',' +
-        document.getElementById('longitude').value,
+    'location': lat + ',' + long,
     // the location radius is approximately 1.5 times the width the cursor
     // covers which changes based on zoom as represented by the equation
     // below YouTube API doesnt support a radius greater than 1000 km
@@ -63,7 +69,7 @@ function executeSearch(searchContent, radius) {
                 'searching for videos related to just search');
             noLocationSearch(searchContent);
           } else {
-            radius = Math.min(parseInt(radius) * 4, 1000) + 'km';
+            radius = Math.min(parseFloat(radius) * 4, 1000) + 'km';
             executeSearch(searchContent, radius);
           }
         } else {
