@@ -1,7 +1,7 @@
 /* exported searchForVideos, nextPageSearch */
 /* globals gapi, player */
 function searchForVideos(map, searched) {
-  let radius = Math.min(2600 * Math.pow(.5, map.getZoom()), 1000) + 'km';
+  const radius = Math.min(2600 * Math.pow(.5, map.getZoom()), 1000) + 'km';
   gapi.client.setApiKey(keys.YOUTUBE_API_KEY);
   if (document.getElementById('latitude').value === '') {
     alert('No location found: Search or click somewhere on the map');
@@ -38,8 +38,12 @@ function nextPageSearch(pageToken) {
 // method.
 function executeSearch(searchContent, radius) {
   const roundingConst = 1000000;
-  const lat = Math.round(document.getElementById('latitude').value * roundingConst) / roundingConst;
-  const long = Math.round(document.getElementById('longitude').value * roundingConst) / roundingConst;
+  const lat =
+      Math.round(document.getElementById('latitude').value * roundingConst) /
+      roundingConst;
+  const long =
+      Math.round(document.getElementById('longitude').value * roundingConst) /
+      roundingConst;
   const forList = {
     'part': ['snippet'],
     'location': lat + ',' + long,
