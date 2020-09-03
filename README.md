@@ -11,7 +11,11 @@ Videomap is an interactive map that combines Google Maps and Youtube to provide 
   will be able to see data for that specific location. Additionally, the user can switch between textual statistics, a pie chart which shows the data in a graphical
   format, and a line graph which shows the spread of the virus over time. The user can hide and show this information using the menu.
   
-- Routing with COVID-19 information
+- Routing with COVID-19 information. Like in google maps, users can get directions between two locations. However, Videomap will also display the number of active cases 
+  in counties the route will pass through. Users can either use the Videomap suggested route, which uses cases, distance, and time, or manually select the one they want 
+  to use. In addition, the travel mode can be set to driving, walking, or biking. Once a route and travel mode are selected, it can be shared to other devices through a 
+  link in an email. When clicked on a mobile device, the link will open in the Google Maps App for turn by turn navigation. If not on a mobile device, the link will 
+  redirect to the Google Maps webpage.
 
 - Heat map functionality based on various COVID-19 data points. The heat map allows the user to visually see the COVID-19 data on the map itself. The user can
   choose which data set they wish to see on the map, from confirmed to active, deaths, recoveries, per-capita, and recent cases, with recent showing new cases in
