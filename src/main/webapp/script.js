@@ -332,10 +332,19 @@ function createMap() {
     placeMarker(map, curLocation);
     lastSearchClicked = 'map';
   });
+  const CENTERSZOOM = 10;
   map.addListener('idle', function() {
     const relHeat = document.getElementById('relative-heat');
     if (relHeat.classList.contains('selected')) {
       changeRelativeHeat();
+    }
+    if (map.getZoom() >= CENTERSZOOM) {
+      showTestCenters();
+    }
+  });
+  map.addListener('zoom_changed', function() {
+    if (map.getZoom() < CENTERSZOOM) {
+      hideTestCenters();
     }
   });
   const directionsService = new google.maps.DirectionsService();
@@ -678,6 +687,75 @@ function changeRelativeHeat() {
     });
     heatmap.setData(relativeRecentCases);
   }
+}
+
+let markers = [];
+let activeWindow = null;
+// Show test centers visable on the map
+function showTestCenters() {
+  // Hide previously shown and get map bounds
+  hideTestCenters();
+  const bounds = map.getBounds();
+  const southWest = bounds.getSouthWest();
+  const northEast = bounds.getNorthEast();
+  const st = southWest.lat();
+  const sg = southWest.lng();
+  const nt = northEast.lat();
+  const ng = northEast.lng();
+
+  // Get all centers within screen view
+  fetch(`/testcenters?swlat=${st}&swlng=${sg}&nelat=${nt}&nelng=${ng}`)
+      .then((response) => response.json())
+      .then((centers) => {
+        centers.forEach((center) => {
+          const contentString = `<h2>${center.name}</h2>` +
+              `<p>Address: ${center.addr}</p>` +
+              `<p>Hours: ${center.hours}</p>` +
+              `<p>Phone: ${center.phone}</p>` +
+              `<button type="button" class="markerRoute"` +
+              `onClick="routeToCenter` +
+              `(\'${center.addr}\'` +  // eslint-disable-line no-useless-escape
+              `)">` +
+              `Directions</button>` +
+              `<style>.markerRoute{background:#4285f4;color:white;` +
+              `border:none;outline:none;cursor:pointer;border-radius:4px;}` +
+              `.markerRoute:hover{background:#0F9D58;}</style>`;
+          const infowindow =
+              new google.maps.InfoWindow({content: contentString});
+          const marker = new google.maps.Marker({
+            position: new google.maps.LatLng(center.lat, center.lng),
+            map: map,
+            icon:
+                'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+          });
+          // Close previously open info and open new one
+          marker.addListener('click', function() {
+            if (activeWindow != null) {
+              activeWindow.close();
+            }
+            infowindow.open(map, marker);
+            activeWindow = infowindow;
+          });
+          markers.push(marker);
+        });
+      });
+}
+
+// Hide all test centers from the map
+function hideTestCenters() {
+  for (let i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
+  markers = [];
+}
+
+// Open routing and input center address
+function routeToCenter(addr) {  // eslint-disable-line no-unused-vars
+  document.getElementById('openOverlay').click();
+  if (!document.getElementById('route').classList.contains('active')) {
+    document.getElementById('route').click();
+  }
+  document.getElementById('end').value = addr;
 }
 
 // Recenter map to location searched and update current coordinates
