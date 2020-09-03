@@ -1,1 +1,50 @@
-This is the Videomap capstone project
+# Videomap
+[http://videomap-step-2020.appspot.com/](http://videomap-step-2020.appspot.com/)
+
+<img src="https://user-images.githubusercontent.com/34525787/92045219-dc665e00-ed34-11ea-8cca-da998c8be418.gif" width=500>
+<img src="https://user-images.githubusercontent.com/55601789/91622207-dfcfa300-e94a-11ea-83a6-dd8b2095e58e.gif" width=500>
+<img src="https://user-images.githubusercontent.com/34525787/92044847-f6ec0780-ed33-11ea-85f6-dce392876b0a.gif" width=500>
+
+## About
+Videomap is an interactive map that combines Google Maps and Youtube to provide a simple way for users to find videos related to location. Videomap includes additional features related to related to the corona coronavirus pandemic including:
+- statistical and graphical data related to the virus
+- routing with COVID-19 information
+- heat map functionality based on various COVID-19 data points (confirmed, active, deaths, recovered, per capita)
+
+## Run and Deploy
+Videomap uses maven to build and deploy. The project id and version along with dependencies and other settings can be found in [pom.xml](pom.xml).
+The easiest way to test Videomap is to use Cloud Shell as it has gcloud and dependencies preinstalled.
+### Testing Servlets
+Run
+
+`mvn test`
+
+### Testing Servlets + Webpage
+Run
+
+`mvn package appengine:run`
+
+Then if on Cloud Shell, click on the webpreview button in the upper right corner.
+
+### Deploy to App Engine
+Run
+
+`mvn package appengine:deploy`
+
+## Technologies and APIs used
+### Front End:
+- [Javascript](https://en.wikipedia.org/wiki/JavaScript)
+- [Google Maps API](https://cloud.google.com/maps-platform/)
+- [Google Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview)
+- [Google Directions API](https://cloud.google.com/maps-platform/routes)
+- [Youtube API](https://developers.google.com/youtube/v3)
+- [Google Places API](https://cloud.google.com/maps-platform/places)
+- [Openstreetmaps](https://www.openstreetmap.org/copyright)
+### Backend
+- [App Engine](https://cloud.google.com/appengine)
+- [Datastore](https://cloud.google.com/datastore)
+- [Servlets](https://docs.oracle.com/cd/E17802_01/products/products/servlet/2.5/docs/servlet-2_5-mr2/javax/servlet/package-summary.html)
+- [JHU CSSE COVID-19 Data](https://github.com/CSSEGISandData/COVID-19)
+
+## Application Architecture
+![Diagram](https://user-images.githubusercontent.com/34525787/91915167-ae1e4b00-ec6e-11ea-8fc9-40f08f69dabd.jpg)
