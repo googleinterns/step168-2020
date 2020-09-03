@@ -7,9 +7,21 @@
 
 ## About
 Videomap is an interactive map that combines Google Maps and Youtube to provide a simple way for users to find videos related to location. Videomap includes additional features related to related to the corona coronavirus pandemic including:
-- statistical and graphical data related to the virus
-- routing with COVID-19 information
-- heat map functionality based on various COVID-19 data points (confirmed, active, deaths, recovered, per capita)
+- Statistical and graphical data related to the virus. Initially, the user can see worldwide COVID-19 statistics, and if they click or search for a location, they
+  will be able to see data for that specific location. Additionally, the user can switch between textual statistics, a pie chart which shows the data in a graphical
+  format, and a line graph which shows the spread of the virus over time. The user can hide and show this information using the menu.
+  
+- Routing with COVID-19 information
+
+- Heat map functionality based on various COVID-19 data points. The heat map allows the user to visually see the COVID-19 data on the map itself. The user can
+  choose which data set they wish to see on the map, from confirmed to active, deaths, recoveries, per-capita, and recent cases, with recent showing new cases in
+  the past week. The user can also determine how large they want the heat on the heat map to be with the adjustable slider in the menu. Finally, the user can choose
+  if they would like relative heat to be on or off. When off, the heat map will show color based on and relative to the entire world, but when on, the heat map will
+  show heat relative to the area that is currently visible on the screen.
+  
+- COVID-19 testing center support. This feature makes it possible for users to see testing centers near them in the form of markers dropped on the map. When the
+  user clicks on a marker, they can see the testing center's name, address, phone number, and operating hours. The user can also press a button to route to this
+  testing center, which will open up the directions menu and put the center's address in the destination field.
 
 ## Run and Deploy
 Videomap uses maven to build and deploy. The project id and version along with dependencies and other settings can be found in [pom.xml](pom.xml).
@@ -45,6 +57,7 @@ Run
 - [Datastore](https://cloud.google.com/datastore)
 - [Servlets](https://docs.oracle.com/cd/E17802_01/products/products/servlet/2.5/docs/servlet-2_5-mr2/javax/servlet/package-summary.html)
 - [JHU CSSE COVID-19 Data](https://github.com/CSSEGISandData/COVID-19)
+- [ARCGIS Testing Center Data](https://services.arcgis.com/8ZpVMShClf8U8dae/arcgis/rest/services/TestingLocations_public/FeatureServer/)
 
 ## Application Architecture
 ![Diagram](https://user-images.githubusercontent.com/34525787/91915167-ae1e4b00-ec6e-11ea-8fc9-40f08f69dabd.jpg)
