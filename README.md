@@ -6,7 +6,13 @@
 <img src="https://user-images.githubusercontent.com/34525787/92044847-f6ec0780-ed33-11ea-85f6-dce392876b0a.gif" width=500>
 
 ## About
-Videomap is an interactive map that combines Google Maps and Youtube to provide a simple way for users to find videos related to location. Videomap includes additional features related to related to the corona coronavirus pandemic including:
+Videomap is an interactive map that combines Google Maps and Youtube to provide a simple way for users to find videos related to location. Users can search for videos based on location by clicking the desired location on the map and searching. Searching related to COVID-19 News can be done by clicking on the map and:
+1. pressing 'enter' on the keyboard
+2. clicking the video tape icon by the top of the screen
+
+Alternatively, users can search locations with the search bar at the top left of the screen. Once the user searches a location, Videomap will automatically search for COVID-19 News videos surrounding that location. Users can also search for videos unrelated to COVID-19 News by entering a search topic in the search bar to the left of the video tape icon. These searches can be completed the same way as COVID-19 News searches (pressing 'enter' or clicking the video tape icon).
+
+Videomap includes additional features related to the COVID-19 pandemic including:
 - Statistical and graphical data related to the virus. Initially, the user can see worldwide COVID-19 statistics, and if they click or search for a location, they
   will be able to see data for that specific location. Additionally, the user can switch between textual statistics, a pie chart which shows the data in a graphical
   format, and a line graph which shows the spread of the virus over time. The user can hide and show this information using the menu.
