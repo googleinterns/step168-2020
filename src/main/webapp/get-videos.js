@@ -99,6 +99,7 @@ function noLocationSearch(searchContent) {
     'part': ['snippet'],
     'q': searchContent,
     'videoEmbeddable': 'true',
+    'order': 'date',
     'maxResults': 50,
     'type': ['video'],
   };
